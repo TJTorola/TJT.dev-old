@@ -1,6 +1,37 @@
 import { getDisplayName, getLocation } from './lib.mjs';
 import { Component, h } from './preact.mjs';
 
+export const withLoader = (loader, WrappedComponent) => {
+  class WithLoader extends Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        loading: true
+      }
+    }
+
+    componentDidMount() {
+      loader().finally(() => {
+        this.setState({
+          loading: false
+        })
+      })
+    }
+
+    render(props) {
+      if (loading) {
+        return h('div', {}, 'Loading...');
+      } else {
+        return h(WrappedComponent, props);
+      }
+    }
+  }
+
+  WithLoader.displayName = `withLoader(${getDisplayName(WrappedComponent)})`;
+  return withLoader;
+}
+
 export const withRoute = WrappedComponent => {
   class WithRoute extends Component {
     constructor(props) {
