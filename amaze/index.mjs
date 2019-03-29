@@ -1,23 +1,41 @@
-import { withRoute } from './hocs.mjs';
 import { h, render } from './preact.mjs';
 
-const Root = withRoute(({ route }) => {
-  switch (route) {
-    case "":
-      return h('div', {}, [
-        h('div', {}, 'Test Link'),
-        h('a', { href: '#foo' }, 'Foo')
-      ]);
-    case "foo":
-      return h('div', {}, [
-        h('a', { href: '#' }, 'Home')
-      ]);
-    default:
-      throw new Error('ROUTE_NOT_FOUND');
-  }
-});
+const Cell = ({ xi, yi, size, wRight, wBottom }) => {
+  const x = xi * size;
+  const y = yi * size;
+  // w: wall
+  const wThickness = size / 10;
+  const wOffset = size - (wThickness / 2);
+
+  return h('g', {}, [
+    h('rect', { x, y, width: size, height: size, class: 'fg' }),
+    wRight && h('rect', {
+      x: x + wOffset,
+      y,
+      width: wThickness,
+      height: size,
+      class: 'bg'
+    }),
+    wBottom && h('rect', {
+      x,
+      y: y + wOffset,
+      width: size,
+      height: wThickness,
+      class: 'bg'
+    })
+  ]);
+};
 
 export const main = () => {
-  render(h(Root, {}), document.body);
+  const width = 25;
+
+  render((
+    h('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
+      h(Cell, { xi: 0, yi: 0, size: 25, wRight: true, wBottom: false }),
+      h(Cell, { xi: 0, yi: 1, size: 25, wRight: true, wBottom: true }),
+      h(Cell, { xi: 1, yi: 0, size: 25, wRight: false, wBottom: false }),
+      h(Cell, { xi: 1, yi: 1, size: 25, wRight: true, wBottom: false }),
+    ])
+  ), document.body);
 }
 
