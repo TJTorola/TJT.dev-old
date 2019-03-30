@@ -1,7 +1,8 @@
 import { h, render } from './preact.mjs';
-import { Grid, TEST_MAZE } from './grid.mjs';
+import { RandGrid } from './maze.mjs';
 
 export const main = (mountId) => {
-  render(h(Grid, { maze: TEST_MAZE }), document.getElementById(mountId));
+  render(h(RandGrid, {}), document.getElementById(mountId));
+  console.log('rendered', Date.now());
 }
 
