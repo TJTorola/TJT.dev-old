@@ -41,8 +41,8 @@ const Fill = ({ fill, xIdx, yIdx }) => (
   h('rect', {
     x: xIdx * CELL_SIZE,
     y: yIdx * CELL_SIZE,
-    width: CELL_SIZE,
-    height: CELL_SIZE,
+    width: CELL_SIZE + 1,
+    height: CELL_SIZE + 1,
     style: { fill }
   })
 );
