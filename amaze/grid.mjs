@@ -1,6 +1,11 @@
 import { h } from './preact.mjs';
 
 const CELL_SIZE = 10;
+const WALL_PROPS = {
+  stroke: 'black',
+  ['stroke-width']: CELL_SIZE / 5,
+  ['stroke-linecap']: 'square'
+};
 
 /**
  * type Fill = string
@@ -61,7 +66,7 @@ export const Grid = ({ maze }) => {
     ),
     ...maze.walls.horizontal.map(
       (walls, y) => h(Walls, { xIdx: 0, yIdx: y + 1, walls })
-    )
+    ),
   ]);
 }
 
@@ -70,12 +75,23 @@ const GridWrapper = ({ rowCount, colCount, maxHeight, maxWidth, children }) => {
   const maxCellWidth = maxWidth / colCount;
   const cellSize = Math.min(maxCellHeight, maxCellWidth);
 
+  const maxX = colCount * CELL_SIZE;
+  const maxY = rowCount * CELL_SIZE; 
+
   return h('svg', {
     height: `${cellSize * rowCount}px`,
     width: `${cellSize * colCount}px`,
-    viewBox: `0 0 ${colCount * CELL_SIZE} ${rowCount * CELL_SIZE}`,
+    viewBox: `0 0 ${maxX} ${maxY}`,
     xmlns: 'http://www.w3.org/2000/svg'
-  }, children);
+  }, [
+    ...children,
+    h('g', WALL_PROPS, [
+      h('line', { x1: 0, y1: 0, x2: 0, y2: maxY }),
+      h('line', { x1: 0, y1: 0, x2: maxX, y2: 0 }),
+      h('line', { x1: 0, y1: maxY, x2: maxX, y2: maxY }),
+      h('line', { x1: maxX, y1: 0, x2: maxX, y2: maxY }),
+    ])
+  ]);
 }
 
 const Walls = ({ walls, xIdx, yIdx }) => {
@@ -107,11 +123,7 @@ const Walls = ({ walls, xIdx, yIdx }) => {
     )];
   }, [{}]);
 
-  return h('g', {
-    stroke: 'black',
-    ['stroke-width']: CELL_SIZE / 10,
-    ['stroke-linecap']: 'square'
-  }, strokes.map(stroke => {
+  return h('g', WALL_PROPS, strokes.map(stroke => {
     if (stroke.start !== undefined && stroke.end !== undefined) {
       const [ x1, y1 ] = stroke.start;
       const [ x2, y2 ] = stroke.end;
