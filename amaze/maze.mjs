@@ -1,4 +1,4 @@
-import { Grid } from './grid.mjs';
+import { Grid } from './canvas-grid.mjs';
 import { h } from './preact.mjs';
 
 const numToHex = n => n.toString(16).padStart(2, '0').toUpperCase();
@@ -23,7 +23,6 @@ const generateRandomGrid = (w, h) => {
       ))
     }
   };
-  console.log('generated', Date.now());
   return grid;
 };
 
