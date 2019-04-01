@@ -14,8 +14,13 @@ import { Component, h } from './preact.mjs';
  */
 
 export class Grid extends Component {
+  constructor(props) {
+    super(props);
+    this.renderCanvas = makeRenderCanvas();
+  }
+
   componentDidMount() {
-    renderCanvas({
+    this.renderCanvas({
       canvas: this.canvas,
       ctx: this.canvas.getContext('2d'),
       maze: this.props.maze
@@ -23,7 +28,7 @@ export class Grid extends Component {
   }
 
   componentDidUpdate() {
-    renderCanvas({
+    this.renderCanvas({
       canvas: this.canvas,
       ctx: this.canvas.getContext('2d'),
       maze: this.props.maze
@@ -35,6 +40,13 @@ export class Grid extends Component {
   }
 }
 
-const renderCanvas = ({ ctx, canvas, maze }) => {
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+const makeRenderCanvas = () => {
+  let lastMaze;
+  return ({ ctx, canvas, maze }) => {
+    if (lastMaze === maze) return;
+
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    lastMaze = maze;
+  };
 }
