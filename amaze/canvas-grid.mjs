@@ -1,17 +1,26 @@
 import { Component, h } from './preact.mjs';
 
 /**
- * type Fill = string
- * type Maze = {
- *   maxHeight: number,
- *   maxWidth: number,
- *   rows: Array<Array<Fill>>,
- *   walls: {
- *     vertical: Array<Array<boolean>>,
- *     horizontal: Array<Array<boolean>>
- *   }
- * }
- */
+  type Coord = string
+  - ex: "1,2" | "231,76"
+
+  type Step = {
+    diff: Array<Coord>,
+    cells: Map<Coord, Cell>
+  }
+  - Here diff is the coords that were changed,
+  - deleted, or added from the previous step.
+
+  type GridProps = {
+    maxHeight: number,
+    maxWidth: number,
+    currentStep: number,
+    steps: Array<{
+      diff: Array<Coord>,
+      cells: Map<Coord, Cell>
+    }
+  }
+**/
 
 export class Grid extends Component {
   constructor(props) {
@@ -23,7 +32,7 @@ export class Grid extends Component {
     this.renderCanvas({
       canvas: this.canvas,
       ctx: this.canvas.getContext('2d'),
-      maze: this.props.maze
+      cells: this.props.cells
     });
   }
 
@@ -31,7 +40,7 @@ export class Grid extends Component {
     this.renderCanvas({
       canvas: this.canvas,
       ctx: this.canvas.getContext('2d'),
-      maze: this.props.maze
+      cells: this.props.cells
     });
   }
 
@@ -41,12 +50,12 @@ export class Grid extends Component {
 }
 
 const makeRenderCanvas = () => {
-  let lastMaze;
-  return ({ ctx, canvas, maze }) => {
-    if (lastMaze === maze) return;
+  let lastCells;
+  return ({ ctx, canvas, cells }) => {
+    if (lastCells === cells) return;
 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    lastMaze = maze;
+    lastCells = cells;
   };
 }
