@@ -1,5 +1,8 @@
 import { Component, h } from './preact.mjs';
 
+// How thick is a wall compared to a cell
+const WALL_RATIO = .1;
+
 /**
   type Coord = string
   - ex: "1,2" | "231,76"
@@ -12,6 +15,7 @@ import { Component, h } from './preact.mjs';
   - deleted, or added from the previous step.
 
   type GridProps = {
+    dimensions: [number, number],
     maxHeight: number,
     maxWidth: number,
     step: number,
@@ -20,11 +24,6 @@ import { Component, h } from './preact.mjs';
 **/
 
 export class Grid extends Component {
-  constructor(props) {
-    super(props);
-    this.renderCanvas = makeRenderCanvas();
-  }
-
   componentDidMount() {
     paintFull({
       canvas: this.canvas,
@@ -34,10 +33,7 @@ export class Grid extends Component {
   }
 
   componentDidUpdate(lastProps) {
-    this.paint(lastProps.step);
-  }
-
-  paint(lastStep) {
+    const lastStep = lastProps.step;
     if (lastStep === this.props.step) return;
 
     const lower = Math.min(lastStep, this.props.step);
@@ -56,8 +52,30 @@ export class Grid extends Component {
     });
   }
 
+  get cellSize() {
+    const { dimensions, maxHeight, maxWidth } = this.props;
+    const [x, y] = dimensions;
+
+    const maxCellWidth = maxWidth / (x + (WALL_RATIO * (x - 1)));
+    const maxCellHeight = maxHeight / (y + (WALL_RATIO * (y - 1)));
+
+    return Math.min(maxCellWidth, maxCellHeight);
+  }
+
+  get width() {
+    return this.cellSize * this.props.dimensions[0];
+  }
+
+  get height() {
+    return this.cellSize * this.props.dimensions[1];
+  }
+
   render() {
-    return h('canvas', { ref: r => this.canvas = r });
+    return h('canvas', {
+      ref: r => this.canvas = r,
+      width: this.width,
+      height: this.height
+    });
   }
 }
 
