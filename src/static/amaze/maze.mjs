@@ -27,12 +27,13 @@ const generateRandomGrid = (w, h) => {
 };
 
 export const RandGrid = () => h(Grid, {
-  dimensions: [6, 4],
-  maxHeight: window.screen.height - 30,
-  maxWidth: window.screen.width - 30,
   step: 0,
   steps: [{
     diff: [],
-    cells: new Map()
+    cells: new Map([['@meta', {
+      dimensions: [6, 4],
+      maxHeight: window.screen.height - 30,
+      maxWidth: window.screen.width - 30,
+    }]])
   }]
 });

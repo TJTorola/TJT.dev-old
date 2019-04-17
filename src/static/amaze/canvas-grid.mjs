@@ -53,21 +53,24 @@ export class Grid extends Component {
   }
 
   get cellSize() {
-    const { dimensions, maxHeight, maxWidth } = this.props;
-    const [x, y] = dimensions;
+    if (this.cellSizeMemo !== undefined) return this.cellSizeMemo;
 
-    const maxCellWidth = maxWidth / (x + (WALL_RATIO * (x - 1)));
-    const maxCellHeight = maxHeight / (y + (WALL_RATIO * (y - 1)));
-
-    return Math.min(maxCellWidth, maxCellHeight);
+    this.cellSizeMemo = getCellSize(this.props.steps[0].cells);
+    return this.cellSizeMemo;
   }
 
   get width() {
-    return this.cellSize * this.props.dimensions[0];
+    if (this.widthMemo !== undefined) return this.widthMemo;
+
+    this.widthMemo = getWidth(this.props.steps[0].cells);
+    return this.widthMemo;
   }
 
   get height() {
-    return this.cellSize * this.props.dimensions[1];
+    if (this.heightMemo !== undefined) return this.heightMemo;
+
+    this.heightMemo = getHeight(this.props.steps[0].cells);
+    return this.heightMemo;
   }
 
   render() {
@@ -78,6 +81,20 @@ export class Grid extends Component {
     });
   }
 }
+
+const getCellSize = cells => {
+  const { dimensions, maxHeight, maxWidth } = cells.get('@meta');
+  const [x, y] = dimensions;
+
+  const maxCellWidth = maxWidth / (x + (WALL_RATIO * (x - 1)));
+  const maxCellHeight = maxHeight / (y + (WALL_RATIO * (y - 1)));
+
+  return Math.min(maxCellWidth, maxCellHeight);
+};
+
+const getWidth = cells => getCellSize(cells) + cells.get('@meta').maxWidth;
+
+const getHeight = cells => getCellSize(cells) + cells.get('@meta').maxHeight;
 
 const paintFull = ({ ctx, canvas, cells }) => {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
