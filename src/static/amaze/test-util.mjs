@@ -45,19 +45,18 @@ export const assertIs = (
 };
 
 export const spy = fn => {
-  let callCount = 0;
-  let returns = [];
+  let intel = [];
 
   const returnFn = (...args) => {
     const result = fn(...args);
-
-    callCount += 1;
-    returns.push(result);
+    intel.push({
+      args,
+      result
+    });
 
     return result;
   }
   
-  returnFn.callCount = callCount;
-  returnFn.returns = returns;
+  returnFn.intel = intel;
   return returnFn;
 }
