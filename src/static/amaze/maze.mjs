@@ -1,4 +1,5 @@
 import { Grid } from './canvas-grid.mjs';
+import { ImmutableMap } from './util.mjs';
 import { h } from './preact.mjs';
 
 const numToHex = n => n.toString(16).padStart(2, '0').toUpperCase();
@@ -30,7 +31,7 @@ export const RandGrid = () => h(Grid, {
   step: 0,
   steps: [{
     diff: [],
-    cells: new Map([['@meta', {
+    cells: new ImmutableMap([['@meta', {
       dimensions: [6, 4],
       maxHeight: window.screen.height - 30,
       maxWidth: window.screen.width - 30,
