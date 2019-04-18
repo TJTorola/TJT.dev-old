@@ -6,7 +6,7 @@ const numToHex = n => n.toString(16).padStart(2, '0').toUpperCase();
 const randNum = m => Math.floor(Math.random() * m);
 const randShade = () => numToHex(randNum(256));
 const randColor = () => `#${randShade()}${randShade()}${randShade()}`;
-const emptArr = l => [...new Array(l)];
+const emptyArr = l => [...new Array(l)];
 
 const generateRandomGrid = (w, h) => {
   const grid = {
@@ -27,22 +27,24 @@ const generateRandomGrid = (w, h) => {
   return grid;
 };
 
-export const RandGrid = () => h(Grid, {
+export const randCells = (x, y) => (
+  emptyArr(x).reduce((acc, _, xi) => ([
+    ...acc,
+    ...emptyArr(y).map((_, yi) => (
+      [`${(xi * 2) + 1},${(yi * 2) + 1}`, randColor()]
+    ))
+  ]), [])
+);
+
+export const RandGrid = ({ x, y }) => h(Grid, {
   step: 0,
   meta: {
-    dimensions: [3, 2],
+    dimensions: [x, y],
     maxHeight: window.innerHeight - 30,
     maxWidth: window.innerWidth - 30,
   },
   steps: [{
     diff: [],
-    cells: new ImmutableMap([
-      ['1,1', '#AABBCC'],
-      ['1,3', '#AABBCC'],
-      ['3,1', '#AABBCC'],
-      ['3,3', '#AABBCC'],
-      ['5,1', '#AABBCC'],
-      ['5,3', '#AABBCC'],
-    ])
+    cells: new ImmutableMap(randCells(x, y))
   }]
 });
