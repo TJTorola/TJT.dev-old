@@ -29,12 +29,20 @@ const generateRandomGrid = (w, h) => {
 
 export const RandGrid = () => h(Grid, {
   step: 0,
+  meta: {
+    dimensions: [3, 2],
+    maxHeight: window.innerHeight - 30,
+    maxWidth: window.innerWidth - 30,
+  },
   steps: [{
     diff: [],
-    cells: new ImmutableMap([['@meta', {
-      dimensions: [6, 4],
-      maxHeight: window.screen.height - 30,
-      maxWidth: window.screen.width - 30,
-    }]])
+    cells: new ImmutableMap([
+      ['1,1', '#AABBCC'],
+      ['1,3', '#AABBCC'],
+      ['3,1', '#AABBCC'],
+      ['3,3', '#AABBCC'],
+      ['5,1', '#AABBCC'],
+      ['5,3', '#AABBCC'],
+    ])
   }]
 });

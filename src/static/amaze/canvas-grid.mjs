@@ -1,4 +1,5 @@
 import { Component, h } from './preact.mjs';
+import { m } from './util.mjs';
 
 // How thick is a wall compared to a cell
 const WALL_RATIO = .1;
@@ -15,9 +16,11 @@ const WALL_RATIO = .1;
   - deleted, or added from the previous step.
 
   type GridProps = {
-    dimensions: [number, number],
-    maxHeight: number,
-    maxWidth: number,
+    meta: {
+      dimensions: [number, number],
+      maxHeight: number,
+      maxWidth: number,
+    },
     step: number,
     steps: Array<Step>
   }
@@ -27,50 +30,47 @@ export class Grid extends Component {
   componentDidMount() {
     paintFull({
       canvas: this.canvas,
-      ctx: this.canvas.getContext('2d'),
       cells: this.props.steps[this.props.step].cells,
+      meta: this.props.meta
     });
   }
 
   componentDidUpdate(lastProps) {
-    const lastStep = lastProps.step;
-    if (lastStep === this.props.step) return;
+    const { step, meta, steps } = this.props;
 
-    const lower = Math.min(lastStep, this.props.step);
-    const upper = Math.max(lastStep, this.props.step);
+    if (lastProps.step === step) return;
+    if (lastProps.meta !== meta) {
+      console.warn('META_CHANGED: Forcing expensive full re-render');
+      paintFull({
+        canvas: this.canvas,
+        cells: steps[step].cells,
+        meta
+      });
+      return;
+    }
+
+    const lower = Math.min(lastStep, step);
+    const upper = Math.max(lastStep, step);
     // Exclude the lower since it's diff is compared to it's prev step
     const diff = new Set();
     for (let i = lower + 1; i <= upper; i++) {
-      this.props.steps[i].diff.forEach(coord => diff.add(coord));
+      steps[i].diff.forEach(coord => diff.add(coord));
     }
 
     paintDiff({
       canvas: this.canvas,
-      ctx: this.canvas.getContext('2d'),
-      cells: this.props.steps[this.props.step].cells,
+      cells: steps[step].cells,
+      meta,
       diff
     });
   }
 
-  get cellSize() {
-    if (this.cellSizeMemo !== undefined) return this.cellSizeMemo;
-
-    this.cellSizeMemo = getCellSize(this.props.steps[0].cells);
-    return this.cellSizeMemo;
-  }
-
   get width() {
-    if (this.widthMemo !== undefined) return this.widthMemo;
-
-    this.widthMemo = getWidth(this.props.steps[0].cells);
-    return this.widthMemo;
+    return getWidth(this.props.meta);
   }
 
   get height() {
-    if (this.heightMemo !== undefined) return this.heightMemo;
-
-    this.heightMemo = getHeight(this.props.steps[0].cells);
-    return this.heightMemo;
+    return getHeight(this.props.meta);
   }
 
   render() {
@@ -82,22 +82,58 @@ export class Grid extends Component {
   }
 }
 
-const getCellSize = cells => {
-  const { dimensions, maxHeight, maxWidth } = cells.get('@meta');
+const getCellSize = m(({ dimensions, maxHeight, maxWidth }) => {
   const [x, y] = dimensions;
 
-  const maxCellWidth = maxWidth / (x + (WALL_RATIO * (x - 1)));
-  const maxCellHeight = maxHeight / (y + (WALL_RATIO * (y - 1)));
+  const xWallCnt = x + 1;
+  const xCellUnits = x + (xWallCnt * WALL_RATIO);
+  const maxCellWidth = maxWidth / xCellUnits;
+
+  const yWallCnt = y + 1;
+  const yCellUnits = y + (yWallCnt * WALL_RATIO);
+  const maxCellHeight = maxHeight / yCellUnits;
 
   return Math.min(maxCellWidth, maxCellHeight);
-};
+});
 
-const getWidth = cells => getCellSize(cells) + cells.get('@meta').maxWidth;
+const getWidth = m(meta => {
+  const cellSize = getCellSize(meta);
+  const x = meta.dimensions[0];
 
-const getHeight = cells => getCellSize(cells) + cells.get('@meta').maxHeight;
+  const xWallCnt = x + 1;
+  const xCellUnits = x + (xWallCnt * WALL_RATIO);
+  
+  return xCellUnits * cellSize;
+});
 
-const paintFull = ({ ctx, canvas, cells }) => {
+const getHeight = m(meta => {
+  const cellSize = getCellSize(meta);
+  const y = meta.dimensions[1];
+
+  const yWallCnt = y + 1;
+  const yCellUnits = y + (yWallCnt * WALL_RATIO);
+  
+  return yCellUnits * cellSize;
+});
+
+const paintFull = ({ canvas, cells, meta }) => {
+  const ctx = canvas.getContext('2d');
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const cellSize = getCellSize(meta);
+  const wallSize = cellSize * WALL_RATIO;
+
+  for (const [ coord, color ] of cells.entries()) {
+    const [x, y] = coord.split(',').map(c => parseInt(c, 10));
+
+    const width = x % 2 === 0 ? wallSize : cellSize;
+    const height = y % 2 === 0 ? wallSize : cellSize;
+
+    const xOffset = Math.floor(x / 2) * (cellSize + wallSize) + (x % 2 === 1 ? wallSize : 0);
+    const yOffset = Math.floor(y / 2) * (cellSize + wallSize) + (y % 2 === 1 ? wallSize : 0);
+
+    ctx.fillStyle = color;
+    ctx.fillRect(xOffset, yOffset, width, height);
+  }
 };
 
 const paintDiff = ({ ctx, canvas, cells, diff }) => {
