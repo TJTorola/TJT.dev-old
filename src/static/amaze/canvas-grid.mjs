@@ -26,6 +26,13 @@ const WALL_RATIO = .1;
   }
 **/
 
+const makeCtx = m(canvas => {
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  ctx.scale(dpr, dpr);
+  return ctx;
+});
+
 export class Grid extends Component {
   componentDidMount() {
     paintFull({
@@ -49,8 +56,8 @@ export class Grid extends Component {
       return;
     }
 
-    const lower = Math.min(lastStep, step);
-    const upper = Math.max(lastStep, step);
+    const lower = Math.min(lastProps.step, step);
+    const upper = Math.max(lastProps.step, step);
     // Exclude the lower since it's diff is compared to it's prev step
     const diff = new Set();
     for (let i = lower + 1; i <= upper; i++) {
@@ -66,10 +73,7 @@ export class Grid extends Component {
   }
 
   get ctx() {
-    const ctx = this.canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    ctx.scale(dpr, dpr);
-    return ctx;
+    return makeCtx(this.canvas);
   }
 
   get width() {
@@ -127,24 +131,46 @@ const getHeight = m(meta => {
   return yCellUnits * cellSize;
 });
 
+const getExMeta = m(meta => ({
+  height: getHeight(meta),
+  width: getWidth(meta),
+  cellSize: getCellSize(meta),
+  wallSize: getCellSize(meta) * WALL_RATIO,
+  ...meta
+}));
+
+const paintCell = ({ ctx, exMeta }, cell) => {
+  const { wallSize, cellSize } = exMeta;
+  const [ coord, color ] = cell;
+  const [x, y] = coord.split(',').map(c => parseInt(c, 10));
+
+  const width = x % 2 === 0 ? wallSize : cellSize;
+  const height = y % 2 === 0 ? wallSize : cellSize;
+
+  const xOffset = Math.floor(x / 2) * (cellSize + wallSize) + (x % 2 === 1 ? wallSize : 0);
+  const yOffset = Math.floor(y / 2) * (cellSize + wallSize) + (y % 2 === 1 ? wallSize : 0);
+
+  ctx.fillStyle = color;
+  ctx.fillRect(xOffset, yOffset, width, height);
+}
+
 const paintFull = ({ ctx, cells, meta }) => {
-  ctx.fillRect(0, 0, getWidth(meta), getHeight(meta));
-  const cellSize = getCellSize(meta);
-  const wallSize = cellSize * WALL_RATIO;
+  const exMeta = getExMeta(meta);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, exMeta.width, exMeta.height);
 
-  for (const [ coord, color ] of cells.entries()) {
-    const [x, y] = coord.split(',').map(c => parseInt(c, 10));
-
-    const width = x % 2 === 0 ? wallSize : cellSize;
-    const height = y % 2 === 0 ? wallSize : cellSize;
-
-    const xOffset = Math.floor(x / 2) * (cellSize + wallSize) + (x % 2 === 1 ? wallSize : 0);
-    const yOffset = Math.floor(y / 2) * (cellSize + wallSize) + (y % 2 === 1 ? wallSize : 0);
-
-    ctx.fillStyle = color;
-    ctx.fillRect(xOffset, yOffset, width, height);
+  for (const cell of cells.entries()) {
+    paintCell({ ctx, exMeta }, cell);
   }
 };
 
-const paintDiff = ({ ctx, cells, diff }) => {
+const paintDiff = ({ ctx, cells, meta, diff }) => {
+  const exMeta = getExMeta(meta);
+
+  diff.forEach(coord => {
+    paintCell(
+      { ctx, exMeta },
+      [ coord, cells.get(coord) || '#000' ]
+    );
+  });
 };
