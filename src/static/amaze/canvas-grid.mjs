@@ -29,7 +29,7 @@ const WALL_RATIO = .1;
 export class Grid extends Component {
   componentDidMount() {
     paintFull({
-      canvas: this.canvas,
+      ctx: this.ctx,
       cells: this.props.steps[this.props.step].cells,
       meta: this.props.meta
     });
@@ -42,7 +42,7 @@ export class Grid extends Component {
     if (lastProps.meta !== meta) {
       console.warn('META_CHANGED: Forcing expensive full re-render');
       paintFull({
-        canvas: this.canvas,
+        ctx: this.ctx,
         cells: steps[step].cells,
         meta
       });
@@ -58,11 +58,18 @@ export class Grid extends Component {
     }
 
     paintDiff({
-      canvas: this.canvas,
+      ctx: this.ctx,
       cells: steps[step].cells,
       meta,
       diff
     });
+  }
+
+  get ctx() {
+    const ctx = this.canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    ctx.scale(dpr, dpr);
+    return ctx;
   }
 
   get width() {
@@ -76,8 +83,12 @@ export class Grid extends Component {
   render() {
     return h('canvas', {
       ref: r => this.canvas = r,
-      width: this.width,
-      height: this.height
+      width: this.width * window.devicePixelRatio,
+      height: this.height * window.devicePixelRatio,
+      style: {
+        width: `${this.width}px`,
+        height: `${this.height}px`
+      }
     });
   }
 }
@@ -116,9 +127,8 @@ const getHeight = m(meta => {
   return yCellUnits * cellSize;
 });
 
-const paintFull = ({ canvas, cells, meta }) => {
-  const ctx = canvas.getContext('2d');
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+const paintFull = ({ ctx, cells, meta }) => {
+  ctx.fillRect(0, 0, getWidth(meta), getHeight(meta));
   const cellSize = getCellSize(meta);
   const wallSize = cellSize * WALL_RATIO;
 
@@ -136,5 +146,5 @@ const paintFull = ({ canvas, cells, meta }) => {
   }
 };
 
-const paintDiff = ({ ctx, canvas, cells, diff }) => {
+const paintDiff = ({ ctx, cells, diff }) => {
 };
