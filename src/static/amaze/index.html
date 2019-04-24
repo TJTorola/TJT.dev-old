@@ -6,23 +6,14 @@
     <title>TJT.Dev - Amaze</title>
 
     <style>
-      html, body, #App { height: 100%; }
+      html, body { height: 100%; }
       body { margin: 0; }
     </style>
 
-    <script type="module">
-      import { main } from './main.mjs';
-
-      window.mountApp = () => {
-        if (window.unmountApp) window.unmountApp();
-        window.unmountApp = main('App');
-      }
-
-      window.mountApp();
-    </script>
+    <script type="module" src="./main.mjs"></script>
   </head>
 
   <body>
-    <div id="App"></div>
+    <a-maze></a-maze>
   </body>
 </html>
