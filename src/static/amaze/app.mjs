@@ -31,10 +31,10 @@ const STYLE = `
   }
 `;
 
-export const App = withCss(withClasses(STYLE, ({ classes }) => (
+export const App = withClasses(STYLE, ({ classes }) => (
   h('main', { class: classes.main }, [
     h('header', { class: classes.header }),
     h('nav', { class: classes.nav }),
     h('section', { class: classes.section })
   ])
-)));
+));

@@ -12,7 +12,13 @@
 
     <script type="module">
       import { main } from './main.mjs';
-      window.__APP__ = main('App');
+
+      window.mountApp = () => {
+        if (window.unmountApp) window.unmountApp();
+        window.unmountApp = main('App');
+      }
+
+      window.mountApp();
     </script>
   </head>
 

@@ -17,7 +17,7 @@ class Css {
     this._mounted = true;
   }
 
-  dismount() {
+  unmount() {
     if (!this._mounted) return;
 
     this._styleEl.remove();
