@@ -1,16 +1,22 @@
 <!doctype html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>TJT.Dev - Amaze</title>
-  <script type="module">
-    import { main } from './main.mjs';
-    main('App');
-  </script>
-</head>
+  <head>
+    <meta charset="utf-8">
+    <title>TJT.Dev - Amaze</title>
 
-<body>
-  <div id="App"></div>
-</body>
+    <style>
+      html, body, #App { height: 100%; }
+      body { margin: 0; }
+    </style>
+
+    <script type="module">
+      import { main } from './main.mjs';
+      window.__APP__ = main('App');
+    </script>
+  </head>
+
+  <body>
+    <div id="App"></div>
+  </body>
 </html>

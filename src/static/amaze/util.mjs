@@ -17,6 +17,16 @@ export const m = fn => {
   }
 }
 
+export const getDisplayName = WrappedComponent => (
+  WrappedComponent.displayName || WrappedComponent.name || 'Component'
+);
+
+export const getLocation = () => (
+  window.location.hash.length > 0
+    ? window.location.hash.slice(1)
+    : ''
+);
+
 const filter = test => (
   function* (iter) {
     let n = iter.next();
@@ -67,3 +77,15 @@ export class ImmutableMap extends Map {
     ]);
   }
 }
+
+export const interweave = ([ head, ...rest ], other) => (
+  (head !== undefined)
+    ? [ head, ...interweave(other, rest) ]
+    : other
+);
+
+export const randChar = () => (
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 52)]
+);
+
+export const randStr = len => [...new Array(len)].map(randChar).join('');
