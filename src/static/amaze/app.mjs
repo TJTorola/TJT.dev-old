@@ -3,6 +3,12 @@ import { withClasses, withCss } from './hocs.mjs';
 import { Component, h } from './preact.mjs';
 
 const STYLE = `
+  hr {
+    border-color: ${SC.COLORS.GRAY.M};
+    border-top: 0;
+    border-width: 1px;
+  }
+
   .header {
     align-items: center;
     border-bottom: solid ${SC.COLORS.GRAY.M} 1px;
@@ -11,6 +17,14 @@ const STYLE = `
     grid-area: 1 / 2;
     justify-content: space-between;
     padding: 0 ${SC.SPACING.M};
+  }
+
+  .links {
+    padding-top: ${SC.SPACING.S};
+  }
+
+  .links li {
+    margin-bottom: ${SC.SPACING.XS};
   }
 
   .main {
@@ -50,6 +64,12 @@ const STYLE = `
   }
 `;
 
+export const LiAnchor = ({ children, href }) => (
+  h('li', {}, [
+    h('a', { href }, children)
+  ])
+);
+
 export const App = withClasses(STYLE, ({ classes }) => (
   h('main', { class: classes.main }, [
     h('div', { class: classes.title }, [
@@ -66,7 +86,29 @@ export const App = withClasses(STYLE, ({ classes }) => (
     ]),
     h('nav', { class: classes.nav }, [
       h('h2', {}, 'Generators'),
-      h('h2', {}, 'Solvers'),
+      h('hr'),
+      h('ul', { class: classes.links }, [
+        h(LiAnchor, { href: '#dfs' }, 'Depth First Search'),
+        h(LiAnchor, { href: '#kruskals' }, "Kruskal's Algorithm"),
+        h(LiAnchor, { href: '#prims' }, "Prim's Algorithm"),
+        h(LiAnchor, { href: '#recur-backtracker' }, 'Recursive Backtracker'),
+        h(LiAnchor, { href: '#recur-division' }, 'Recursive Division'),
+        h(LiAnchor, { href: '#wilsons' }, "Wilson's Algorithm"),
+      ]),
+      h('h2', {
+        style: {
+          marginTop: SC.SPACING.L,
+        },
+      }, 'Solvers'),
+      h('hr'),
+      h('ul', { class: classes.links }, [
+        h(LiAnchor, { href: '#foobar' }, 'A* Algorithm'),
+        h(LiAnchor, { href: '#foobar' }, 'Breadth First Search'),
+        h(LiAnchor, { href: '#foobar' }, 'Dead End Filling'),
+        h(LiAnchor, { href: '#foobar' }, 'Random Mouse'),
+        h(LiAnchor, { href: '#foobar' }, "Trémaux's Algorithm"),
+        h(LiAnchor, { href: '#foobar' }, 'Wall Follower'),
+      ]),
     ]),
     h('section', { class: classes.section }),
   ])
