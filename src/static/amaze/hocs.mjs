@@ -1,4 +1,10 @@
-import { getDisplayName, getLocation, interweave, randStr } from "./util.mjs";
+import {
+  getDisplayName,
+  getRoute,
+  getParams,
+  interweave,
+  randStr
+} from "./util.mjs";
 import { Component, h } from "./preact.mjs";
 
 class Css {
@@ -112,30 +118,23 @@ export const withRoute = WrappedComponent => {
   class WithRoute extends Component {
     constructor(props) {
       super(props);
-
-      this.state = {
-        route: getLocation()
-      };
-
-      this.onLocationChange = this.onLocationChange.bind(this);
+      this.update = this.forceUpdate.bind(this);
     }
 
     componentDidMount() {
-      window.addEventListener("hashchange", this.onLocationChange);
+      window.addEventListener("hashchange", this.update);
     }
 
     componentWillUnmount() {
-      window.removeEventListener("hashchange", this.onLocationChange);
+      window.removeEventListener("hashchange", this.update);
     }
 
-    onLocationChange() {
-      this.setState({
-        route: getLocation()
-      });
-    }
+    render(props) {
+      const { hash } = window.location;
+      const route = getRoute(hash);
+      const params = getParams(hash);
 
-    render(props, { route }) {
-      return h(WrappedComponent, { ...props, route });
+      return h(WrappedComponent, { ...props, route, params });
     }
   }
 

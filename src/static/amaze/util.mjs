@@ -20,8 +20,29 @@ export const m = fn => {
 export const getDisplayName = WrappedComponent =>
   WrappedComponent.displayName || WrappedComponent.name || "Component";
 
-export const getLocation = () =>
-  window.location.hash.length > 0 ? window.location.hash.slice(1) : "";
+export const getRoute = hash => (hash.length > 0 ? hash.slice(1) : "");
+
+const ROUTE_LABELS = ["generator", "solver", "solverSeed"];
+
+export const getParams = hash => {
+  const route = getRoute(hash);
+  const parts = route.split("/");
+
+  return ROUTE_LABELS.reduce(
+    (acc, label, idx) => ({ ...acc, [label]: parts[idx] }),
+    {}
+  );
+};
+
+export const getHash = params => {
+  const recur = (parts = []) => {
+    const label = params[ROUTE_LABELS[parts.length]];
+    if (!label) return parts.join("/");
+    return recur([...parts, label]);
+  };
+
+  return `#${recur()}`;
+};
 
 const filter = test =>
   function*(iter) {
