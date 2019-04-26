@@ -9,7 +9,7 @@ const STYLE = `
     border-width: 1px;
   }
 
-  .header {
+  ~header {
     align-items: center;
     border-bottom: solid ${SC.COLORS.GRAY.M} 1px;
     display: flex;
@@ -19,15 +19,15 @@ const STYLE = `
     padding: 0 ${SC.SPACING.M};
   }
 
-  .links {
+  ~links {
     padding-top: ${SC.SPACING.S};
   }
 
-  .links li {
+  ~links li {
     margin-bottom: ${SC.SPACING.XS};
   }
 
-  .main {
+  ~main {
     display: grid;
     font-family: Helvetica, Arial, sans-serif;
     grid-template-columns: ${SC.SPACING.NAV_WIDTH} auto;
@@ -38,22 +38,22 @@ const STYLE = `
     width: 100%;
   }
 
-  .nav {
+  ~nav {
     border-right: solid ${SC.COLORS.GRAY.M} 1px;
     grid-area: 2 / 1;
     padding-left: ${SC.SPACING.M};
     padding-top: ${SC.SPACING.M};
   }
 
-  .section {
+  ~section {
     grid-area: 2 / 2;
   }
 
-  .slider {
+  ~slider {
     flex-grow: 1
   }
 
-  .title {
+  ~title {
     align-items: center;
     border-bottom: solid ${SC.COLORS.GRAY.M} 1px;
     border-right: solid ${SC.COLORS.GRAY.M} 1px;

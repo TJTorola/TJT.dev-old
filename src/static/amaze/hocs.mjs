@@ -34,7 +34,7 @@ class Css {
   }
 
   apply(unscopedCss) {
-    const unscopedClasses = Array.from(unscopedCss.match(/\.[\w-]+/g)).map(r =>
+    const unscopedClasses = Array.from(unscopedCss.match(/~[\w-]+/g)).map(r =>
       r.slice(1)
     );
 
@@ -48,7 +48,7 @@ class Css {
 
     const css = Object.keys(classes).reduce(
       (acc, clas) =>
-        acc.replace(new RegExp(`.${clas}`, "g"), `.${classes[clas]}`),
+        acc.replace(new RegExp(`~${clas}`, "g"), `.${classes[clas]}`),
       unscopedCss
     );
 
