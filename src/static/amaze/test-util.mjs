@@ -1,16 +1,13 @@
 // Who tests the test functions?
-export const makeSuite = tests => () => (
-  tests.reduce((acc, test) => (
-    // NOTE: this short-circuits later tests, maybe good?
-    acc && test()
-  ), true)
-);
+export const makeSuite = tests => () =>
+  tests.reduce(
+    (acc, test) =>
+      // NOTE: this short-circuits later tests, maybe good?
+      acc && test(),
+    true
+  );
 
-export const assertEquals = (
-  testDesc,
-  leftFn,
-  right
-) => () => {
+export const assertEquals = (testDesc, leftFn, right) => () => {
   const left = leftFn();
   if (deepEquals(left, right)) {
     console.log(`PASSED: ${testDesc}`);
@@ -25,11 +22,7 @@ export const assertEquals = (
   }
 };
 
-export const assertIs = (
-  testDesc,
-  leftFn,
-  right
-) => () => {
+export const assertIs = (testDesc, leftFn, right) => () => {
   const left = leftFn();
   if (left === right) {
     console.log(`PASSED: ${testDesc}`);
@@ -55,8 +48,8 @@ export const spy = fn => {
     });
 
     return result;
-  }
-  
+  };
+
   returnFn.intel = intel;
   return returnFn;
-}
+};

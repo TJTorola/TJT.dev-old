@@ -1,6 +1,6 @@
-import { SCHEME as SC } from './constants.mjs';
-import { withClasses, withCss } from './hocs.mjs';
-import { Component, h } from './preact.mjs';
+import { SCHEME as SC } from "./constants.mjs";
+import { withClasses, withRoute } from "./hocs.mjs";
+import { Component, h } from "./preact.mjs";
 
 const STYLE = `
   hr {
@@ -64,52 +64,45 @@ const STYLE = `
   }
 `;
 
-export const LiAnchor = ({ children, href }) => (
-  h('li', {}, [
-    h('a', { href }, children)
-  ])
-);
+export const LiAnchor = ({ children, href }) =>
+  h("li", {}, [h("a", { href }, children)]);
 
-export const App = withClasses(STYLE, ({ classes }) => (
-  h('main', { class: classes.main }, [
-    h('div', { class: classes.title }, [
-      h('h1', {}, 'A maze'),
-    ]),
-    h('header', { class: classes.header }, [
-      h('input', {
-        class: classes.slider,
-        type: 'range',
-        min: 1,
-        max: 100,
-        value: 50,
-      }),
-    ]),
-    h('nav', { class: classes.nav }, [
-      h('h2', {}, 'Generators'),
-      h('hr'),
-      h('ul', { class: classes.links }, [
-        h(LiAnchor, { href: '#dfs' }, 'Depth First Search'),
-        h(LiAnchor, { href: '#kruskals' }, "Kruskal's Algorithm"),
-        h(LiAnchor, { href: '#prims' }, "Prim's Algorithm"),
-        h(LiAnchor, { href: '#recur-backtracker' }, 'Recursive Backtracker'),
-        h(LiAnchor, { href: '#recur-division' }, 'Recursive Division'),
-        h(LiAnchor, { href: '#wilsons' }, "Wilson's Algorithm"),
+export const App = withRoute(
+  withClasses(STYLE, ({ classes, route }) =>
+    h("main", { class: classes.main }, [
+      h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
+      h("header", { class: classes.header }, [
+        h("input", {
+          class: classes.slider,
+          type: "range",
+          min: 1,
+          max: 100,
+          value: 50
+        })
       ]),
-      h('h2', {
-        style: {
-          marginTop: SC.SPACING.L,
-        },
-      }, 'Solvers'),
-      h('hr'),
-      h('ul', { class: classes.links }, [
-        h(LiAnchor, { href: '#foobar' }, 'A* Algorithm'),
-        h(LiAnchor, { href: '#foobar' }, 'Breadth First Search'),
-        h(LiAnchor, { href: '#foobar' }, 'Dead End Filling'),
-        h(LiAnchor, { href: '#foobar' }, 'Random Mouse'),
-        h(LiAnchor, { href: '#foobar' }, "Trémaux's Algorithm"),
-        h(LiAnchor, { href: '#foobar' }, 'Wall Follower'),
+      h("nav", { class: classes.nav }, [
+        h("h2", {}, "Generators"),
+        h("hr"),
+        h("ul", { class: classes.links }, [
+          h(LiAnchor, { href: "#dfs" }, "Depth First Search"),
+          h(LiAnchor, { href: "#kruskals" }, "Kruskal's Algorithm"),
+          h(LiAnchor, { href: "#prims" }, "Prim's Algorithm"),
+          h(LiAnchor, { href: "#recur-backtracker" }, "Recursive Backtracker"),
+          h(LiAnchor, { href: "#recur-division" }, "Recursive Division"),
+          h(LiAnchor, { href: "#wilsons" }, "Wilson's Algorithm")
+        ]),
+        h("h2", { style: { marginTop: SC.SPACING.L } }, "Solvers"),
+        h("hr"),
+        h("ul", { class: classes.links }, [
+          h(LiAnchor, { href: "./a-star" }, "A* Algorithm"),
+          h(LiAnchor, { href: "#${route}/bfs" }, "Breadth First Search"),
+          h(LiAnchor, { href: "#${route}/dead-end" }, "Dead End Filling"),
+          h(LiAnchor, { href: "#${route}/random" }, "Random Mouse"),
+          h(LiAnchor, { href: "#${route}/tremauxs" }, "Trémaux's Algorithm"),
+          h(LiAnchor, { href: "#${route}/wall-follow" }, "Wall Follower")
+        ])
       ]),
-    ]),
-    h('section', { class: classes.section }),
-  ])
-));
+      h("section", { class: classes.section })
+    ])
+  )
+);

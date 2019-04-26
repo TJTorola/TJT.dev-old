@@ -1,19 +1,19 @@
-import { getDisplayName, getLocation, interweave, randStr } from './util.mjs';
-import { Component, h } from './preact.mjs';
+import { getDisplayName, getLocation, interweave, randStr } from "./util.mjs";
+import { Component, h } from "./preact.mjs";
 
 class Css {
   constructor() {
-    this._styleEl = document.createElement('style');
-    this._styleEl.type = 'text/css';
-    this._styleEl.innerHTML = '';
-    
+    this._styleEl = document.createElement("style");
+    this._styleEl.type = "text/css";
+    this._styleEl.innerHTML = "";
+
     this._mounted = false;
   }
 
   mount() {
     if (this._mounted) return;
 
-    document.getElementsByTagName('head')[0].appendChild(this._styleEl);
+    document.getElementsByTagName("head")[0].appendChild(this._styleEl);
     this._mounted = true;
   }
 
@@ -25,33 +25,41 @@ class Css {
   }
 
   template(strings, ...exps) {
-    if (exps.some(exp => typeof exp !== 'string')) {
-      throw new Error('CSS_TEMPLATE_ERR: All expressions must be strings');
+    if (exps.some(exp => typeof exp !== "string")) {
+      throw new Error("CSS_TEMPLATE_ERR: All expressions must be strings");
     }
 
-    const unscopedCss = interweave(strings, exps).join('');
+    const unscopedCss = interweave(strings, exps).join("");
     return this.apply(unscopedCss);
   }
 
   apply(unscopedCss) {
-    const unscopedClasses = Array.from(unscopedCss.match(/\.[\w-]+/g)).map(r => r.slice(1))
+    const unscopedClasses = Array.from(unscopedCss.match(/\.[\w-]+/g)).map(r =>
+      r.slice(1)
+    );
 
-    const classes = unscopedClasses.reduce((acc, clas) => ({
-      ...acc,
-      [clas]: `${clas}_${randStr(6)}`
-    }), {});
+    const classes = unscopedClasses.reduce(
+      (acc, clas) => ({
+        ...acc,
+        [clas]: `${clas}_${randStr(6)}`
+      }),
+      {}
+    );
 
     const css = Object.keys(classes).reduce(
-      (acc, clas) => acc.replace(new RegExp(`.${clas}`, 'g'), `.${classes[clas]}`),
+      (acc, clas) =>
+        acc.replace(new RegExp(`.${clas}`, "g"), `.${classes[clas]}`),
       unscopedCss
     );
-    
+
     this._styleEl.innerHTML += css;
 
     return WrappedComponent => {
       const WithClasses = props => h(WrappedComponent, { ...props, classes });
 
-      WithClasses.displayName = `withClasses(${getDisplayName(WrappedComponent)})`;
+      WithClasses.displayName = `withClasses(${getDisplayName(
+        WrappedComponent
+      )})`;
       return WithClasses;
     };
   }
@@ -79,7 +87,7 @@ export const withCss = WrappedComponent => {
 
   WithCss.displayName = `withCss(${getDisplayName(WrappedComponent)})`;
   return WithCss;
-}
+};
 
 export const withClasses = (style, WrappedComponent) => {
   class WithClasses extends Component {
@@ -98,7 +106,7 @@ export const withClasses = (style, WrappedComponent) => {
 
   WithClasses.displayName = `withClasses(${getDisplayName(WrappedComponent)})`;
   return WithClasses;
-}
+};
 
 export const withRoute = WrappedComponent => {
   class WithRoute extends Component {
@@ -107,17 +115,17 @@ export const withRoute = WrappedComponent => {
 
       this.state = {
         route: getLocation()
-      }
+      };
 
       this.onLocationChange = this.onLocationChange.bind(this);
     }
 
     componentDidMount() {
-      window.addEventListener('hashchange', this.onLocationChange);
+      window.addEventListener("hashchange", this.onLocationChange);
     }
 
     componentWillUnmount() {
-      window.removeEventListener('hashchange', this.onLocationChange);
+      window.removeEventListener("hashchange", this.onLocationChange);
     }
 
     onLocationChange() {
@@ -133,4 +141,4 @@ export const withRoute = WrappedComponent => {
 
   WithRoute.displayName = `withRoute(${getDisplayName(WrappedComponent)})`;
   return WithRoute;
-}
+};

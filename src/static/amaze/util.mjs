@@ -5,37 +5,32 @@ export const m = fn => {
 
   return (...args) => {
     if (
-      !lastArgs
-      || lastArgs.length !== args.length
-      || lastArgs.some((a, i) => a !== args[i])
+      !lastArgs ||
+      lastArgs.length !== args.length ||
+      lastArgs.some((a, i) => a !== args[i])
     ) {
       lastArgs = args;
       memo = fn(...args);
     }
 
     return memo;
-  }
-}
+  };
+};
 
-export const getDisplayName = WrappedComponent => (
-  WrappedComponent.displayName || WrappedComponent.name || 'Component'
-);
+export const getDisplayName = WrappedComponent =>
+  WrappedComponent.displayName || WrappedComponent.name || "Component";
 
-export const getLocation = () => (
-  window.location.hash.length > 0
-    ? window.location.hash.slice(1)
-    : ''
-);
+export const getLocation = () =>
+  window.location.hash.length > 0 ? window.location.hash.slice(1) : "";
 
-const filter = test => (
-  function* (iter) {
+const filter = test =>
+  function*(iter) {
     let n = iter.next();
-    while(!n.done) {
+    while (!n.done) {
       if (test(n.value)) yield n.value;
       n = iter.next();
     }
-  }
-)
+  };
 
 export class ImmutableMap extends Map {
   constructor(...args) {
@@ -49,7 +44,7 @@ export class ImmutableMap extends Map {
   }
 
   delete(key) {
-    return new ImmutableMap(filter(e => e[0] !== key)(this.entries()))
+    return new ImmutableMap(filter(e => e[0] !== key)(this.entries()));
   }
 
   set(key, value) {
@@ -58,7 +53,7 @@ export class ImmutableMap extends Map {
       : super.set(key, value);
   }
 
-  /** 
+  /**
    * Try to overcome a little of the performance pitfalls of immutability by providing
    * this process method, that takes a number of changes and does them all at once.
    *
@@ -78,14 +73,12 @@ export class ImmutableMap extends Map {
   }
 }
 
-export const interweave = ([ head, ...rest ], other) => (
-  (head !== undefined)
-    ? [ head, ...interweave(other, rest) ]
-    : other
-);
+export const interweave = ([head, ...rest], other) =>
+  head !== undefined ? [head, ...interweave(other, rest)] : other;
 
-export const randChar = () => (
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 52)]
-);
+export const randChar = () =>
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[
+    Math.floor(Math.random() * 52)
+  ];
 
-export const randStr = len => [...new Array(len)].map(randChar).join('');
+export const randStr = len => [...new Array(len)].map(randChar).join("");

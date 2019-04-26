@@ -1,5 +1,5 @@
-import { Component, h } from './preact.mjs';
-import { m } from './util.mjs';
+import { Component, h } from "./preact.mjs";
+import { m } from "./util.mjs";
 
 /**
   type Coord = string
@@ -25,7 +25,7 @@ import { m } from './util.mjs';
 **/
 
 const makeCtx = m(canvas => {
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
   ctx.scale(dpr, dpr);
   return ctx;
@@ -45,7 +45,7 @@ export class Grid extends Component {
 
     if (lastProps.step === step) return;
     if (lastProps.meta !== meta) {
-      console.warn('META_CHANGED: Forcing expensive full re-render');
+      console.warn("META_CHANGED: Forcing expensive full re-render");
       paintFull({
         ctx: this.ctx,
         cells: steps[step].cells,
@@ -83,8 +83,8 @@ export class Grid extends Component {
   }
 
   render() {
-    return h('canvas', {
-      ref: r => this.canvas = r,
+    return h("canvas", {
+      ref: r => (this.canvas = r),
       width: this.width * window.devicePixelRatio,
       height: this.height * window.devicePixelRatio,
       style: {
@@ -106,13 +106,13 @@ const getDimensions = m(meta => {
 const getWidth = m(meta => {
   const { cellSize, wallSize } = meta;
   const [x, _] = getDimensions(meta);
-  return wallSize + (x * (wallSize + cellSize)) + 1;
+  return wallSize + x * (wallSize + cellSize) + 1;
 });
 
 const getHeight = m(meta => {
   const { cellSize, wallSize } = meta;
   const [_, y] = getDimensions(meta);
-  return wallSize + (y * (wallSize + cellSize)) + 1;
+  return wallSize + y * (wallSize + cellSize) + 1;
 });
 
 export const getExMeta = m(meta => ({
@@ -124,15 +124,17 @@ export const getExMeta = m(meta => ({
 
 const paintCell = ({ ctx, exMeta }, cell) => {
   const { wallSize, cellSize } = exMeta;
-  const [ coord, color ] = cell;
-  const [x, y] = coord.split(',').map(c => parseInt(c, 10));
+  const [coord, color] = cell;
+  const [x, y] = coord.split(",").map(c => parseInt(c, 10));
 
   if (color) {
     const width = x % 2 === 0 ? wallSize : cellSize;
     const height = y % 2 === 0 ? wallSize : cellSize;
 
-    const xOffset = Math.floor(x / 2) * (cellSize + wallSize) + (x % 2 === 1 ? wallSize : 0);
-    const yOffset = Math.floor(y / 2) * (cellSize + wallSize) + (y % 2 === 1 ? wallSize : 0);
+    const xOffset =
+      Math.floor(x / 2) * (cellSize + wallSize) + (x % 2 === 1 ? wallSize : 0);
+    const yOffset =
+      Math.floor(y / 2) * (cellSize + wallSize) + (y % 2 === 1 ? wallSize : 0);
 
     ctx.fillStyle = color;
     ctx.fillRect(xOffset, yOffset, width, height);
@@ -141,21 +143,23 @@ const paintCell = ({ ctx, exMeta }, cell) => {
     const width = (x % 2 === 0 ? wallSize : cellSize) + wallSize;
     const height = (y % 2 === 0 ? wallSize : cellSize) + wallSize;
 
-    const xOffset = Math.floor(x / 2) * (cellSize + wallSize)
-      + (x % 2 === 1 ? wallSize : 0)
-      - (wallSize / 2);
-    const yOffset = Math.floor(y / 2) * (cellSize + wallSize)
-      + (y % 2 === 1 ? wallSize : 0)
-      - (wallSize / 2);
+    const xOffset =
+      Math.floor(x / 2) * (cellSize + wallSize) +
+      (x % 2 === 1 ? wallSize : 0) -
+      wallSize / 2;
+    const yOffset =
+      Math.floor(y / 2) * (cellSize + wallSize) +
+      (y % 2 === 1 ? wallSize : 0) -
+      wallSize / 2;
 
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = "#000";
     ctx.fillRect(xOffset, yOffset, width, height);
   }
-}
+};
 
 const paintFull = ({ ctx, cells, meta }) => {
   const exMeta = getExMeta(meta);
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, exMeta.width, exMeta.height);
 
   for (const cell of cells.entries()) {
@@ -169,25 +173,18 @@ const paintDiff = ({ ctx, cells, meta, diff }) => {
   diff.forEach(coord => {
     const color = cells.get(coord);
 
-    paintCell(
-      { ctx, exMeta },
-      [ coord, color ]
-    );
+    paintCell({ ctx, exMeta }, [coord, color]);
     if (!color) {
-      const [x, y] = coord.split(',').map(c => parseInt(c, 10));
+      const [x, y] = coord.split(",").map(c => parseInt(c, 10));
       // If this is a delete, we need to repaint the surrounding cells
       const d = [-1, 0, 1];
-      const dcoords = d.reduce((acc, dx) => ([
-        ...acc,
-        ...d.map(dy => [dx + x, dy + y])
-      ]), []).map(([nx, ny]) => `${nx},${ny}`);
+      const dcoords = d
+        .reduce((acc, dx) => [...acc, ...d.map(dy => [dx + x, dy + y])], [])
+        .map(([nx, ny]) => `${nx},${ny}`);
 
       dcoords.forEach(c => {
         if (cells.get(c)) {
-          paintCell(
-            { ctx, exMeta },
-            [ c, cells.get(c) ]
-          );
+          paintCell({ ctx, exMeta }, [c, cells.get(c)]);
         }
       });
     }

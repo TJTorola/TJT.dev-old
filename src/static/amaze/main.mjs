@@ -1,10 +1,10 @@
-import { App } from './app.mjs';
-import { withCss } from './hocs.mjs';
-import { Component, h, render } from './preact.mjs';
+import { App } from "./app.mjs";
+import { withCss } from "./hocs.mjs";
+import { Component, h, render } from "./preact.mjs";
 
 class Amaze extends HTMLElement {
   connectedCallback() {
-    render(h(withCss(App)), this); 
+    render(h(withCss(App)), this);
   }
 
   disconnectedCallback() {
@@ -12,5 +12,4 @@ class Amaze extends HTMLElement {
   }
 }
 
-customElements.define('a-maze', Amaze);
-
+customElements.define("a-maze", Amaze);
