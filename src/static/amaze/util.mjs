@@ -76,9 +76,7 @@ export class ImmutableMap extends Map {
 export const interweave = ([head, ...rest], other) =>
   head !== undefined ? [head, ...interweave(other, rest)] : other;
 
-export const randChar = () =>
-  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[
-    Math.floor(Math.random() * 52)
-  ];
+const CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export const randChar = () => CHARS[Math.floor(Math.random() * 52)];
 
 export const randStr = len => [...new Array(len)].map(randChar).join("");
