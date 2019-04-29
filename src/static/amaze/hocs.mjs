@@ -95,7 +95,7 @@ export const withCss = WrappedComponent => {
   return WithCss;
 };
 
-export const withClasses = (style, WrappedComponent) => {
+export const withClasses = style => WrappedComponent => {
   class WithClasses extends Component {
     componentWillMount() {
       this._withClasses = this.context.css.apply(style);
@@ -141,3 +141,6 @@ export const withRoute = WrappedComponent => {
   WithRoute.displayName = `withRoute(${getDisplayName(WrappedComponent)})`;
   return WithRoute;
 };
+
+export const withHocs = hocs => WrappedComponent =>
+  hocs.reduce((acc, hoc) => hoc(acc), WrappedComponent);

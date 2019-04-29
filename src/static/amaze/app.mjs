@@ -1,5 +1,5 @@
 import { SCHEME as SC } from "./constants.mjs";
-import { withClasses, withRoute } from "./hocs.mjs";
+import { withClasses, withHocs, withRoute } from "./hocs.mjs";
 import { Component, h } from "./preact.mjs";
 import { getHash } from "./util.mjs";
 
@@ -73,86 +73,87 @@ const STYLE = `
 export const LiAnchor = ({ children, href }) =>
   h("li", {}, [h("a", { href }, children)]);
 
-export const App = withRoute(
-  withClasses(STYLE, ({ classes, params }) =>
-    h("main", { class: classes.main }, [
-      h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
-      h("header", { class: classes.header }, [
-        h("input", {
-          class: classes.slider,
-          type: "range",
-          min: 1,
-          max: 100,
-          value: 50
-        })
+export const App = withHocs([
+  withRoute,
+  withClasses(STYLE)
+])(({ classes, params }) =>
+  h("main", { class: classes.main }, [
+    h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
+    h("header", { class: classes.header }, [
+      h("input", {
+        class: classes.slider,
+        type: "range",
+        min: 1,
+        max: 100,
+        value: 50
+      })
+    ]),
+    h("nav", { class: classes.nav }, [
+      h("h2", { class: classes.subheader }, "Generators"),
+      h("hr"),
+      h("ul", { class: classes.links }, [
+        h(
+          LiAnchor,
+          { href: getHash({ generator: "dfs" }) },
+          "Depth First Search"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ generator: "kruskals" }) },
+          "Kruskal's Algorithm"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ generator: "prims" }) },
+          "Prim's Algorithm"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ generator: "recur-backtracker" }) },
+          "Recursive Backtracker"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ generator: "recur-division" }) },
+          "Recursive Division"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ generator: "wilsons" }) },
+          "Wilson's Algorithm"
+        )
       ]),
-      h("nav", { class: classes.nav }, [
-        h("h2", { class: classes.subheader }, "Generators"),
-        h("hr"),
-        h("ul", { class: classes.links }, [
-          h(
-            LiAnchor,
-            { href: getHash({ generator: "dfs" }) },
-            "Depth First Search"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ generator: "kruskals" }) },
-            "Kruskal's Algorithm"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ generator: "prims" }) },
-            "Prim's Algorithm"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ generator: "recur-backtracker" }) },
-            "Recursive Backtracker"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ generator: "recur-division" }) },
-            "Recursive Division"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ generator: "wilsons" }) },
-            "Wilson's Algorithm"
-          )
-        ]),
-        h("h2", { class: classes.subheader }, "Solvers"),
-        h("hr"),
-        h("ul", { class: classes.links }, [
-          h(LiAnchor, { href: getHash({ solver: "a-star" }) }, "A* Algorithm"),
-          h(
-            LiAnchor,
-            { href: getHash({ ...params, solver: "bfs" }) },
-            "Breadth First Search"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ ...params, solver: "dead-end" }) },
-            "Dead End Filling"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ ...params, solver: "random" }) },
-            "Random Mouse"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ ...params, solver: "tremauxs" }) },
-            "Trémaux's Algorithm"
-          ),
-          h(
-            LiAnchor,
-            { href: getHash({ ...params, solver: "wall-follow" }) },
-            "Wall Follower"
-          )
-        ])
-      ]),
-      h("section", { class: classes.section })
-    ])
-  )
+      h("h2", { class: classes.subheader }, "Solvers"),
+      h("hr"),
+      h("ul", { class: classes.links }, [
+        h(LiAnchor, { href: getHash({ solver: "a-star" }) }, "A* Algorithm"),
+        h(
+          LiAnchor,
+          { href: getHash({ ...params, solver: "bfs" }) },
+          "Breadth First Search"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ ...params, solver: "dead-end" }) },
+          "Dead End Filling"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ ...params, solver: "random" }) },
+          "Random Mouse"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ ...params, solver: "tremauxs" }) },
+          "Trémaux's Algorithm"
+        ),
+        h(
+          LiAnchor,
+          { href: getHash({ ...params, solver: "wall-follow" }) },
+          "Wall Follower"
+        )
+      ])
+    ]),
+    h("section", { class: classes.section })
+  ])
 );
