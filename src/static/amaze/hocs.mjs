@@ -142,5 +142,57 @@ export const withRoute = WrappedComponent => {
   return WithRoute;
 };
 
-export const withHocs = hocs => WrappedComponent =>
-  hocs.reduce((acc, hoc) => hoc(acc), WrappedComponent);
+export const withState = initialState => WrappedComponent => {
+  class WithState extends Component {
+    constructor(props) {
+      super(props);
+
+      this.state =
+        typeof initialState === "function" ? initialState(props) : initialState;
+      this.setState = this.setState.bind(this);
+    }
+
+    render(props, state) {
+      return h(WrappedComponent, {
+        ...props,
+        state,
+        setState: this.setState
+      });
+    }
+  }
+
+  WithState.displayName = `withState(${getDisplayName(WrappedComponent)})`;
+  return WithState;
+};
+
+export const withProps = propGenerator => WrappedComponent => {
+  class WithProps extends Component {
+    constructor(props) {
+      super(props);
+
+      this.state = propGenerator(props);
+    }
+
+    componentWillReceiveProps(nextProps) {
+      if (nextProps !== this.props) {
+        const nextState = propGenerator(nextProps);
+
+        if (nextState !== this.state) {
+          this.setState(nextState);
+        }
+      }
+    }
+
+    render(props, state) {
+      return h(WrappedComponent, { ...props, ...state });
+    }
+  }
+
+  WithProps.displayName = `withProps(${getDisplayName(WrappedComponent)})`;
+  return WithProps;
+};
+
+export const compose = hocs => hocs.reduce(
+  (acc, hoc) => (...args) => acc(hoc(...args)),
+  arg => arg
+)

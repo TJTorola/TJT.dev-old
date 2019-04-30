@@ -1,11 +1,7 @@
 import { getExMeta } from "./canvas-grid.mjs";
 import { ImmutableMap } from "./util.mjs";
 
-const numToHex = n =>
-  n
-    .toString(16)
-    .padStart(2, "0")
-    .toUpperCase();
+const numToHex = num => num.toString(16).padStart(2, "0").toUpperCase();
 const randNum = m => Math.floor(Math.random() * m);
 const randShade = () => numToHex(randNum(256));
 const randColor = () => `#${randShade()}${randShade()}${randShade()}`;
@@ -15,9 +11,9 @@ const randCoord = (maxX, maxY) =>
   `${randNum(maxX * 2 + 1)},${randNum(maxY * 2 + 1)}`;
 const randChange = (maxX, maxY) => [randCoord(maxX, maxY), randColor()];
 
-export const genRandomMaze = (cnt, meta) => {
-  const [maxX, maxY] = getExMeta(META).dimensions;
-  const makeSteps = (steps = [{ cells: new ImmutableMap(), diff: [] }]) => {
+export const genRandomSteps = (cnt, meta) => {
+  const [maxX, maxY] = getExMeta(meta).dimensions;
+  const recur = (steps = [{ cells: new ImmutableMap(), diff: [] }]) => {
     if (steps.length === cnt) return steps;
     const last = steps[steps.length - 1];
 
@@ -34,11 +30,5 @@ export const genRandomMaze = (cnt, meta) => {
     return recur([...steps, step]);
   };
 
-  const steps = makeSteps();
-
-  return {
-    step: 0,
-    meta,
-    steps: makeSteps()
-  };
-};
+  return recur();
+}

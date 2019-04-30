@@ -1,7 +1,16 @@
+import { Grid } from "./canvas-grid.mjs";
 import { SCHEME as SC } from "./constants.mjs";
-import { withClasses, withHocs, withRoute } from "./hocs.mjs";
+import {
+  compose,
+  withCss,
+  withClasses,
+  withRoute,
+  withState,
+  withProps
+} from "./hocs.mjs";
+import { genRandomSteps } from "./maze-generators.mjs";
 import { Component, h } from "./preact.mjs";
-import { getHash } from "./util.mjs";
+import { clamp, getHash, m } from "./util.mjs";
 
 const STYLE = `
   hr {
@@ -73,10 +82,29 @@ const STYLE = `
 export const LiAnchor = ({ children, href }) =>
   h("li", {}, [h("a", { href }, children)]);
 
-export const App = withHocs([
+const genRandomMaze = m(() => {
+  const meta = {
+    cellSize: 10,
+    wallSize: 1,
+    maxHeight: 700,
+    maxWidth: 400
+  };
+
+  return {
+    maze: {
+      steps: genRandomSteps(100, meta),
+      meta
+    }
+  };
+});
+
+export const App = compose([
+  withCss,
   withRoute,
-  withClasses(STYLE)
-])(({ classes, params }) =>
+  withProps(genRandomMaze),
+  withClasses(STYLE),
+  withState({ step: 0 })
+])(({ classes, params, maze, state: { step }, setState }) =>
   h("main", { class: classes.main }, [
     h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
     h("header", { class: classes.header }, [
@@ -84,8 +112,14 @@ export const App = withHocs([
         class: classes.slider,
         type: "range",
         min: 1,
-        max: 100,
-        value: 50
+        max: maze.steps.length,
+        value: step,
+        onChange: e => {
+          const nextStep = clamp(0, maze.steps.length)(e.target.value);
+          if (step !== nextStep) {
+            setState({ step: nextStep });
+          }
+        }
       })
     ]),
     h("nav", { class: classes.nav }, [
@@ -154,6 +188,6 @@ export const App = withHocs([
         )
       ])
     ]),
-    h("section", { class: classes.section })
+    h("section", { class: classes.section }, [h(Grid, { step, ...maze })])
   ])
 );

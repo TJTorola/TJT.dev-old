@@ -44,8 +44,7 @@ export class Grid extends Component {
     const { step, meta, steps } = this.props;
 
     if (lastProps.step === step) return;
-    if (lastProps.meta !== meta) {
-      console.warn("META_CHANGED: Forcing expensive full re-render");
+    if (lastProps.steps !== steps) {
       paintFull({
         ctx: this.ctx,
         cells: steps[step].cells,

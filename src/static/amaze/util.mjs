@@ -1,3 +1,6 @@
+// Inclusive l, exclusive h
+export const clamp = (l, h) => n => (n < l ? l : n >= h ? h - 1 : n);
+
 // Super-duper-simple-single memoization
 export const m = fn => {
   let lastArgs;
