@@ -55,9 +55,8 @@ export class Grid extends Component {
 
     const lower = Math.min(lastProps.step, step);
     const upper = Math.max(lastProps.step, step);
-    // Exclude the lower since it's diff is compared to it's prev step
     const diff = new Set();
-    for (let i = lower + 1; i <= upper; i++) {
+    for (let i = lower; i <= upper; i++) {
       steps[i].diff.forEach(coord => diff.add(coord));
     }
 

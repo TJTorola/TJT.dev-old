@@ -111,7 +111,7 @@ export const App = compose([
       h("input", {
         class: classes.slider,
         type: "range",
-        min: 1,
+        min: 0,
         max: maze.steps.length,
         value: step,
         onChange: e => {

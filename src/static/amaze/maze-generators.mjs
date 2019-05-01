@@ -18,7 +18,7 @@ export const genRandomSteps = (cnt, meta) => {
     const last = steps[steps.length - 1];
 
     const sets = emptyArr(4).map(() => randChange(maxX, maxY));
-    const deletes = emptyArr(2).map(randCoord);
+    const deletes = emptyArr(2).map(() => randCoord(maxX, maxY));
     const diff = [...deletes, ...sets.map(s => s[0])];
     const cells = last.cells.process({ sets, deletes });
 
