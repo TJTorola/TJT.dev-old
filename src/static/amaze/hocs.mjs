@@ -60,14 +60,7 @@ class Css {
 
     this._styleEl.innerHTML += css;
 
-    return WrappedComponent => {
-      const WithClasses = props => h(WrappedComponent, { ...props, classes });
-
-      WithClasses.displayName = `withClasses(${getDisplayName(
-        WrappedComponent
-      )})`;
-      return WithClasses;
-    };
+    return classes;
   }
 }
 
@@ -98,7 +91,7 @@ export const withCss = WrappedComponent => {
 export const withClasses = style => WrappedComponent => {
   class WithClasses extends Component {
     componentWillMount() {
-      this._withClasses = this.context.css.apply(style);
+      this.classes = this.context.css.apply(style);
     }
 
     componentWillUnmount() {
@@ -106,7 +99,7 @@ export const withClasses = style => WrappedComponent => {
     }
 
     render(props) {
-      return h(this._withClasses(WrappedComponent), props);
+      return h(WrappedComponent, { ...props, classes: this.classes });
     }
   }
 
@@ -118,7 +111,20 @@ export const withRoute = WrappedComponent => {
   class WithRoute extends Component {
     constructor(props) {
       super(props);
-      this.update = this.forceUpdate.bind(this);
+
+      this.update = () => {
+        const { hash } = window.location;
+        this.setState({
+          route: getRoute(hash),
+          params: getParams(hash),
+        });
+      }
+
+      const { hash } = window.location;
+      this.state = {
+        route: getRoute(hash),
+        params: getParams(hash),
+      };
     }
 
     componentDidMount() {
@@ -129,12 +135,8 @@ export const withRoute = WrappedComponent => {
       window.removeEventListener("hashchange", this.update);
     }
 
-    render(props) {
-      const { hash } = window.location;
-      const route = getRoute(hash);
-      const params = getParams(hash);
-
-      return h(WrappedComponent, { ...props, route, params });
+    render(props, state) {
+      return h(WrappedComponent, { ...props, ...state });
     }
   }
 
