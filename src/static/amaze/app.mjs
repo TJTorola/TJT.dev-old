@@ -84,8 +84,8 @@ export const LiAnchor = ({ children, href }) =>
 
 const genRandomMaze = m(() => {
   const meta = {
-    cellSize: 10,
-    wallSize: 1,
+    cellSize: 20,
+    wallSize: 3,
     maxHeight: 700,
     maxWidth: 400
   };
@@ -101,9 +101,9 @@ const genRandomMaze = m(() => {
 export const App = compose([
   withCss,
   withRoute,
-  withProps(genRandomMaze),
   withClasses(STYLE),
-  withState({ step: 0 })
+  withState({ step: 0 }),
+  withProps(() => genRandomMaze()),
 ])(({ classes, params, maze, state: { step }, setState }) =>
   h("main", { class: classes.main }, [
     h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
