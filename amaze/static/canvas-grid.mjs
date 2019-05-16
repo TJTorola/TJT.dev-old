@@ -26,8 +26,15 @@ import { m } from "./util.mjs";
 
 const makeCtx = m(canvas => {
   const ctx = canvas.getContext("2d");
+
+  ctx.imageSmoothingEnabled = false;
+  ctx.mozImageSmoothingEnabled = false;
+  ctx.webkitImageSmoothingEnabled = false;
+  ctx.msImageSmoothingEnabled = false;
+
   const dpr = window.devicePixelRatio || 1;
   ctx.scale(dpr, dpr);
+
   return ctx;
 });
 
@@ -171,20 +178,6 @@ const paintDiff = ({ ctx, cells, meta, diff }) => {
   diff.forEach(coord => {
     const color = cells.get(coord);
 
-    paintCell({ ctx, exMeta }, [coord, color]);
-    if (!color) {
-      const [x, y] = coord.split(",").map(c => parseInt(c, 10));
-      // If this is a delete, we need to repaint the surrounding cells
-      const d = [-1, 0, 1];
-      const dcoords = d
-        .reduce((acc, dx) => [...acc, ...d.map(dy => [dx + x, dy + y])], [])
-        .map(([nx, ny]) => `${nx},${ny}`);
-
-      dcoords.forEach(c => {
-        if (cells.get(c)) {
-          paintCell({ ctx, exMeta }, [c, cells.get(c)]);
-        }
-      });
-    }
+    paintCell({ ctx, exMeta }, [coord, color || "#000"]);
   });
 };
