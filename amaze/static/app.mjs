@@ -20,12 +20,36 @@ const STYLE = `
     border-width: 1px;
   }
 
+  button {
+    background: inherit;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+  }
+
   ~content {
     align-items: center;
     background: ${SC.COLORS.GRAY.L};
     display: flex;
     flex-grow: 1;
     justify-content: center;
+  }
+
+  ~control {
+    fill: ${SC.COLORS.GRAY.S};
+    margin: ${SC.SPACING.XS};
+  }
+
+  ~control:hover {
+    fill: ${SC.COLORS.GRAY.M};
+  }
+
+  ~control:active {
+    fill: ${SC.COLORS.GRAY.S};
+  }
+
+  ~control svg {
+    display: block;
   }
 
   ~header {
@@ -117,7 +141,9 @@ export const App = compose([
   h("main", { class: classes.main }, [
     h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
     h("header", { class: classes.header }, [
-      h(icons.Play, { size: 16 }),
+      h("button", { class: classes.control }, [
+        h(icons.Play, { size: 23 }),
+      ]),
       h("input", {
         class: classes.slider,
         type: "range",
