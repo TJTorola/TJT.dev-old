@@ -1,6 +1,6 @@
 import { Grid as CanvasGrid } from "./canvas-grid.mjs";
 import { Grid as SvgGrid } from "./svg-grid.mjs";
-import { ImmutableMap } from "./util.mjs";
+import { ImmutableMap } from "./lib/util.mjs";
 import { h, render } from "./preact.mjs";
 
 const numToHex = n =>

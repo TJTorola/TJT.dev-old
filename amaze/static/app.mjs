@@ -12,7 +12,7 @@ import * as icons from "./icons.mjs";
 import { Loader } from "./loader.mjs";
 import { genRandomSteps } from "./maze-generators.mjs";
 import { Component, h } from "./preact.mjs";
-import { clamp, getHash, m } from "./util.mjs";
+import { clamp, getHash, m } from "./lib/util.mjs";
 
 const STYLE = `
 hr {

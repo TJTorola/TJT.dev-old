@@ -4,7 +4,7 @@ import {
   getParams,
   interweave,
   randStr
-} from "./util.mjs";
+} from "./lib/util.mjs";
 import { Component, h } from "./preact.mjs";
 
 class Css {

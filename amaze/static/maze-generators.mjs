@@ -1,5 +1,5 @@
 import { getExMeta } from "./canvas-grid.mjs";
-import { ImmutableMap } from "./util.mjs";
+import { ImmutableMap } from "./lib/util.mjs";
 
 const numToHex = num => num.toString(16).padStart(2, "0").toUpperCase();
 const randNum = m => Math.floor(Math.random() * m);

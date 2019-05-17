@@ -1,5 +1,5 @@
 import { Component, h } from "./preact.mjs";
-import { m } from "./util.mjs";
+import { m } from "./lib/util.mjs";
 
 /**
   type Coord = string
