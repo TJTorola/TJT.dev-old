@@ -94,7 +94,8 @@ export class Grid extends Component {
       height: this.height * window.devicePixelRatio,
       style: {
         width: `${this.width}px`,
-        height: `${this.height}px`
+        height: `${this.height}px`,
+        background: '#000'
       }
     });
   }
