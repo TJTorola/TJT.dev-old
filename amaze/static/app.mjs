@@ -9,6 +9,7 @@ import {
   withProps
 } from "./hocs.mjs";
 import * as icons from "./icons.mjs";
+import { Loader } from "./loader.mjs";
 import { genRandomSteps } from "./maze-generators.mjs";
 import { Component, h } from "./preact.mjs";
 import { clamp, getHash, m } from "./util.mjs";
@@ -141,9 +142,7 @@ export const App = compose([
   h("main", { class: classes.main }, [
     h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
     h("header", { class: classes.header }, [
-      h("button", { class: classes.control }, [
-        h(icons.Play, { size: 23 }),
-      ]),
+      h("button", { class: classes.control }, [h(icons.Play, { size: 23 })]),
       h("input", {
         class: classes.slider,
         type: "range",
@@ -224,6 +223,6 @@ export const App = compose([
         )
       ])
     ]),
-    h("section", { class: classes.content }, [h(Grid, { step, ...maze })])
+    h("section", { class: classes.content }, [h(Loader, { size: 128, color: SC.COLORS.GRAY.M })])
   ])
 );
