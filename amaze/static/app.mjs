@@ -19,6 +19,14 @@ const STYLE = `
     border-width: 1px;
   }
 
+  ~content {
+    align-items: center;
+    background: ${SC.COLORS.GRAY.L};
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+  }
+
   ~header {
     align-items: center;
     border-bottom: solid ${SC.COLORS.GRAY.M} 1px;
@@ -60,12 +68,12 @@ const STYLE = `
     grid-area: 2 / 2;
   }
 
-  ~subheader {
-    margin-bottom: ${SC.SPACING.XS};
+  ~slider {
+    width: 100%;
   }
 
-  ~slider {
-    flex-grow: 1
+  ~subheader {
+    margin-bottom: ${SC.SPACING.XS};
   }
 
   ~title {
@@ -87,7 +95,7 @@ const genRandomMaze = m(() => {
     cellSize: 20,
     wallSize: 3,
     maxHeight: 700,
-    maxWidth: 400
+    maxWidth: 1000
   };
 
   return {
@@ -103,7 +111,7 @@ export const App = compose([
   withRoute,
   withClasses(STYLE),
   withState({ step: 0 }),
-  withProps(() => genRandomMaze()),
+  withProps(() => genRandomMaze())
 ])(({ classes, params, maze, state: { step }, setState }) =>
   h("main", { class: classes.main }, [
     h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
@@ -188,6 +196,6 @@ export const App = compose([
         )
       ])
     ]),
-    h("section", { class: classes.section }, [h(Grid, { step, ...maze })])
+    h("section", { class: classes.content }, [h(Grid, { step, ...maze })])
   ])
 );
