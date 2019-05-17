@@ -15,103 +15,102 @@ import { Component, h } from "./preact.mjs";
 import { clamp, getHash, m } from "./util.mjs";
 
 const STYLE = `
-  hr {
-    border-color: ${SC.COLORS.GRAY.M};
-    border-top: 0;
-    border-width: 1px;
-  }
+hr {
+  border-color: ${SC.COLORS.GRAY.M};
+  border-top: 0;
+  border-width: 1px;
+}
 
-  button {
-    background: inherit;
-    border: 0;
-    cursor: pointer;
-    padding: 0;
-  }
+button {
+  background: inherit;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
 
-  ~content {
-    align-items: center;
-    background: ${SC.COLORS.GRAY.L};
-    display: flex;
-    flex-grow: 1;
-    justify-content: center;
-  }
+~content {
+  align-items: center;
+  background: ${SC.COLORS.GRAY.L};
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+}
 
-  ~control {
-    fill: ${SC.COLORS.GRAY.S};
-    margin: ${SC.SPACING.XS};
-  }
+~control {
+  fill: ${SC.COLORS.GRAY.S};
+  margin: ${SC.SPACING.XS};
+}
 
-  ~control:hover {
-    fill: ${SC.COLORS.GRAY.M};
-  }
+~control:hover {
+  fill: ${SC.COLORS.GRAY.M};
+}
 
-  ~control:active {
-    fill: ${SC.COLORS.GRAY.S};
-  }
+~control:active {
+  fill: ${SC.COLORS.GRAY.S};
+}
 
-  ~control svg {
-    display: block;
-  }
+~control svg {
+  display: block;
+}
 
-  ~header {
-    align-items: center;
-    border-bottom: solid ${SC.COLORS.GRAY.M} 1px;
-    display: flex;
-    flex-direction: row;
-    grid-area: 1 / 2;
-    justify-content: space-between;
-    padding: 0 ${SC.SPACING.M};
-  }
+~header {
+  align-items: center;
+  border-bottom: solid ${SC.COLORS.GRAY.M} 1px;
+  display: flex;
+  flex-direction: row;
+  grid-area: 1 / 2;
+  justify-content: space-between;
+  padding: 0 ${SC.SPACING.M};
+}
 
-  ~links {
-    padding-bottom: ${SC.SPACING.L};
-    padding-top: ${SC.SPACING.S};
-  }
+~links {
+  padding-bottom: ${SC.SPACING.L};
+  padding-top: ${SC.SPACING.S};
+}
 
-  ~links li {
-    margin-bottom: ${SC.SPACING.XS};
-  }
+~links li {
+  margin-bottom: ${SC.SPACING.XS};
+}
 
-  ~main {
-    display: grid;
-    font-family: Helvetica, Arial, sans-serif;
-    grid-template-columns: ${SC.SPACING.NAV_WIDTH} auto;
-    grid-template-rows: ${SC.SPACING.CONTROL_HEIGHT} auto;
-    height: 100%;
-    min-height: ${SC.SPACING.MIN_APP_HEIGHT};
-    min-width: ${SC.SPACING.MIN_APP_WIDTH};
-    width: 100%;
-  }
+~main {
+  display: grid;
+  font-family: Helvetica, Arial, sans-serif;
+  grid-template-columns: ${SC.SPACING.NAV_WIDTH} auto;
+  grid-template-rows: ${SC.SPACING.CONTROL_HEIGHT} auto;
+  height: 100%;
+  min-height: ${SC.SPACING.MIN_APP_HEIGHT};
+  min-width: ${SC.SPACING.MIN_APP_WIDTH};
+  width: 100%;
+}
 
-  ~nav {
-    border-right: solid ${SC.COLORS.GRAY.M} 1px;
-    grid-area: 2 / 1;
-    padding-left: ${SC.SPACING.M};
-    padding-top: ${SC.SPACING.M};
-  }
+~nav {
+  border-right: solid ${SC.COLORS.GRAY.M} 1px;
+  grid-area: 2 / 1;
+  padding-left: ${SC.SPACING.M};
+  padding-top: ${SC.SPACING.M};
+}
 
-  ~section {
-    grid-area: 2 / 2;
-  }
+~section {
+  grid-area: 2 / 2;
+}
 
-  ~slider {
-    width: 100%;
-  }
+~slider {
+  width: 100%;
+}
 
-  ~subheader {
-    margin-bottom: ${SC.SPACING.XS};
-  }
+~subheader {
+  margin-bottom: ${SC.SPACING.XS};
+}
 
-  ~title {
-    align-items: center;
-    border-bottom: solid ${SC.COLORS.GRAY.M} 1px;
-    border-right: solid ${SC.COLORS.GRAY.M} 1px;
-    display: flex;
-    grid-area: 1 / 1;
-    justify-content: center;
-    margin: 0;
-  }
-`;
+~title {
+  align-items: center;
+  border-bottom: solid ${SC.COLORS.GRAY.M} 1px;
+  border-right: solid ${SC.COLORS.GRAY.M} 1px;
+  display: flex;
+  grid-area: 1 / 1;
+  justify-content: center;
+  margin: 0;
+}`;
 
 export const LiAnchor = ({ children, href }) =>
   h("li", {}, [h("a", { href }, children)]);
