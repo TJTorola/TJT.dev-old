@@ -8,6 +8,7 @@ import {
   withState,
   withProps
 } from "./hocs.mjs";
+import * as icons from "./icons.mjs";
 import { genRandomSteps } from "./maze-generators.mjs";
 import { Component, h } from "./preact.mjs";
 import { clamp, getHash, m } from "./util.mjs";
@@ -116,6 +117,7 @@ export const App = compose([
   h("main", { class: classes.main }, [
     h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
     h("header", { class: classes.header }, [
+      h(icons.Play, { size: 16 }),
       h("input", {
         class: classes.slider,
         type: "range",
