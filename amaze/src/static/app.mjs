@@ -1,4 +1,3 @@
-import { Grid } from "./canvas-grid.mjs";
 import { SCHEME as SC } from "./constants.mjs";
 import {
   compose,
@@ -222,6 +221,6 @@ export const App = compose([
         )
       ])
     ]),
-    h("section", { class: classes.content }, [h(Loader, { size: 128, color: SC.COLORS.GRAY.M })])
+    h("section", { class: classes.content }, [h("wasm-grid")])
   ])
 );
