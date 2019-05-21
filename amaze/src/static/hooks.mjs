@@ -2,6 +2,7 @@ import { StyleContext } from "./context.mjs";
 import {
   useContext,
   useCallback,
+  useRef,
   useState,
   useEffect,
   useLayoutEffect
@@ -63,6 +64,24 @@ export const useStyle = style => {
   return classes;
 };
 
+export const useInterval = (callback, delay) => {
+  const savedCallback = useRef();
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    const tick = () => {
+      savedCallback.current();
+    }
+
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+
 export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
   const [loading, setLoading] = useState(true);
   const [maze, setMaze] = useState(null);
@@ -121,25 +140,6 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
 
     _setPlaying(newPlaying);
   };
-
-  useEffect(() => {
-    if (playing && playingInterval === null) {
-      setPlayingInterval(
-        setInterval(() => {
-          if (step === stepCount - 1) {
-            _setPlaying(false);
-          } else {
-            const newStep = step + 1;
-            maze.set_step(newStep);
-            _setStep(newStep);
-          }
-        }, 1000)
-      );
-    } else if (!playing && playingInterval !== null) {
-      clearInterval(playingInterval);
-      setPlayingInterval(null);
-    }
-  }, [playing, step, playingInterval]);
 
   return {
     imageData,

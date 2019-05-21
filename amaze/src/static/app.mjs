@@ -1,5 +1,11 @@
 import { SCHEME as SC } from "./constants.mjs";
-import { useLocation, useStyle, useMaze, getHashRoute } from "./hooks.mjs";
+import {
+  useLocation,
+  useStyle,
+  useMaze,
+  getHashRoute,
+  useInterval
+} from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { Maze } from "./maze.mjs";
 import { h, useState } from "./react.mjs";
@@ -114,6 +120,10 @@ export const App = () => {
   const loc = useLocation();
   const classes = useStyle(STYLE);
   const maze = useMaze({ cellSize: 10, maxWidth: 700, maxHeight: 700 });
+
+  useInterval(() => {
+    maze.setStep(maze.step + 1);
+  }, maze.playing ? 16 : null)
 
   return h(
     "main",
