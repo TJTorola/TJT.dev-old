@@ -14,16 +14,20 @@ impl Pixel {
     pub fn new(r: u8, g: u8, b: u8) -> Pixel {
         Pixel(r, g, b, 255)
     }
+
+    pub fn set(&mut self, r: u8, g: u8, b: u8) {
+        self.0 = r;
+        self.1 = g;
+        self.2 = b;
+    }
 }
 
-#[wasm_bindgen]
 pub struct Image {
     width: u32,
     height: u32,
     data: Vec<Pixel>,
 }
 
-#[wasm_bindgen]
 impl Image {
     pub fn new(width: u32, height: u32) -> Image {
         let data = vec![Pixel::new(0, 0, 0); (width * height * 4).try_into().unwrap()];
@@ -45,6 +49,23 @@ impl Image {
 
     pub fn data(&self) -> *const Pixel {
         self.data.as_ptr()
+    }
+
+    fn get_idx(&self, x: u32, y: u32) -> usize {
+        (x * self.width + y) as usize
+    }
+
+    pub fn paint_region(&mut self, from: (u32, u32), to: (u32, u32), color: (u8, u8, u8)) {
+        let (x1, y1) = from;
+        let (x2, y2) = to;
+        let (r, g, b) = color;
+
+        for x in x1..x2 {
+            for y in y1..y2 {
+                let idx = self.get_idx(x, y);
+                self.data[idx].set(r, g, b);
+            }
+        }
     }
 }
 
@@ -82,6 +103,10 @@ impl Maze {
 
     pub fn height(&self) -> u32 {
         self.image.height()
+    }
+
+    pub fn tick(&mut self) {
+        self.image.paint_region((10, 10), (100, 100), (12, 55, 231));
     }
 }
 

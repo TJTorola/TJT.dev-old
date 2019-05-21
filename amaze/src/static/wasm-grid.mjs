@@ -29,6 +29,11 @@ class WasmGrid extends HTMLElement {
     this.imageData = new ImageData(data, this.width, this.height);
 
     this.render();
+
+    setTimeout(() => {
+      this.maze.tick();
+      this.render();
+    }, 1000);
   }
 
   render() {
