@@ -144,7 +144,7 @@ export const App = () => {
           className: classes.control,
           onClick: () => maze.setPlaying(!maze.playing)
         },
-        h(icons.Play, { size: 23 })
+        h(maze.playing ? icons.Pause : icons.Play, { size: 23 })
       ),
       h("input", {
         className: classes.slider,
