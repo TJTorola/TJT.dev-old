@@ -71,6 +71,8 @@ impl Image {
 
 #[wasm_bindgen]
 pub struct Maze {
+    cell_size: u32,
+    wall_size: u32,
     cols: u32,
     rows: u32,
     image: Image,
@@ -82,11 +84,16 @@ impl Maze {
         let wall_size = cell_size / 10;
         let full_size = wall_size + cell_size;
 
-        let rows = max_width / full_size;
-        let cols = max_height / full_size;
-        let image = Image::new(rows * full_size, cols * full_size);
+        let rows = (max_height + wall_size) / full_size;
+        let cols = (max_width + wall_size) / full_size;
+        let height = (rows * full_size) - wall_size;
+        let width = (cols * full_size) - wall_size;
+
+        let image = Image::new(width, height);
 
         Maze {
+            cell_size,
+            wall_size,
             cols,
             rows,
             image,
@@ -105,8 +112,21 @@ impl Maze {
         self.image.height()
     }
 
+    fn get_region(&self, row: u32, col: u32) -> ((u32, u32), (u32, u32)) {
+        let full_size = self.cell_size + self.wall_size;
+        (
+            (row * full_size, col * full_size),
+            ((row * full_size) + self.cell_size, (col * full_size) + self.cell_size),
+        )
+    }
+
     pub fn tick(&mut self) {
-        self.image.paint_region((10, 10), (100, 100), (12, 55, 231));
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                let (to, from) = self.get_region(row, col);
+                self.image.paint_region(to, from, (255, 255, 255));
+            }
+        }
     }
 }
 
