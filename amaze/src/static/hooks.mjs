@@ -1,5 +1,5 @@
 import { StyleContext } from "./context.mjs";
-import { useContext, useState, useEffect } from "./react.mjs";
+import { useContext, useCallback, useState, useEffect } from "./react.mjs";
 
 const getRoute = hash => (hash.length > 0 ? hash.slice(1) : "");
 
@@ -60,6 +60,8 @@ export const useStyle = style => {
 export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
   const [loading, setLoading] = useState(true);
   const [maze, setMaze] = useState(null);
+  const [width, setWidth] = useState(null);
+  const [height, setHeight] = useState(null);
   const [imageData, setImageData] = useState(null);
   const [step, _setStep] = useState(0);
 
@@ -68,7 +70,7 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
       const pkg = await import("./pkg/index.js");
       const wasm = await pkg.default("./pkg/index_bg.wasm");
 
-      const maze = pkg.Maze.new(cellSize, maxHeight, maxWidth);
+      const maze = pkg.Maze.new(cellSize, maxWidth, maxHeight);
       const imageData = new ImageData(
         new Uint8ClampedArray(
           wasm.memory.buffer,
@@ -81,6 +83,8 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
 
       setImageData(imageData);
       setMaze(maze);
+      setWidth(maze.width());
+      setHeight(maze.height());
 
       setLoading(false);
     })();
@@ -89,7 +93,20 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
   const setStep = newStep => {
     // TODO: call into maze
     _setStep(newStep);
-  }
+  };
 
-  return { imageData, loading, step, setStep };
+  return { imageData, width, height, loading, step, setStep };
+};
+
+export const useCtx = () => {
+  const [ctx, setCtx] = useState(null);
+  const ref = useCallback(canvas => {
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      setCtx(ctx);
+    }
+  }, []);
+
+  return { ref, ctx };
 };
