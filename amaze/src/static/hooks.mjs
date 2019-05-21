@@ -141,6 +141,14 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
     _setPlaying(newPlaying);
   };
 
+  useInterval(() => {
+    if (step < stepCount - 1) {
+      setStep(step + 1);
+    } else {
+      setPlaying(false);
+    }
+  }, playing ? 16 : null);
+
   return {
     imageData,
     width,
