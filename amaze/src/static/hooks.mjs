@@ -82,7 +82,7 @@ export const useInterval = (callback, delay) => {
   }, [delay]);
 }
 
-export const useMaze = ({ cellSize, contentSize }) => {
+export const useMaze = ({ cellSize, wallSize, contentSize }) => {
   const [loading, setLoading] = useState(true);
   const [maze, setMaze] = useState(null);
   const [width, setWidth] = useState(null);
@@ -104,7 +104,7 @@ export const useMaze = ({ cellSize, contentSize }) => {
       const pkg = await import("./pkg/index.js");
       const wasm = await pkg.default("./pkg/index_bg.wasm");
 
-      const maze = pkg.Maze.new(cellSize, contentSize.width - 64, contentSize.height - 64);
+      const maze = pkg.Maze.new(cellSize, wallSize, contentSize.width - 64, contentSize.height - 64);
       const imageData = new ImageData(
         new Uint8ClampedArray(
           wasm.memory.buffer,

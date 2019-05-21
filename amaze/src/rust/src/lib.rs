@@ -107,8 +107,7 @@ pub struct Maze {
 
 #[wasm_bindgen]
 impl Maze {
-    pub fn new(cell_size: u32, max_width: u32, max_height: u32) -> Maze {
-        let wall_size = cell_size / 10;
+    pub fn new(cell_size: u32, wall_size: u32, max_width: u32, max_height: u32) -> Maze {
         let full_size = wall_size + cell_size;
 
         let rows = (max_height + wall_size) / full_size;

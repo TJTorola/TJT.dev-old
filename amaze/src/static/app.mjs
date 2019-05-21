@@ -127,7 +127,8 @@ export const App = () => {
   }, [classes]);
 
   const maze = useMaze({
-    cellSize: 10,
+    cellSize: 16,
+    wallSize: 4,
     contentSize,
   });
 
