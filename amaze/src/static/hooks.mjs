@@ -119,19 +119,6 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
     })();
   }, []);
 
-  const setStep = newStep => {
-    const newStepNum = parseInt(newStep, 10);
-    if (!maze) {
-      throw new Error("Cannot setStep before maze is loaded");
-    }
-    if (0 > newStepNum || newStepNum >= stepCount) {
-      throw new Error("New step is out of bounds");
-    }
-
-    maze.set_step(newStepNum);
-    _setStep(newStepNum);
-  };
-
   const setPlaying = newPlaying => {
     if (!maze) {
       throw new Error("Cannot setPlaying before maze is loaded");
@@ -143,11 +130,28 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
 
   useInterval(() => {
     if (step < stepCount - 1) {
-      setStep(step + 1);
+      maze.set_step(step + 1);
+      _setStep(step + 1);
     } else {
       setPlaying(false);
     }
-  }, playing ? 16 : null);
+  }, playing ? 20 : null);
+
+  const setStep = newStep => {
+    const newStepNum = parseInt(newStep, 10);
+    if (!maze) {
+      throw new Error("Cannot setStep before maze is loaded");
+    }
+    if (0 > newStepNum || newStepNum >= stepCount) {
+      throw new Error("New step is out of bounds");
+    }
+
+    maze.set_step(newStepNum);
+    _setStep(newStepNum);
+    if (playing) {
+      setPlaying(false);
+    }
+  };
 
   return {
     imageData,
