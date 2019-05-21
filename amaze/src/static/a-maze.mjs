@@ -1,6 +1,6 @@
 import { App } from "./app.mjs";
 import { StyleContext, Css } from "./context.mjs";
-import { Fragment, h, render, unmount, useContext, useEffect } from "./react.mjs";
+import { Fragment, h, render, unmount } from "./react.mjs";
 
 class Amaze extends HTMLElement {
   constructor() {
@@ -9,20 +9,12 @@ class Amaze extends HTMLElement {
   }
 
   connectedCallback() {
-    const Root = h(StyleContext.Provider, { value: this.css }, h(() => {
-      const css = useContext(StyleContext);
-      useEffect(() => {
-        css.mount();
-        () => css.unmount();
-      }, []);
-
-      return h(App)
-    }));
-
-    render(Root, this);
+    this.css.mount();
+    render(h(StyleContext.Provider, { value: this.css }, h(App)), this);
   }
 
   disconnectedCallback() {
+    this.css.unmount();
     unmount(this);
   }
 }
