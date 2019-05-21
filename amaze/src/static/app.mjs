@@ -27,6 +27,10 @@ button {
   padding: 0;
 }
 
+canvas {
+  border: ${SC.SPACING.XS} solid black;
+}
+
 ~content {
   align-items: center;
   background: ${SC.COLORS.GRAY.L};
