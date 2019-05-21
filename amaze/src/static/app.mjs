@@ -113,7 +113,7 @@ export const LiAnchor = ({ children, href }) =>
 export const App = () => {
   const loc = useLocation();
   const classes = useStyle(STYLE);
-  const maze = useMaze({ cellSize: 10, maxWidth: 800, maxHeight: 600 });
+  const maze = useMaze({ cellSize: 10, maxWidth: 1200, maxHeight: 700 });
 
   return h(
     "main",

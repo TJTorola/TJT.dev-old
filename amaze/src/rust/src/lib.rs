@@ -84,7 +84,7 @@ fn randNum(to: u32) -> u32 {
 }
 
 fn generateRandSteps(rows: u32, cols: u32) -> Steps {
-  (0..2048).map(|_| {
+  (0..10000).map(|_| {
       (0..randNum(5)).map(|_| {
           Diff {
               coord: (randNum(rows), randNum(cols)),
