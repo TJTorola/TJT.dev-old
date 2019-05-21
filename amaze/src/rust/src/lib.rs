@@ -153,15 +153,6 @@ impl Maze {
         )
     }
 
-    pub fn tick(&mut self) {
-        for row in 0..self.rows {
-            for col in 0..self.cols {
-                let (to, from) = self.get_region(row, col);
-                self.image.paint_region(to, from, (255, 255, 255));
-            }
-        }
-    }
-
     pub fn set_step(&mut self, new_step: usize) {
         for step in self.step..new_step {
             for i in 0..self.steps[step].len() {
