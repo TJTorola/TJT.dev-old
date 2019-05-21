@@ -2,7 +2,7 @@ import { SCHEME as SC } from "./constants.mjs";
 import { useLocation, useStyle, useMaze, getHashRoute } from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { Maze } from "./maze.mjs";
-import { Component, h, useState } from "./react.mjs";
+import { h, useState } from "./react.mjs";
 import { clamp, m } from "./lib/util.mjs";
 
 const STYLE = `

@@ -1,6 +1,6 @@
 import { App } from "./app.mjs";
 import { StyleContext, Css } from "./context.mjs";
-import { Component, Fragment, h, render, unmount, useContext, useEffect } from "./react.mjs";
+import { Fragment, h, render, unmount, useContext, useEffect } from "./react.mjs";
 
 class Amaze extends HTMLElement {
   constructor() {
