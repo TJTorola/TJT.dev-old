@@ -84,7 +84,7 @@ fn randNum(to: u32) -> u32 {
 }
 
 fn generateRandSteps(rows: u32, cols: u32) -> Steps {
-  (0..256).map(|_| {
+  (0..2048).map(|_| {
       (0..randNum(5)).map(|_| {
           Diff {
               coord: (randNum(rows), randNum(cols)),
@@ -160,6 +160,18 @@ impl Maze {
                 self.image.paint_region(to, from, (255, 255, 255));
             }
         }
+    }
+
+    pub fn set_step(&mut self, new_step: usize) {
+        for step in self.step..new_step {
+            for i in 0..self.steps[step].len() {
+                let diff = &self.steps[step][i];
+                let (row, col) = diff.coord;
+                let (to, from) = self.get_region(row, col);
+                self.image.paint_region(to, from, diff.color);
+            }
+        }
+        self.step = new_step;
     }
 }
 

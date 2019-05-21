@@ -93,8 +93,16 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
   }, []);
 
   const setStep = newStep => {
-    // TODO: call into maze
-    _setStep(newStep);
+    const newStepNum = parseInt(newStep, 10);
+    if (!maze) {
+      throw new Error("Cannot setStep before maze is loaded");
+    }
+    if (0 > newStepNum || newStepNum >= stepCount) {
+      throw new Error("New step is out of bounds");
+    }
+
+    maze.set_step(newStepNum);
+    _setStep(newStepNum);
   };
 
   return { imageData, width, height, loading, stepCount, step, setStep };
@@ -104,7 +112,7 @@ export const useCtx = () => {
   const [ctx, setCtx] = useState(null);
   const ref = useCallback(canvas => {
     if (canvas) {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       ctx.imageSmoothingEnabled = false;
       setCtx(ctx);
     }
