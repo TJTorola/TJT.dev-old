@@ -1,14 +1,9 @@
 import { SCHEME as SC } from "./constants.mjs";
-import {
-  compose,
-  withClasses,
-  withRoute,
-  withState
-} from "./hocs.mjs";
+import { useLocation, useStyle, getHashRoute } from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { Maze } from "./maze.mjs";
-import { Component, h } from "./react.mjs";
-import { clamp, getHash, m } from "./lib/util.mjs";
+import { Component, h, useState } from "./react.mjs";
+import { clamp, m } from "./lib/util.mjs";
 
 const STYLE = `
 hr {
@@ -115,14 +110,18 @@ canvas {
 export const LiAnchor = ({ children, href }) =>
   h("li", {}, h("a", { href }, children));
 
-export const App = compose([
-  withRoute,
-  withClasses(STYLE),
-  withState({ step: 0 }),
-])(({ classes, params, state: { step }, setState }) =>
-  h("main", { className: classes.main },
+export const App = () => {
+  const [step, setStep] = useState(0);
+  const loc = useLocation();
+  const classes = useStyle(STYLE);
+
+  return h(
+    "main",
+    { className: classes.main },
     h("div", { className: classes.title }, h("h1", {}, "A maze")),
-    h("header", { className: classes.header },
+    h(
+      "header",
+      { className: classes.header },
       h("button", { className: classes.control }, h(icons.Play, { size: 23 })),
       h("input", {
         className: classes.slider,
@@ -133,77 +132,83 @@ export const App = compose([
         onChange: e => {
           const nextStep = clamp(0, 100)(e.target.value);
           if (step !== nextStep) {
-            setState({ step: nextStep });
+            setStep(nextStep);
           }
         }
       })
     ),
-    h("nav", { className: classes.nav },
+    h(
+      "nav",
+      { className: classes.nav },
       h("h2", { className: classes.subheader }, "Generators"),
       h("hr"),
-      h("ul", { className: classes.links },
+      h(
+        "ul",
+        { className: classes.links },
         h(
           LiAnchor,
-          { href: getHash({ generator: "dfs" }) },
+          { href: getHashRoute({ generator: "dfs" }) },
           "Depth First Search"
         ),
         h(
           LiAnchor,
-          { href: getHash({ generator: "kruskals" }) },
+          { href: getHashRoute({ generator: "kruskals" }) },
           "Kruskal's Algorithm"
         ),
         h(
           LiAnchor,
-          { href: getHash({ generator: "prims" }) },
+          { href: getHashRoute({ generator: "prims" }) },
           "Prim's Algorithm"
         ),
         h(
           LiAnchor,
-          { href: getHash({ generator: "recur-backtracker" }) },
+          { href: getHashRoute({ generator: "recur-backtracker" }) },
           "Recursive Backtracker"
         ),
         h(
           LiAnchor,
-          { href: getHash({ generator: "recur-division" }) },
+          { href: getHashRoute({ generator: "recur-division" }) },
           "Recursive Division"
         ),
         h(
           LiAnchor,
-          { href: getHash({ generator: "wilsons" }) },
+          { href: getHashRoute({ generator: "wilsons" }) },
           "Wilson's Algorithm"
         )
       ),
       h("h2", { className: classes.subheader }, "Solvers"),
       h("hr"),
-      h("ul", { className: classes.links },
-        h(LiAnchor, { href: getHash({ solver: "a-star" }) }, "A* Algorithm"),
+      h(
+        "ul",
+        { className: classes.links },
+        h(LiAnchor, { href: getHashRoute({ solver: "a-star" }) }, "A* Algorithm"),
         h(
           LiAnchor,
-          { href: getHash({ ...params, solver: "bfs" }) },
+          { href: getHashRoute({ ...loc.params, solver: "bfs" }) },
           "Breadth First Search"
         ),
         h(
           LiAnchor,
-          { href: getHash({ ...params, solver: "dead-end" }) },
+          { href: getHashRoute({ ...loc.params, solver: "dead-end" }) },
           "Dead End Filling"
         ),
         h(
           LiAnchor,
-          { href: getHash({ ...params, solver: "random" }) },
+          { href: getHashRoute({ ...loc.params, solver: "random" }) },
           "Random Mouse"
         ),
         h(
           LiAnchor,
-          { href: getHash({ ...params, solver: "tremauxs" }) },
+          { href: getHashRoute({ ...loc.params, solver: "tremauxs" }) },
           "Trémaux's Algorithm"
         ),
         h(
           LiAnchor,
-          { href: getHash({ ...params, solver: "wall-follow" }) },
+          { href: getHashRoute({ ...loc.params, solver: "wall-follow" }) },
           "Wall Follower"
         )
       )
     ),
     h("section", { className: classes.content }, h(Maze))
-  )
-);
+  );
+};

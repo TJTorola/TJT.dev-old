@@ -1,9 +1,25 @@
 import { App } from "./app.mjs";
-import { Component, h, render, unmount } from "./react.mjs";
+import { StyleContext, Css } from "./context.mjs";
+import { Component, Fragment, h, render, unmount, useContext, useEffect } from "./react.mjs";
 
 class Amaze extends HTMLElement {
+  constructor() {
+    super();
+    this.css = new Css();
+  }
+
   connectedCallback() {
-    render(h(App), this);
+    const Root = h(StyleContext.Provider, { value: this.css }, h(() => {
+      const css = useContext(StyleContext);
+      useEffect(() => {
+        css.mount();
+        () => css.unmount();
+      }, []);
+
+      return h(App)
+    }));
+
+    render(Root, this);
   }
 
   disconnectedCallback() {

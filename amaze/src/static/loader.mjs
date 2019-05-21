@@ -1,7 +1,7 @@
 // CSS Credit: @tobiasahlin, https://tobiasahlin.com/spinkit/
 
 import { SCHEME as SC } from "./constants.mjs";
-import { withClasses } from "./hocs.mjs";
+import { useStyle } from "./hooks.mjs";
 import { h } from "./react.mjs";
 
 const DEFAULT_SIZE = 60;
@@ -34,11 +34,17 @@ const STYLE = `
   } 
 }`;
 
-export const Loader = withClasses(STYLE)(
-  ({ classes, size = DEFAULT_SIZE, color = DEFAULT_COLOR }) =>
-    h(
-      "div",
-      { className: classes.grid, style: { width: size, height: size } },
-      [...new Array(9)].map((_, i) => h("div", { key: i, style: { background: color } }))
+export const Loader = ({
+  size = DEFAULT_SIZE,
+  color = DEFAULT_COLOR
+}) => {
+  const classes = useStyle(STYLE);
+
+  return h(
+    "div",
+    { className: classes.grid, style: { width: size, height: size } },
+    [...new Array(9)].map((_, i) =>
+      h("div", { key: i, style: { background: color } })
     )
-);
+  );
+}
