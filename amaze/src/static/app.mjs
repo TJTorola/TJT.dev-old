@@ -113,7 +113,7 @@ export const LiAnchor = ({ children, href }) =>
 export const App = () => {
   const loc = useLocation();
   const classes = useStyle(STYLE);
-  const maze = useMaze({ cellSize: 10, maxWidth: 1200, maxHeight: 700 });
+  const maze = useMaze({ cellSize: 10, maxWidth: 700, maxHeight: 700 });
 
   return h(
     "main",
@@ -122,7 +122,14 @@ export const App = () => {
     h(
       "header",
       { className: classes.header },
-      h("button", { className: classes.control }, h(icons.Play, { size: 23 })),
+      h(
+        "button",
+        {
+          className: classes.control,
+          onClick: () => maze.setPlaying(!maze.playing)
+        },
+        h(icons.Play, { size: 23 })
+      ),
       h("input", {
         className: classes.slider,
         type: "range",
@@ -181,7 +188,11 @@ export const App = () => {
       h(
         "ul",
         { className: classes.links },
-        h(LiAnchor, { href: getHashRoute({ solver: "a-star" }) }, "A* Algorithm"),
+        h(
+          LiAnchor,
+          { href: getHashRoute({ solver: "a-star" }) },
+          "A* Algorithm"
+        ),
         h(
           LiAnchor,
           { href: getHashRoute({ ...loc.params, solver: "bfs" }) },

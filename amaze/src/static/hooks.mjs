@@ -1,5 +1,11 @@
 import { StyleContext } from "./context.mjs";
-import { useContext, useCallback, useState, useEffect } from "./react.mjs";
+import {
+  useContext,
+  useCallback,
+  useState,
+  useEffect,
+  useLayoutEffect
+} from "./react.mjs";
 
 const getRoute = hash => (hash.length > 0 ? hash.slice(1) : "");
 
@@ -47,7 +53,7 @@ export const useStyle = style => {
   const css = useContext(StyleContext);
   const [classes, setClasses] = useState({});
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const applied = css.apply(style);
     setClasses(applied.classes);
 
@@ -65,6 +71,8 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
   const [imageData, setImageData] = useState(null);
   const [stepCount, setStepCount] = useState(null);
   const [step, _setStep] = useState(0);
+  const [playing, _setPlaying] = useState(false);
+  const [playingInterval, setPlayingInterval] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -105,7 +113,45 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
     _setStep(newStepNum);
   };
 
-  return { imageData, width, height, loading, stepCount, step, setStep };
+  const setPlaying = newPlaying => {
+    if (!maze) {
+      throw new Error("Cannot setPlaying before maze is loaded");
+    }
+    if (step === stepCount - 1 && newPlaying) return;
+
+    _setPlaying(newPlaying);
+  };
+
+  useEffect(() => {
+    if (playing && playingInterval === null) {
+      setPlayingInterval(
+        setInterval(() => {
+          if (step === stepCount - 1) {
+            _setPlaying(false);
+          } else {
+            const newStep = step + 1;
+            maze.set_step(newStep);
+            _setStep(newStep);
+          }
+        }, 1000)
+      );
+    } else if (!playing && playingInterval !== null) {
+      clearInterval(playingInterval);
+      setPlayingInterval(null);
+    }
+  }, [playing, step, playingInterval]);
+
+  return {
+    imageData,
+    width,
+    height,
+    loading,
+    stepCount,
+    step,
+    setStep,
+    playing,
+    setPlaying
+  };
 };
 
 export const useCtx = () => {

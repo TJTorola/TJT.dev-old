@@ -9,5 +9,6 @@ export const unmount = ReactDom.unmountComponentAtNode;
 export const useCallback = React.useCallback;
 export const useContext = React.useContext;
 export const useEffect = React.useEffect;
+export const useLayoutEffect = React.useLayoutEffect;
 export const useRef = React.useRef;
 export const useState = React.useState;
