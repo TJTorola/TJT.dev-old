@@ -1,18 +1,7 @@
 import { Loader } from "./loader.mjs";
-import { h, Component } from './react.mjs';
+import { h } from './react.mjs';
 
-export class Maze extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      loaded: false,
-    }
-  }
-
-  render() {
-    const { loaded } = this.state;
-
-    if (!loaded) return h(Loader);
-  }
+export const Maze = ({ loading, imageData, step }) => {
+  if (loading) return h(Loader);
+  return h('div', {}, 'Loaded!');
 }

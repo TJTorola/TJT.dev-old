@@ -56,3 +56,40 @@ export const useStyle = style => {
 
   return classes;
 };
+
+export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
+  const [loading, setLoading] = useState(true);
+  const [maze, setMaze] = useState(null);
+  const [imageData, setImageData] = useState(null);
+  const [step, _setStep] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const pkg = await import("./pkg/index.js");
+      const wasm = await pkg.default("./pkg/index_bg.wasm");
+
+      const maze = pkg.Maze.new(cellSize, maxHeight, maxWidth);
+      const imageData = new ImageData(
+        new Uint8ClampedArray(
+          wasm.memory.buffer,
+          maze.image_data(),
+          maze.width() * maze.height() * 4
+        ),
+        maze.width(),
+        maze.height()
+      );
+
+      setImageData(imageData);
+      setMaze(maze);
+
+      setLoading(false);
+    })();
+  }, []);
+
+  const setStep = newStep => {
+    // TODO: call into maze
+    _setStep(newStep);
+  }
+
+  return { imageData, loading, step, setStep };
+};

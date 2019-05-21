@@ -1,5 +1,5 @@
 import { SCHEME as SC } from "./constants.mjs";
-import { useLocation, useStyle, getHashRoute } from "./hooks.mjs";
+import { useLocation, useStyle, useMaze, getHashRoute } from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { Maze } from "./maze.mjs";
 import { Component, h, useState } from "./react.mjs";
@@ -111,9 +111,9 @@ export const LiAnchor = ({ children, href }) =>
   h("li", {}, h("a", { href }, children));
 
 export const App = () => {
-  const [step, setStep] = useState(0);
   const loc = useLocation();
   const classes = useStyle(STYLE);
+  const maze = useMaze({ cellSize: 10, maxWidth: 600, maxHeight: 300 });
 
   return h(
     "main",
@@ -128,11 +128,11 @@ export const App = () => {
         type: "range",
         min: 0,
         max: 100,
-        value: step,
+        value: maze.step,
         onChange: e => {
           const nextStep = clamp(0, 100)(e.target.value);
-          if (step !== nextStep) {
-            setStep(nextStep);
+          if (maze.step !== nextStep) {
+            maze.setStep(nextStep);
           }
         }
       })
@@ -209,6 +209,6 @@ export const App = () => {
         )
       )
     ),
-    h("section", { className: classes.content }, h(Maze))
+    h("section", { className: classes.content }, h(Maze, maze))
   );
 };
