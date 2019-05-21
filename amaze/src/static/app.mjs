@@ -4,12 +4,9 @@ import {
   withCss,
   withClasses,
   withRoute,
-  withState,
-  withProps
+  withState
 } from "./hocs.mjs";
 import * as icons from "./icons.mjs";
-import { Loader } from "./loader.mjs";
-import { genRandomSteps } from "./maze-generators.mjs";
 import { Component, h } from "./preact.mjs";
 import { clamp, getHash, m } from "./lib/util.mjs";
 
@@ -118,28 +115,11 @@ canvas {
 export const LiAnchor = ({ children, href }) =>
   h("li", {}, [h("a", { href }, children)]);
 
-const genRandomMaze = m(() => {
-  const meta = {
-    cellSize: 20,
-    wallSize: 3,
-    maxHeight: 700,
-    maxWidth: 1000
-  };
-
-  return {
-    maze: {
-      steps: genRandomSteps(100, meta),
-      meta
-    }
-  };
-});
-
 export const App = compose([
   withCss,
   withRoute,
   withClasses(STYLE),
   withState({ step: 0 }),
-  withProps(() => genRandomMaze())
 ])(({ classes, params, maze, state: { step }, setState }) =>
   h("main", { class: classes.main }, [
     h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
