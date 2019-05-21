@@ -127,10 +127,10 @@ export const App = () => {
         className: classes.slider,
         type: "range",
         min: 0,
-        max: 100,
+        max: maze.stepCount,
         value: maze.step,
         onChange: e => {
-          const nextStep = clamp(0, 100)(e.target.value);
+          const nextStep = clamp(0, maze.stepCount)(e.target.value);
           if (maze.step !== nextStep) {
             maze.setStep(nextStep);
           }

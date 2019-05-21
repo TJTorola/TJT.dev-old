@@ -3,6 +3,8 @@ mod utils;
 use std::convert::TryInto;
 use wasm_bindgen::prelude::*;
 
+extern crate js_sys;
+
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
@@ -69,6 +71,29 @@ impl Image {
     }
 }
 
+pub struct Diff {
+    coord: (u32, u32),
+    color: (u8, u8, u8),
+}
+
+type Diffs = Vec<Diff>;
+type Steps = Vec<Diffs>;
+
+fn randNum(to: u32) -> u32 {
+    (js_sys::Math::random() * to as f64) as u32
+}
+
+fn generateRandSteps(rows: u32, cols: u32) -> Steps {
+  (0..256).map(|_| {
+      (0..randNum(5)).map(|_| {
+          Diff {
+              coord: (randNum(rows), randNum(cols)),
+              color: (randNum(256) as u8, randNum(256) as u8, randNum(256) as u8)
+          }
+      }).collect()
+  }).collect()
+}
+
 #[wasm_bindgen]
 pub struct Maze {
     cell_size: u32,
@@ -76,6 +101,8 @@ pub struct Maze {
     cols: u32,
     rows: u32,
     image: Image,
+    step: usize,
+    steps: Steps,
 }
 
 #[wasm_bindgen]
@@ -97,6 +124,8 @@ impl Maze {
             cols,
             rows,
             image,
+            step: 0,
+            steps: generateRandSteps(rows, cols),
         }
     }
 
@@ -110,6 +139,10 @@ impl Maze {
 
     pub fn height(&self) -> u32 {
         self.image.height()
+    }
+
+    pub fn stepCount(&self) -> usize {
+        self.steps.len()
     }
 
     fn get_region(&self, row: u32, col: u32) -> ((u32, u32), (u32, u32)) {
@@ -129,3 +162,28 @@ impl Maze {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

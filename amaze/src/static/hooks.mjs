@@ -63,6 +63,7 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
   const [width, setWidth] = useState(null);
   const [height, setHeight] = useState(null);
   const [imageData, setImageData] = useState(null);
+  const [stepCount, setStepCount] = useState(null);
   const [step, _setStep] = useState(0);
 
   useEffect(() => {
@@ -85,6 +86,7 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
       setMaze(maze);
       setWidth(maze.width());
       setHeight(maze.height());
+      setStepCount(maze.stepCount());
 
       setLoading(false);
     })();
@@ -95,7 +97,7 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
     _setStep(newStep);
   };
 
-  return { imageData, width, height, loading, step, setStep };
+  return { imageData, width, height, loading, stepCount, step, setStep };
 };
 
 export const useCtx = () => {
