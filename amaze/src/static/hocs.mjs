@@ -5,7 +5,7 @@ import {
   interweave,
   randStr
 } from "./lib/util.mjs";
-import { Component, h } from "./preact.mjs";
+import { Component, h } from "./react.mjs";
 
 class Css {
   constructor() {
@@ -79,8 +79,8 @@ export const withCss = WrappedComponent => {
       return { css: this._css };
     }
 
-    render(props) {
-      return h(WrappedComponent, props);
+    render() {
+      return h(WrappedComponent, this.props);
     }
   }
 
@@ -90,16 +90,8 @@ export const withCss = WrappedComponent => {
 
 export const withClasses = style => WrappedComponent => {
   class WithClasses extends Component {
-    componentWillMount() {
-      this.classes = this.context.css.apply(style);
-    }
-
-    componentWillUnmount() {
-      // TODO
-    }
-
-    render(props) {
-      return h(WrappedComponent, { ...props, classes: this.classes });
+    render() {
+      return h(WrappedComponent, { ...this.props, classes: {} });
     }
   }
 
@@ -135,8 +127,8 @@ export const withRoute = WrappedComponent => {
       window.removeEventListener("hashchange", this.update);
     }
 
-    render(props, state) {
-      return h(WrappedComponent, { ...props, ...state });
+    render() {
+      return h(WrappedComponent, { ...this.props, ...this.state });
     }
   }
 
@@ -154,10 +146,10 @@ export const withState = initialState => WrappedComponent => {
       this.setState = this.setState.bind(this);
     }
 
-    render(props, state) {
+    render() {
       return h(WrappedComponent, {
-        ...props,
-        state,
+        ...this.props,
+        state: this.state,
         setState: this.setState
       });
     }
@@ -185,8 +177,8 @@ export const withProps = propGenerator => WrappedComponent => {
       }
     }
 
-    render(props, state) {
-      return h(WrappedComponent, { ...props, ...state });
+    render() {
+      return h(WrappedComponent, { ...this.props, ...this.state });
     }
   }
 

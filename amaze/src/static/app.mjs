@@ -1,13 +1,13 @@
 import { SCHEME as SC } from "./constants.mjs";
 import {
   compose,
-  withCss,
   withClasses,
   withRoute,
   withState
 } from "./hocs.mjs";
 import * as icons from "./icons.mjs";
-import { Component, h } from "./preact.mjs";
+import { Maze } from "./maze.mjs";
+import { Component, h } from "./react.mjs";
 import { clamp, getHash, m } from "./lib/util.mjs";
 
 const STYLE = `
@@ -113,36 +113,35 @@ canvas {
 }`;
 
 export const LiAnchor = ({ children, href }) =>
-  h("li", {}, [h("a", { href }, children)]);
+  h("li", {}, h("a", { href }, children));
 
 export const App = compose([
-  withCss,
   withRoute,
   withClasses(STYLE),
   withState({ step: 0 }),
-])(({ classes, params, maze, state: { step }, setState }) =>
-  h("main", { class: classes.main }, [
-    h("div", { class: classes.title }, [h("h1", {}, "A maze")]),
-    h("header", { class: classes.header }, [
-      h("button", { class: classes.control }, [h(icons.Play, { size: 23 })]),
+])(({ classes, params, state: { step }, setState }) =>
+  h("main", { className: classes.main },
+    h("div", { className: classes.title }, h("h1", {}, "A maze")),
+    h("header", { className: classes.header },
+      h("button", { className: classes.control }, h(icons.Play, { size: 23 })),
       h("input", {
-        class: classes.slider,
+        className: classes.slider,
         type: "range",
         min: 0,
-        max: maze.steps.length,
+        max: 100,
         value: step,
         onChange: e => {
-          const nextStep = clamp(0, maze.steps.length)(e.target.value);
+          const nextStep = clamp(0, 100)(e.target.value);
           if (step !== nextStep) {
             setState({ step: nextStep });
           }
         }
       })
-    ]),
-    h("nav", { class: classes.nav }, [
-      h("h2", { class: classes.subheader }, "Generators"),
+    ),
+    h("nav", { className: classes.nav },
+      h("h2", { className: classes.subheader }, "Generators"),
       h("hr"),
-      h("ul", { class: classes.links }, [
+      h("ul", { className: classes.links },
         h(
           LiAnchor,
           { href: getHash({ generator: "dfs" }) },
@@ -173,10 +172,10 @@ export const App = compose([
           { href: getHash({ generator: "wilsons" }) },
           "Wilson's Algorithm"
         )
-      ]),
-      h("h2", { class: classes.subheader }, "Solvers"),
+      ),
+      h("h2", { className: classes.subheader }, "Solvers"),
       h("hr"),
-      h("ul", { class: classes.links }, [
+      h("ul", { className: classes.links },
         h(LiAnchor, { href: getHash({ solver: "a-star" }) }, "A* Algorithm"),
         h(
           LiAnchor,
@@ -203,8 +202,8 @@ export const App = compose([
           { href: getHash({ ...params, solver: "wall-follow" }) },
           "Wall Follower"
         )
-      ])
-    ]),
-    h("section", { class: classes.content }, [h("wasm-grid")])
-  ])
+      )
+    ),
+    h("section", { className: classes.content }, h(Maze))
+  )
 );

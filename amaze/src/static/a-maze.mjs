@@ -1,5 +1,5 @@
 import { App } from "./app.mjs";
-import { Component, h, render } from "./preact.mjs";
+import { Component, h, render, unmount } from "./react.mjs";
 
 class Amaze extends HTMLElement {
   connectedCallback() {
@@ -7,7 +7,7 @@ class Amaze extends HTMLElement {
   }
 
   disconnectedCallback() {
-    render(null, this, this.firstChild);
+    unmount(this);
   }
 }
 

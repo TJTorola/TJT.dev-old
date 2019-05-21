@@ -2,7 +2,7 @@
 
 import { SCHEME as SC } from "./constants.mjs";
 import { withClasses } from "./hocs.mjs";
-import { h } from "./preact.mjs";
+import { h } from "./react.mjs";
 
 const DEFAULT_SIZE = 60;
 const DEFAULT_COLOR = SC.COLORS.GRAY.S;
@@ -38,7 +38,7 @@ export const Loader = withClasses(STYLE)(
   ({ classes, size = DEFAULT_SIZE, color = DEFAULT_COLOR }) =>
     h(
       "div",
-      { class: classes.grid, style: { width: size, height: size } },
-      [...new Array(9)].map(() => h("div", { style: { background: color } }))
+      { className: classes.grid, style: { width: size, height: size } },
+      [...new Array(9)].map((_, i) => h("div", { key: i, style: { background: color } }))
     )
 );
