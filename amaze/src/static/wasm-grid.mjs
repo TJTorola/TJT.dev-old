@@ -3,6 +3,9 @@ class WasmGrid extends HTMLElement {
     super();
 
     this.canvas = document.createElement('canvas');
+    this.canvas.width = 300;
+    this.canvas.height = 100;
+
     this.ctx = this.canvas.getContext('2d');
     this.appendChild(this.canvas);
   }
@@ -13,6 +16,20 @@ class WasmGrid extends HTMLElement {
 
     this.pkg = pkg;
     this.wasm = wasm;
+
+    this.grid = pkg.Grid.new(300, 100);
+    const data = new Uint8ClampedArray(
+      wasm.memory.buffer,
+      this.grid.image_data(),
+      300 * 100 * 4
+    );
+    this.imageData = new ImageData(data, 300, 100);
+
+    this.render();
+  }
+
+  render() {
+    this.ctx.putImageData(this.imageData, 0, 0);
   }
 }
 
