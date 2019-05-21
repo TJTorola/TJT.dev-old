@@ -82,7 +82,7 @@ export const useInterval = (callback, delay) => {
   }, [delay]);
 }
 
-export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
+export const useMaze = ({ cellSize, contentSize }) => {
   const [loading, setLoading] = useState(true);
   const [maze, setMaze] = useState(null);
   const [width, setWidth] = useState(null);
@@ -94,11 +94,17 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
   const [playingInterval, setPlayingInterval] = useState(null);
 
   useEffect(() => {
+    // Allow the app to calculate w & h before initializing the maze
+    if (!contentSize) return;
+
+    // Don't recalculate if size changes
+    if (!loading) return;
+
     (async () => {
       const pkg = await import("./pkg/index.js");
       const wasm = await pkg.default("./pkg/index_bg.wasm");
 
-      const maze = pkg.Maze.new(cellSize, maxWidth, maxHeight);
+      const maze = pkg.Maze.new(cellSize, contentSize.width - 64, contentSize.height - 64);
       const imageData = new ImageData(
         new Uint8ClampedArray(
           wasm.memory.buffer,
@@ -117,7 +123,7 @@ export const useMaze = ({ cellSize, maxWidth, maxHeight }) => {
 
       setLoading(false);
     })();
-  }, []);
+  }, [contentSize]);
 
   const setPlaying = newPlaying => {
     if (!maze) {

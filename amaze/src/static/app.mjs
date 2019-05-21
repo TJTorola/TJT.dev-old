@@ -2,7 +2,7 @@ import { SCHEME as SC } from "./constants.mjs";
 import { useLocation, useStyle, useMaze, getHashRoute } from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { Maze } from "./maze.mjs";
-import { h, useState } from "./react.mjs";
+import { h, useEffect, useRef, useState } from "./react.mjs";
 import { clamp, m } from "./lib/util.mjs";
 
 const STYLE = `
@@ -113,7 +113,23 @@ export const LiAnchor = ({ children, href }) =>
 export const App = () => {
   const loc = useLocation();
   const classes = useStyle(STYLE);
-  const maze = useMaze({ cellSize: 10, maxWidth: 700, maxHeight: 700 });
+
+  const contentRef = useRef();
+  const [contentSize, setContentSize] = useState(null);
+  useEffect(() => {
+    // Wait until content class exists to set contentSize
+    if (!!classes.content) {
+      setContentSize({
+        width: contentRef.current.clientWidth,
+        height: contentRef.current.clientHeight
+      });
+    }
+  }, [classes]);
+
+  const maze = useMaze({
+    cellSize: 10,
+    contentSize,
+  });
 
   return h(
     "main",
@@ -134,7 +150,7 @@ export const App = () => {
         className: classes.slider,
         type: "range",
         min: 0,
-        max: maze.stepCount,
+        max: maze.stepCount - 1,
         value: maze.step,
         onChange: e => {
           const nextStep = clamp(0, maze.stepCount)(e.target.value);
@@ -220,6 +236,6 @@ export const App = () => {
         )
       )
     ),
-    h("section", { className: classes.content }, h(Maze, maze))
+    h("section", { className: classes.content, ref: contentRef }, h(Maze, maze))
   );
 };
