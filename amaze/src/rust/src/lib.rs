@@ -19,6 +19,7 @@ macro_rules! log {
 }
 
 type Coord = (usize, usize);
+type Region = (Coord, Coord);
 type Color = (u8, u8, u8);
 type Change = (Coord, Color);
 type Diff = Vec<Coord>;
@@ -164,9 +165,8 @@ impl Image {
         (x * self.width + y) as usize
     }
 
-    pub fn paint_region(&mut self, from: Coord, to: Coord, color: Color) {
-        let (x1, y1) = from;
-        let (x2, y2) = to;
+    pub fn paint_region(&mut self, region: Region, color: Color) {
+        let ((x1, y1), (x2, y2)) = region;
 
         for x in x1..x2 {
             for y in y1..y2 {
@@ -227,7 +227,7 @@ impl Maze {
         self.process.len()
     }
 
-    fn get_region(&self, coord: Coord) -> (Coord, Coord) {
+    fn get_region(&self, coord: Coord) -> Region {
         let (row, col) = coord;
         let full_size = self.cell_size + self.wall_size;
         (
@@ -245,8 +245,8 @@ impl Maze {
                 Some(c) => c.clone(),
                 None => (0, 0, 0),
             };
-            let (to, from) = self.get_region(*coord);
-            self.image.paint_region(to, from, color);
+            let region = self.get_region(*coord);
+            self.image.paint_region(region, color);
         }
         self.step_idx = new_step_idx;
     }
