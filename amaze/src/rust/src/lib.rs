@@ -25,6 +25,16 @@ type Change = (Coord, Color);
 type Diff = Vec<Coord>;
 type Map = im::HashMap<Coord, Color>;
 type Step = (Diff, Map);
+enum Dir {
+    Up,
+    Down,
+    Right,
+    Left,
+}
+
+const BLACK: Color = (0, 0, 0);
+const GRAY: Color = (127, 127, 127);
+const WHITE: Color = (255, 255, 255);
 
 fn clamp(i: usize, low: usize, high: usize) -> usize {
     if i < low {
@@ -40,7 +50,7 @@ fn randNum(to: usize) -> usize {
     (js_sys::Math::random() * to as f64) as usize
 }
 
-fn generateRandSteps(rows: usize, cols: usize) -> Process {
+fn generateRandProcess(rows: usize, cols: usize) -> Process {
   let mut process = Process::new(None); 
   for _ in 0..255 {
       let changes = (0..5).map(|_| {(
@@ -145,7 +155,7 @@ pub struct Image {
 
 impl Image {
     pub fn new(width: usize, height: usize) -> Image {
-        let data = vec![Pixel::new((0, 0, 0)); (width * height * 4).try_into().unwrap()];
+        let data = vec![Pixel::new(BLACK); (width * height * 4).try_into().unwrap()];
 
         Image {
             width,
@@ -216,7 +226,7 @@ impl Maze {
             rows,
             image,
             step_idx: 0,
-            process: generateRandSteps(rows, cols),
+            process: generateRandProcess(rows, cols),
         }
     }
 
@@ -243,8 +253,8 @@ impl Maze {
         let x1 = (full_size * (x / 2)) + (self.cell_size * (x % 2));
         let y1 = (full_size * (y / 2)) + (self.cell_size * (y % 2));
 
-        let height = if (y % 2 == 0) { self.cell_size } else { self.wall_size };
-        let width = if (x % 2 == 0) { self.cell_size } else { self.wall_size };
+        let height = if y % 2 == 0 { self.cell_size } else { self.wall_size };
+        let width = if x % 2 == 0 { self.cell_size } else { self.wall_size };
 
         let x2 = x1 + width;
         let y2 = y1 + height;
@@ -259,7 +269,7 @@ impl Maze {
         for coord in diff.iter() {
             let color = match map.get(coord) {
                 Some(c) => c.clone(),
-                None => (0, 0, 0),
+                None => BLACK,
             };
             let region = self.get_region(*coord);
             self.image.paint_region(region, color);
