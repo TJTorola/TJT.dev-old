@@ -1,14 +1,22 @@
 mod utils;
 
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+extern crate web_sys;
+extern crate js_sys;
+extern crate im;
 
 use std::convert::TryInto;
 use wasm_bindgen::prelude::*;
 
-extern crate js_sys;
-extern crate im;
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+// A macro to provide `println!(..)`-style syntax for `console.log` logging.
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    }
+}
 
 type Coord = (usize, usize);
 type Color = (u8, u8, u8);
@@ -92,8 +100,10 @@ impl Process {
             }
         } else {
             let to = to.unwrap();
+            let low = std::cmp::min(to, from) + 1;
+            let high = std::cmp::max(to, from);
 
-            (from..to).fold(vec![], |acc, idx| {
+            (low..=high).fold(vec![], |acc, idx| {
                 match self.steps.get(idx) {
                     Some(step) => [&acc[..], &step.0[..]].concat(),
                     None => acc,
@@ -228,7 +238,9 @@ impl Maze {
 
     pub fn set_step(&mut self, new_step_idx: usize) {
         let map = self.process.get_map(new_step_idx).unwrap();
-        for coord in self.process.get_diff(self.step_idx, Some(new_step_idx)).iter() {
+        let diff = self.process.get_diff(self.step_idx, Some(new_step_idx));
+
+        for coord in diff.iter() {
             let color = match map.get(coord) {
                 Some(c) => c.clone(),
                 None => (0, 0, 0),
@@ -236,5 +248,6 @@ impl Maze {
             let (to, from) = self.get_region(*coord);
             self.image.paint_region(to, from, color);
         }
+        self.step_idx = new_step_idx;
     }
 }
