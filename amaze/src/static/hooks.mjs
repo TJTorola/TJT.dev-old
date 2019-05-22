@@ -84,15 +84,14 @@ export const useInterval = (callback, delay) => {
 
 export const useMaze = ({ cellSize, wallSize, contentSize }) => {
   const [loading, setLoading] = useState(true);
-  const [maze, setMaze] = useState(null);
   const [width, setWidth] = useState(null);
   const [height, setHeight] = useState(null);
-  const [imageData, setImageData] = useState(null);
   const [stepCount, setStepCount] = useState(null);
   const [step, _setStep] = useState(0);
   const [playing, _setPlaying] = useState(false);
   const [playingInterval, setPlayingInterval] = useState(null);
 
+  const bridge = useRef();
   useEffect(() => {
     // Allow the app to calculate w & h before initializing the maze
     if (!contentSize) return;
@@ -103,8 +102,20 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
     (async () => {
       const pkg = await import("./pkg/index.js");
       const wasm = await pkg.default("./pkg/index_bg.wasm");
-
       const maze = pkg.Maze.new(cellSize, wallSize, contentSize.width - 64, contentSize.height - 64);
+      bridge.current = { wasm, maze };
+
+      setWidth(maze.width());
+      setHeight(maze.height());
+      setStepCount(maze.step_count());
+
+      setLoading(false);
+    })();
+  }, [contentSize]);
+
+  const setImage = ctx => {
+    if (bridge.current) {
+      const { wasm, maze } = bridge.current;
       const imageData = new ImageData(
         new Uint8ClampedArray(
           wasm.memory.buffer,
@@ -115,20 +126,14 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
         maze.height()
       );
 
-      setImageData(imageData);
-      setMaze(maze);
-      setWidth(maze.width());
-      setHeight(maze.height());
-      setStepCount(maze.step_count());
-
-      setLoading(false);
-    })();
-  }, [contentSize]);
+      ctx.putImageData(imageData, 0, 0);
+    }
+  }
 
   const blockPlaying = useRef(false);
   const setPlaying = newPlaying => {
     blockPlaying.current = false;
-    if (!maze) {
+    if (loading) {
       throw new Error("Cannot setPlaying before maze is loaded");
     }
     if (step === stepCount - 1 && newPlaying) return;
@@ -140,7 +145,7 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
     if (blockPlaying.current) { return; }
 
     if (step < stepCount - 1) {
-      maze.set_step(step + 1);
+      bridge.current.maze.set_step(step + 1);
       _setStep(step + 1);
     } else {
       setPlaying(false);
@@ -149,14 +154,14 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
 
   const setStep = newStep => {
     const newStepNum = parseInt(newStep, 10);
-    if (!maze) {
+    if (loading) {
       throw new Error("Cannot setStep before maze is loaded");
     }
     if (0 > newStepNum || newStepNum >= stepCount) {
       throw new Error("New step is out of bounds");
     }
 
-    maze.set_step(newStepNum);
+    bridge.current.maze.set_step(newStepNum);
     _setStep(newStepNum);
     if (playing) {
       setPlaying(false);
@@ -165,7 +170,7 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
   };
 
   return {
-    imageData,
+    setImage,
     width,
     height,
     loading,
