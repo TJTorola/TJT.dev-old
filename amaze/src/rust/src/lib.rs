@@ -10,24 +10,97 @@ use wasm_bindgen::prelude::*;
 extern crate js_sys;
 extern crate im;
 
-type Diffs = Vec<Diff>;
-type Steps = Vec<Diffs>;
 type Coord = (usize, usize);
 type Color = (u8, u8, u8);
+type Change = (Coord, Color);
+type Diff = Vec<Coord>;
+type Map = im::HashMap<Coord, Color>;
+type Step = (Diff, Map);
+
+fn clamp(i: usize, low: usize, high: usize) -> usize {
+    if i < low {
+        low
+    } else if i >= high {
+        high - 1
+    } else {
+        i
+    }
+}
 
 fn randNum(to: usize) -> usize {
     (js_sys::Math::random() * to as f64) as usize
 }
 
-fn generateRandSteps(rows: usize, cols: usize) -> Steps {
-  (0..256).map(|_| {
-      (0..5).map(|_| {
-          Diff {
-              coord: (randNum(rows), randNum(cols)),
-              color: (randNum(256) as u8, randNum(256) as u8, randNum(256) as u8)
-          }
-      }).collect()
-  }).collect()
+fn generateRandSteps(rows: usize, cols: usize) -> Process {
+  let mut process = Process::new(None); 
+  for _ in 0..255 {
+      let changes = (0..5).map(|_| {(
+          (randNum(rows), randNum(cols)),
+          (randNum(256) as u8, randNum(256) as u8, randNum(256) as u8),
+      )}).collect();
+
+      process.push(changes);
+  }
+  process
+}
+
+pub struct Process {
+  steps: Vec<(Diff, Map)>,
+}
+
+impl Process {
+    pub fn new(init: Option<Map>) -> Process {
+        let init = init.unwrap_or(im::HashMap::new());
+        Process {
+            steps: vec![(vec![], init)]
+        }
+    }
+
+    pub fn get_top_map(&self) -> Map {
+        let top = self.steps.get(self.steps.len() - 1).unwrap();
+        top.1.clone()
+    }
+
+    pub fn get_map(&self, step_idx: usize) -> Option<Map> {
+        match self.steps.get(step_idx) {
+            Some(step) => Some(step.1.clone()),
+            None => None,
+        }
+    }
+
+    pub fn push(&mut self, changes: Vec<Change>) {
+        let diff = changes.iter().map(|(coord, _)| {
+            *coord
+        }).collect();
+
+        let map = changes.iter().fold(self.get_top_map(), |acc, (coord, color)| {
+            acc.update(*coord, *color)
+        });
+
+        self.steps.push((diff, map));
+    }
+
+    pub fn len(&self) -> usize {
+        self.steps.len()
+    }
+
+    pub fn get_diff(&self, from: usize, to: Option<usize>) -> Diff {
+        if to.is_none() {
+            match self.steps.get(from) {
+                Some(step) => step.0.clone(),
+                None => vec![],
+            }
+        } else {
+            let to = to.unwrap();
+
+            (from..to).fold(vec![], |acc, idx| {
+                match self.steps.get(idx) {
+                    Some(step) => [&acc[..], &step.0[..]].concat(),
+                    None => acc,
+                }
+            })
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -94,12 +167,6 @@ impl Image {
     }
 }
 
-pub struct Diff {
-    coord: Coord,
-    color: Color,
-}
-
-
 #[wasm_bindgen]
 pub struct Maze {
     cell_size: usize,
@@ -107,8 +174,8 @@ pub struct Maze {
     cols: usize,
     rows: usize,
     image: Image,
-    step: usize,
-    steps: Steps,
+    step_idx: usize,
+    process: Process,
 }
 
 #[wasm_bindgen]
@@ -129,8 +196,8 @@ impl Maze {
             cols,
             rows,
             image,
-            step: 0,
-            steps: generateRandSteps(rows, cols),
+            step_idx: 0,
+            process: generateRandSteps(rows, cols),
         }
     }
 
@@ -147,7 +214,7 @@ impl Maze {
     }
 
     pub fn step_count(&self) -> usize {
-        self.steps.len()
+        self.process.len()
     }
 
     fn get_region(&self, coord: Coord) -> (Coord, Coord) {
@@ -159,14 +226,15 @@ impl Maze {
         )
     }
 
-    pub fn set_step(&mut self, new_step: usize) {
-        for step in self.step..new_step {
-            for i in 0..self.steps[step].len() {
-                let diff = &self.steps[step][i];
-                let (to, from) = self.get_region(diff.coord);
-                self.image.paint_region(to, from, diff.color);
-            }
+    pub fn set_step(&mut self, new_step_idx: usize) {
+        let map = self.process.get_map(new_step_idx).unwrap();
+        for coord in self.process.get_diff(self.step_idx, Some(new_step_idx)).iter() {
+            let color = match map.get(coord) {
+                Some(c) => c.clone(),
+                None => (0, 0, 0),
+            };
+            let (to, from) = self.get_region(*coord);
+            self.image.paint_region(to, from, color);
         }
-        self.step = new_step;
     }
 }
