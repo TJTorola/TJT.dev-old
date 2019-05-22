@@ -119,7 +119,7 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
       setMaze(maze);
       setWidth(maze.width());
       setHeight(maze.height());
-      setStepCount(maze.stepCount());
+      setStepCount(maze.step_count());
 
       setLoading(false);
     })();

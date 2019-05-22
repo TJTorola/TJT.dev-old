@@ -1,89 +1,25 @@
 mod utils;
 
-use std::convert::TryInto;
-use wasm_bindgen::prelude::*;
-
-extern crate js_sys;
-
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Pixel(u8, u8, u8, u8);
+use std::convert::TryInto;
+use wasm_bindgen::prelude::*;
 
-impl Pixel {
-    pub fn new(r: u8, g: u8, b: u8) -> Pixel {
-        Pixel(r, g, b, 255)
-    }
-
-    pub fn set(&mut self, r: u8, g: u8, b: u8) {
-        self.0 = r;
-        self.1 = g;
-        self.2 = b;
-    }
-}
-
-pub struct Image {
-    width: u32,
-    height: u32,
-    data: Vec<Pixel>,
-}
-
-impl Image {
-    pub fn new(width: u32, height: u32) -> Image {
-        let data = vec![Pixel::new(0, 0, 0); (width * height * 4).try_into().unwrap()];
-
-        Image {
-            width,
-            height,
-            data,
-        }
-    }
-
-    pub fn width(&self) -> u32 {
-        self.width
-    }
-
-    pub fn height(&self) -> u32 {
-        self.height
-    }
-
-    pub fn data(&self) -> *const Pixel {
-        self.data.as_ptr()
-    }
-
-    fn get_idx(&self, x: u32, y: u32) -> usize {
-        (x * self.width + y) as usize
-    }
-
-    pub fn paint_region(&mut self, from: (u32, u32), to: (u32, u32), color: (u8, u8, u8)) {
-        let (x1, y1) = from;
-        let (x2, y2) = to;
-        let (r, g, b) = color;
-
-        for x in x1..x2 {
-            for y in y1..y2 {
-                let idx = self.get_idx(x, y);
-                self.data[idx].set(r, g, b);
-            }
-        }
-    }
-}
-
-pub struct Diff {
-    coord: (u32, u32),
-    color: (u8, u8, u8),
-}
+extern crate js_sys;
+extern crate im;
 
 type Diffs = Vec<Diff>;
 type Steps = Vec<Diffs>;
+type Coord = (usize, usize);
+type Color = (u8, u8, u8);
 
-fn randNum(to: u32) -> u32 {
-    (js_sys::Math::random() * to as f64) as u32
+fn randNum(to: usize) -> usize {
+    (js_sys::Math::random() * to as f64) as usize
 }
 
-fn generateRandSteps(rows: u32, cols: u32) -> Steps {
+fn generateRandSteps(rows: usize, cols: usize) -> Steps {
   (0..256).map(|_| {
       (0..5).map(|_| {
           Diff {
@@ -94,12 +30,82 @@ fn generateRandSteps(rows: u32, cols: u32) -> Steps {
   }).collect()
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Pixel(u8, u8, u8, u8);
+
+impl Pixel {
+    pub fn new(color: Color) -> Pixel {
+        let (r, g, b) = color;
+        Pixel(r, g, b, 255)
+    }
+
+    pub fn set(&mut self, color: Color) {
+        let (r, g, b) = color;
+        self.0 = r;
+        self.1 = g;
+        self.2 = b;
+    }
+}
+
+pub struct Image {
+    width: usize,
+    height: usize,
+    data: Vec<Pixel>,
+}
+
+impl Image {
+    pub fn new(width: usize, height: usize) -> Image {
+        let data = vec![Pixel::new((0, 0, 0)); (width * height * 4).try_into().unwrap()];
+
+        Image {
+            width,
+            height,
+            data,
+        }
+    }
+
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    pub fn height(&self) -> usize {
+        self.height
+    }
+
+    pub fn data(&self) -> *const Pixel {
+        self.data.as_ptr()
+    }
+
+    fn get_idx(&self, coord: Coord) -> usize {
+        let (x, y) = coord;
+        (x * self.width + y) as usize
+    }
+
+    pub fn paint_region(&mut self, from: Coord, to: Coord, color: Color) {
+        let (x1, y1) = from;
+        let (x2, y2) = to;
+
+        for x in x1..x2 {
+            for y in y1..y2 {
+                let idx = self.get_idx((x, y));
+                self.data[idx].set(color);
+            }
+        }
+    }
+}
+
+pub struct Diff {
+    coord: Coord,
+    color: Color,
+}
+
+
 #[wasm_bindgen]
 pub struct Maze {
-    cell_size: u32,
-    wall_size: u32,
-    cols: u32,
-    rows: u32,
+    cell_size: usize,
+    wall_size: usize,
+    cols: usize,
+    rows: usize,
     image: Image,
     step: usize,
     steps: Steps,
@@ -107,7 +113,7 @@ pub struct Maze {
 
 #[wasm_bindgen]
 impl Maze {
-    pub fn new(cell_size: u32, wall_size: u32, max_width: u32, max_height: u32) -> Maze {
+    pub fn new(cell_size: usize, wall_size: usize, max_width: usize, max_height: usize) -> Maze {
         let full_size = wall_size + cell_size;
 
         let rows = (max_height + wall_size) / full_size;
@@ -132,19 +138,20 @@ impl Maze {
         self.image.data()
     }
 
-    pub fn width(&self) -> u32 {
+    pub fn width(&self) -> usize {
         self.image.width()
     }
 
-    pub fn height(&self) -> u32 {
+    pub fn height(&self) -> usize {
         self.image.height()
     }
 
-    pub fn stepCount(&self) -> usize {
+    pub fn step_count(&self) -> usize {
         self.steps.len()
     }
 
-    fn get_region(&self, row: u32, col: u32) -> ((u32, u32), (u32, u32)) {
+    fn get_region(&self, coord: Coord) -> (Coord, Coord) {
+        let (row, col) = coord;
         let full_size = self.cell_size + self.wall_size;
         (
             (row * full_size, col * full_size),
@@ -156,8 +163,7 @@ impl Maze {
         for step in self.step..new_step {
             for i in 0..self.steps[step].len() {
                 let diff = &self.steps[step][i];
-                let (row, col) = diff.coord;
-                let (to, from) = self.get_region(row, col);
+                let (to, from) = self.get_region(diff.coord);
                 self.image.paint_region(to, from, diff.color);
             }
         }
