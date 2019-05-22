@@ -44,13 +44,19 @@ fn generateRandSteps(rows: usize, cols: usize) -> Process {
   let mut process = Process::new(None); 
   for _ in 0..255 {
       let changes = (0..5).map(|_| {(
-          (randNum(rows), randNum(cols)),
+          (randNum(cols), randNum(rows)),
           (randNum(256) as u8, randNum(256) as u8, randNum(256) as u8),
       )}).collect();
 
       process.push(changes);
   }
   process
+}
+
+fn generateTestStep(coord: Coord) -> Process {
+    let mut process = Process::new(None);
+    process.push(vec![(coord, (255, 255, 255))]);
+    process
 }
 
 pub struct Process {
@@ -162,7 +168,7 @@ impl Image {
 
     fn get_idx(&self, coord: Coord) -> usize {
         let (x, y) = coord;
-        (x * self.width + y) as usize
+        (y * self.width + x) as usize
     }
 
     pub fn paint_region(&mut self, region: Region, color: Color) {
@@ -193,10 +199,13 @@ impl Maze {
     pub fn new(cell_size: usize, wall_size: usize, max_width: usize, max_height: usize) -> Maze {
         let full_size = wall_size + cell_size;
 
-        let rows = (max_height + wall_size) / full_size;
-        let cols = (max_width + wall_size) / full_size;
-        let height = (rows * full_size) - wall_size;
-        let width = (cols * full_size) - wall_size;
+        let cell_rows = (max_height + wall_size) / full_size;
+        let cell_cols = (max_width + wall_size) / full_size;
+        let height = (cell_rows * full_size) - wall_size;
+        let width = (cell_cols * full_size) - wall_size;
+
+        let rows = (cell_rows * 2) - 1;
+        let cols = (cell_cols * 2) - 1;
 
         let image = Image::new(width, height);
 
@@ -228,12 +237,19 @@ impl Maze {
     }
 
     fn get_region(&self, coord: Coord) -> Region {
-        let (row, col) = coord;
         let full_size = self.cell_size + self.wall_size;
-        (
-            (row * full_size, col * full_size),
-            ((row * full_size) + self.cell_size, (col * full_size) + self.cell_size),
-        )
+        let (x, y) = coord;
+
+        let x1 = (full_size * (x / 2)) + (self.cell_size * (x % 2));
+        let y1 = (full_size * (y / 2)) + (self.cell_size * (y % 2));
+
+        let height = if (y % 2 == 0) { self.cell_size } else { self.wall_size };
+        let width = if (x % 2 == 0) { self.cell_size } else { self.wall_size };
+
+        let x2 = x1 + width;
+        let y2 = y1 + height;
+
+        ((x1, y1), (x2, y2))
     }
 
     pub fn set_step(&mut self, new_step_idx: usize) {
