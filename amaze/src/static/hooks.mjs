@@ -125,7 +125,9 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
     })();
   }, [contentSize]);
 
+  const blockPlaying = useRef(false);
   const setPlaying = newPlaying => {
+    blockPlaying.current = false;
     if (!maze) {
       throw new Error("Cannot setPlaying before maze is loaded");
     }
@@ -135,6 +137,8 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
   };
 
   useInterval(() => {
+    if (blockPlaying.current) { return; }
+
     if (step < stepCount - 1) {
       maze.set_step(step + 1);
       _setStep(step + 1);
@@ -156,6 +160,7 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
     _setStep(newStepNum);
     if (playing) {
       setPlaying(false);
+      blockPlaying.current = true;
     }
   };
 
