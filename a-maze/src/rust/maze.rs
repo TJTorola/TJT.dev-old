@@ -32,7 +32,7 @@ impl Maze {
             wall_size,
             image,
             step_idx: 0,
-            process: generators::hilburt(),
+            process: generators::random((cell_cols * 2) + 1, (cell_rows * 2) + 1),
         }
     }
 

@@ -6,6 +6,7 @@ mod maze;
 mod pixel;
 mod process;
 mod types;
+mod utils;
 
 extern crate web_sys;
 
