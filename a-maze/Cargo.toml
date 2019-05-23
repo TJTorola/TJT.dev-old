@@ -1,7 +1,10 @@
 [package]
 authors = ["Tyler Torola <Tyler@TJT.Codes>"]
+description = "A maze generation/solution algorithm visulizer"
 edition = "2018"
+license = "GPL-3.0-only"
 name = "a_maze"
+repository = "https://github.com/TJTorola/tjt.dev"
 version = "0.1.0"
 
 [lib]
