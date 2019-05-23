@@ -2,7 +2,7 @@ import { App } from "./app.mjs";
 import { StyleContext, Css } from "./context.mjs";
 import { Fragment, h, render, unmount } from "./react.mjs";
 
-class Amaze extends HTMLElement {
+class AMaze extends HTMLElement {
   constructor() {
     super();
     this.css = new Css();
@@ -19,4 +19,4 @@ class Amaze extends HTMLElement {
   }
 }
 
-customElements.define("a-maze", Amaze);
+customElements.define("a-maze", AMaze);

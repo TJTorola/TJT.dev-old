@@ -1,7 +1,7 @@
 [package]
 authors = ["Tyler Torola <Tyler@TJT.Codes>"]
 edition = "2018"
-name = "amaze"
+name = "a_maze"
 version = "0.1.0"
 
 [lib]

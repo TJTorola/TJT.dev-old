@@ -135,7 +135,7 @@ export const App = () => {
   return h(
     "main",
     { className: classes.main },
-    h("div", { className: classes.title }, h("h1", {}, "A maze")),
+    h("div", { className: classes.title }, h("h1", {}, "A Maze")),
     h(
       "header",
       { className: classes.header },
