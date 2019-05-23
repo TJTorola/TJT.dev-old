@@ -28,4 +28,4 @@ serve:
 	${MAKE} && cd www/ && http-server -c-1
 
 watch:
-	bash ./scripts/watch.sh
+	${SHELL} ./scripts/watch.sh
