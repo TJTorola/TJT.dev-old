@@ -1,4 +1,4 @@
-use super::process::{ Process };
+use super::process::Process;
 use super::types::*;
 
 pub enum Dir {

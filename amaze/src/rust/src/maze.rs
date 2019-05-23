@@ -1,8 +1,8 @@
-use super::constants::{ BLACK };
+use super::constants::BLACK;
 use super::generators;
 use super::image::Image;
 use super::pixel::Pixel;
-use super::process::{ Process };
+use super::process::Process;
 use super::types::*;
 use wasm_bindgen::prelude::*;
 
@@ -66,8 +66,16 @@ impl Maze {
         let x1 = (full_size * (x / 2)) + (self.cell_size * (x % 2));
         let y1 = (full_size * (y / 2)) + (self.cell_size * (y % 2));
 
-        let height = if y % 2 == 0 { self.cell_size } else { self.wall_size };
-        let width = if x % 2 == 0 { self.cell_size } else { self.wall_size };
+        let height = if y % 2 == 0 {
+            self.cell_size
+        } else {
+            self.wall_size
+        };
+        let width = if x % 2 == 0 {
+            self.cell_size
+        } else {
+            self.wall_size
+        };
 
         let x2 = x1 + width;
         let y2 = y1 + height;

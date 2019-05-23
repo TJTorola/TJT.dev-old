@@ -1,6 +1,6 @@
-use super::constants::{ WHITE };
-use super::graph::{ Graph, Dir };
-use super::process::{ Process };
+use super::constants::WHITE;
+use super::graph::{Dir, Graph};
+use super::process::Process;
 
 pub fn hilburt() -> Process {
     let mut graph = Graph::new((0, 0), WHITE);
@@ -39,4 +39,3 @@ pub fn hilburt() -> Process {
 
     graph.into_process()
 }
-

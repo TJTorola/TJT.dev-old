@@ -1,17 +1,17 @@
 extern crate im;
 
-use im::HashMap as ImHashMap;
 use super::types::*;
+use im::HashMap as ImHashMap;
 
 pub struct Process {
-  steps: Vec<(Diff, Map)>,
+    steps: Vec<(Diff, Map)>,
 }
 
 impl Process {
     pub fn new(init: Option<Map>) -> Process {
         let init = init.unwrap_or(ImHashMap::new());
         Process {
-            steps: vec![(vec![], init)]
+            steps: vec![(vec![], init)],
         }
     }
 
@@ -28,13 +28,13 @@ impl Process {
     }
 
     pub fn push(&mut self, changes: Vec<Change>) {
-        let diff = changes.iter().map(|(coord, _)| {
-            *coord
-        }).collect();
+        let diff = changes.iter().map(|(coord, _)| *coord).collect();
 
-        let map = changes.iter().fold(self.get_top_map(), |acc, (coord, color)| {
-            acc.update(*coord, *color)
-        });
+        let map = changes
+            .iter()
+            .fold(self.get_top_map(), |acc, (coord, color)| {
+                acc.update(*coord, *color)
+            });
 
         self.steps.push((diff, map));
     }
@@ -54,11 +54,9 @@ impl Process {
             let low = std::cmp::min(to, from) + 1;
             let high = std::cmp::max(to, from);
 
-            (low..=high).fold(vec![], |acc, idx| {
-                match self.steps.get(idx) {
-                    Some(step) => [&acc[..], &step.0[..]].concat(),
-                    None => acc,
-                }
+            (low..=high).fold(vec![], |acc, idx| match self.steps.get(idx) {
+                Some(step) => [&acc[..], &step.0[..]].concat(),
+                None => acc,
             })
         }
     }
