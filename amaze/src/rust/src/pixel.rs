@@ -1,4 +1,4 @@
-use super::color::Color;
+use super::types::*;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Pixel(u8, u8, u8, u8);

@@ -1,4 +1,4 @@
-use super::color::{ WHITE };
+use super::constants::{ WHITE };
 use super::process::{ Process };
 use super::graph::{ Graph, Dir };
 

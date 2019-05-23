@@ -1,4 +1,5 @@
-mod color;
+mod types;
+mod constants;
 mod image;
 mod pixel;
 mod process;

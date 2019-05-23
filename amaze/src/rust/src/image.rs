@@ -1,8 +1,6 @@
 use super::pixel::Pixel;
-use super::color::{ BLACK, Color };
-
-pub type Coord = (usize, usize);
-pub type Region = (Coord, Coord);
+use super::constants::{ BLACK };
+use super::types::*;
 
 pub struct Image {
     width: usize,

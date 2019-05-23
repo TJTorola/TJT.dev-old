@@ -1,6 +1,5 @@
-use super::image::Coord;
-use super::process::{ Process, Change };
-use super::color::Color;
+use super::process::{ Process };
+use super::types::*;
 
 pub enum Dir {
     Up,

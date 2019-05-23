@@ -1,12 +1,7 @@
 extern crate im;
 
 use im::HashMap as ImHashMap;
-use super::color::Color;
-use super::image::Coord;
-
-pub type Change = (Coord, Color);
-pub type Diff = Vec<Coord>;
-pub type Map = ImHashMap<Coord, Color>;
+use super::types::*;
 
 pub struct Process {
   steps: Vec<(Diff, Map)>,

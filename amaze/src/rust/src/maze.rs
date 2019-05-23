@@ -1,6 +1,7 @@
 use wasm_bindgen::prelude::*;
-use super::color::{ BLACK };
-use super::image::{ Image, Coord, Region };
+use super::constants::{ BLACK };
+use super::types::*;
+use super::image::Image;
 use super::pixel::Pixel;
 use super::process::{ Process };
 use super::generators;
