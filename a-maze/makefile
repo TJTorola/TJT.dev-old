@@ -1,15 +1,33 @@
 SHELL := /bin/bash
+MAKE := ${MAKE} --no-print-directory
 
-static_files = $(shell find -L src/static -type f | sed -e 's/src\/static/www/g')
+PKG_FILES := www/pkg/index_bg.d.ts
+PKG_FILES += www/pkg/index_bg.wasm
+PKG_FILES += www/pkg/index.d.ts
+PKG_FILES += www/pkg/index.js
+PKG_FILES += www/pkg/LICENSE.txt
+PKG_FILES += www/pkg/package.json
+STATIC_FILES := $(shell find -L src/static -type f | sed -e 's/src\/static/www/g')
 
-all: pkg $(static_files)
+all: ${PKG_FILES} $(STATIC_FILES)
 
-$(static_files) : www/% : src/static/%
+$(STATIC_FILES) : www/% : src/static/%
 	mkdir -p $(@D)
 	cp $< $@
 
-pkg: src/rust
-	wasm-pack build --out-dir ../../www/pkg --out-name index --target web --debug
+${PKG_FILES} : src/rust/*.rs
+	wasm-pack build --out-dir www/pkg --out-name index --target web --debug
+
+dev:
+	${MAKE} serve & ${MAKE} watch
 
 clean:
 	rm -rf www
+
+serve:
+	${MAKE} && cd www/ && http-server -c-1
+
+watch:
+	while true; do \
+		inotifywait -rqe close_write . | git check-ignore -nv --stdin || ${MAKE}; \
+	done
