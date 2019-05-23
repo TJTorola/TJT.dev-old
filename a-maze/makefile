@@ -28,6 +28,4 @@ serve:
 	${MAKE} && cd www/ && http-server -c-1
 
 watch:
-	while true; do \
-		inotifywait -rqe close_write . | git check-ignore -nv --stdin || ${MAKE}; \
-	done
+	bash ./scripts/watch.sh
