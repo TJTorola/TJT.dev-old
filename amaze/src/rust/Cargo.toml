@@ -1,5 +1,5 @@
 [package]
-name = "a-maze"
+name = "amaze"
 version = "0.1.0"
 authors = ["Tyler Torola <Tyler@TJT.Codes>"]
 edition = "2018"
