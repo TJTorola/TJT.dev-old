@@ -1,31 +1,25 @@
 [package]
-name = "amaze"
-version = "0.1.0"
 authors = ["Tyler Torola <Tyler@TJT.Codes>"]
 edition = "2018"
+name = "amaze"
+version = "0.1.0"
 
 [lib]
-path = "src/rust/lib.rs"
 crate-type = ["cdylib", "rlib"]
+path = "src/rust/lib.rs"
 
 [features]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-wasm-bindgen = "0.2"
 console_error_panic_hook = { version = "0.1.1", optional = true }
-wee_alloc = { version = "0.4.2", optional = true }
-js-sys = "0.3"
 im = "13.0"
+js-sys = "0.3"
+wasm-bindgen = "0.2"
+wee_alloc = { version = "0.4.2", optional = true }
 
 [dependencies.web-sys]
 version = "0.3"
 features = [
   "console",
 ]
-
-[dev-dependencies]
-wasm-bindgen-test = "0.2"
-
-[profile.release]
-opt-level = "s"
