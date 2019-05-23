@@ -102,6 +102,7 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
     (async () => {
       const pkg = await import("./pkg/index.js");
       const wasm = await pkg.default("./pkg/index_bg.wasm");
+      pkg.a_maze_init();
       const maze = pkg.Maze.new(cellSize, wallSize, contentSize.width - 64, contentSize.height - 64);
       bridge.current = { wasm, maze };
 

@@ -11,6 +11,11 @@ use wasm_bindgen::prelude::*;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
+#[wasm_bindgen]
+pub fn a_maze_init() {
+    console_error_panic_hook::set_once();
+}
+
 // A macro to provide `println!(..)`-style syntax for `console.log` logging.
 macro_rules! log {
     ( $( $t:tt )* ) => {
@@ -25,7 +30,7 @@ type Change = (Coord, Color);
 type Diff = Vec<Coord>;
 type Map = im::HashMap<Coord, Color>;
 type Step = (Diff, Map);
-enum Dir {
+pub enum Dir {
     Up,
     Down,
     Right,
@@ -50,23 +55,95 @@ fn randNum(to: usize) -> usize {
     (js_sys::Math::random() * to as f64) as usize
 }
 
-fn generateRandProcess(rows: usize, cols: usize) -> Process {
-  let mut process = Process::new(None); 
-  for _ in 0..255 {
-      let changes = (0..5).map(|_| {(
-          (randNum(cols), randNum(rows)),
-          (randNum(256) as u8, randNum(256) as u8, randNum(256) as u8),
-      )}).collect();
+fn generateDfsProcess() -> Process {
+    let mut graph = Graph::new((0, 0), WHITE);
+    graph.make_step();
 
-      process.push(changes);
-  }
-  process
+    graph.walk(Dir::Right);
+    graph.make_step();
+    graph.walk(Dir::Down);
+    graph.make_step();
+    graph.walk(Dir::Left);
+    graph.make_step();
+    graph.walk(Dir::Down);
+    graph.make_step();
+    graph.walk(Dir::Down);
+    graph.make_step();
+    graph.walk(Dir::Right);
+    graph.make_step();
+    graph.walk(Dir::Up);
+    graph.make_step();
+    graph.walk(Dir::Right);
+    graph.make_step();
+    graph.walk(Dir::Down);
+    graph.make_step();
+    graph.walk(Dir::Right);
+    graph.make_step();
+    graph.walk(Dir::Up);
+    graph.make_step();
+    graph.walk(Dir::Up);
+    graph.make_step();
+    graph.walk(Dir::Left);
+    graph.make_step();
+    graph.walk(Dir::Up);
+    graph.make_step();
+    graph.walk(Dir::Right);
+    graph.make_step();
+
+    graph.into_process()
 }
 
-fn generateTestStep(coord: Coord) -> Process {
-    let mut process = Process::new(None);
-    process.push(vec![(coord, (255, 255, 255))]);
-    process
+pub struct Graph {
+    process: Process,
+    changes: Vec<Change>,
+    coord: Coord,
+    bg: Color,
+}
+
+impl Graph {
+    pub fn new(coord: Coord, bg: Color) -> Graph {
+        Graph {
+            process: Process::new(None),
+            changes: vec![(coord, bg)],
+            coord,
+            bg,
+        }
+    }
+
+    pub fn set_bg(&mut self, bg: Color) {
+        self.bg = bg;
+    }
+
+    pub fn set_coord(&mut self, coord: Coord) {
+        self.coord = coord;
+    }
+
+    pub fn fill(&mut self) {
+        self.changes.push((self.coord, self.bg))
+    }
+
+    pub fn walk(&mut self, dir: Dir) {
+        let (x, y) = self.coord;
+        let (wall_coord, cell_coord) = match dir {
+            Dir::Up => ((x, y - 1), (x, y - 2)),
+            Dir::Down => ((x, y + 1), (x, y + 2)),
+            Dir::Right => ((x + 1, y), (x + 2, y)),
+            Dir::Left => ((x - 1, y), (x - 2, y)),
+        };
+
+        self.changes.push((wall_coord, self.bg));
+        self.changes.push((cell_coord, self.bg));
+        self.coord = cell_coord;
+    }
+
+    pub fn make_step(&mut self) {
+        self.process.push(self.changes.clone());
+        self.changes = vec![];
+    }
+
+    pub fn into_process(self) -> Process {
+        self.process
+    }
 }
 
 pub struct Process {
@@ -226,7 +303,7 @@ impl Maze {
             rows,
             image,
             step_idx: 0,
-            process: generateRandProcess(rows, cols),
+            process: generateDfsProcess(),
         }
     }
 
