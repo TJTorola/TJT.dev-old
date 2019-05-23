@@ -15,7 +15,7 @@ $(STATIC_FILES) : www/% : src/static/%
 	mkdir -p $(@D)
 	cp $< $@
 
-${PKG_FILES} : src/rust/*.rs
+${PKG_FILES} : src/rust/* Cargo.toml
 	wasm-pack build --out-dir www/pkg --out-name index --target web --debug
 
 dev:
