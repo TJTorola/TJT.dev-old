@@ -46,4 +46,8 @@ impl Image {
             }
         }
     }
+
+    pub fn clear(&mut self) {
+        self.paint_region(((0, 0), (self.width, self.height)), BLACK);
+    }
 }

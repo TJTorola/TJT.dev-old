@@ -82,7 +82,8 @@ impl Maze {
 
     pub fn set_generator(&mut self, generator: Generator) {
         self.process = generator.call(self.cell_cols, self.cell_rows);
-        self.set_step(0);
+        self.step_idx = 0;
+        self.image.clear();
     }
 
     pub fn set_step(&mut self, new_step_idx: usize) {
