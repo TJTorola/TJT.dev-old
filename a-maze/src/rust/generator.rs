@@ -2,6 +2,7 @@ use super::constants::WHITE;
 use super::graph::{Dir, Graph};
 use super::process::Process;
 use super::utils::random_usize;
+use wasm_bindgen::prelude::*;
 
 pub fn hilburt(_cols: usize, _rows: usize) -> Process {
     let mut graph = Graph::new();
@@ -46,20 +47,12 @@ pub fn random(cell_cols: usize, cell_rows: usize) -> Process {
     let cols = (cell_cols * 2) - 1;
     let rows = (cell_rows * 2) - 1;
 
-    let mut process = Process::new(None);
+    let mut process = Process::new(None); 
     for _ in 0..255 {
-        let changes = (0..5)
-            .map(|_| {
-                (
-                    (random_usize(cols), random_usize(rows)),
-                    (
-                        random_usize(256) as u8,
-                        random_usize(256) as u8,
-                        random_usize(256) as u8,
-                    ),
-                )
-            })
-            .collect();
+        let changes = (0..5).map(|_| {(
+            (random_usize(cols), random_usize(rows)),
+            (random_usize(256) as u8, random_usize(256) as u8, random_usize(256) as u8),
+        )}).collect();
 
         process.push(changes);
     }
@@ -80,4 +73,21 @@ pub fn test(cols: usize, rows: usize) -> Process {
     }
 
     graph.into_process()
+}
+
+#[wasm_bindgen]
+pub enum Generator {
+    Hilburt,
+    Random,
+    Test,
+}
+
+impl Generator {
+    pub fn call(&self, cols: usize, rows: usize) -> Process {
+        match &self {
+            Generator::Hilburt => hilburt(cols, rows),
+            Generator::Random => random(cols, rows),
+            Generator::Test => test(cols, rows),
+        }
+    }
 }

@@ -73,23 +73,24 @@ export const useInterval = (callback, delay) => {
   useEffect(() => {
     const tick = () => {
       savedCallback.current();
-    }
+    };
 
     if (delay !== null) {
       let id = setInterval(tick, delay);
       return () => clearInterval(id);
     }
   }, [delay]);
-}
+};
 
 export const useMaze = ({ cellSize, wallSize, contentSize }) => {
-  const [loading, setLoading] = useState(true);
-  const [width, setWidth] = useState(null);
+  const [generator, setGenerator] = useState(null);
   const [height, setHeight] = useState(null);
-  const [stepCount, setStepCount] = useState(null);
-  const [step, _setStep] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [playing, _setPlaying] = useState(false);
   const [playingInterval, setPlayingInterval] = useState(null);
+  const [step, _setStep] = useState(0);
+  const [stepCount, setStepCount] = useState(null);
+  const [width, setWidth] = useState(null);
 
   const bridge = useRef();
   useEffect(() => {
@@ -103,8 +104,13 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
       const pkg = await import("./pkg/index.js");
       const wasm = await pkg.default("./pkg/index_bg.wasm");
       pkg.a_maze_init();
-      const maze = pkg.Maze.new(cellSize, wallSize, contentSize.width - 64, contentSize.height - 64);
-      bridge.current = { wasm, maze };
+      const maze = pkg.Maze.new(
+        cellSize,
+        wallSize,
+        contentSize.width - 64,
+        contentSize.height - 64
+      );
+      bridge.current = { wasm, maze, Generator: pkg.Generator };
 
       setWidth(maze.width());
       setHeight(maze.height());
@@ -113,6 +119,16 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
       setLoading(false);
     })();
   }, [contentSize]);
+
+  useEffect(() => {
+    if (!loading) {
+      const { maze } = bridge.current;
+
+      maze.set_generator(generator);
+      setStepCount(maze.step_count());
+      setStep(0);
+    }
+  }, [generator]);
 
   const setImage = ctx => {
     if (bridge.current) {
@@ -129,7 +145,7 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
 
       ctx.putImageData(imageData, 0, 0);
     }
-  }
+  };
 
   const blockPlaying = useRef(false);
   const setPlaying = newPlaying => {
@@ -142,16 +158,21 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
     _setPlaying(newPlaying);
   };
 
-  useInterval(() => {
-    if (blockPlaying.current) { return; }
+  useInterval(
+    () => {
+      if (blockPlaying.current) {
+        return;
+      }
 
-    if (step < stepCount - 1) {
-      bridge.current.maze.set_step(step + 1);
-      _setStep(step + 1);
-    } else {
-      setPlaying(false);
-    }
-  }, playing ? 0 : null);
+      if (step < stepCount - 1) {
+        bridge.current.maze.set_step(step + 1);
+        _setStep(step + 1);
+      } else {
+        setPlaying(false);
+      }
+    },
+    playing ? 0 : null
+  );
 
   const setStep = newStep => {
     const newStepNum = parseInt(newStep, 10);
@@ -171,6 +192,8 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
   };
 
   return {
+    Generator: bridge.current && bridge.current.Generator,
+    setGenerator,
     setImage,
     width,
     height,

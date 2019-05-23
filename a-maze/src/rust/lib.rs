@@ -1,5 +1,5 @@
 mod constants;
-mod generators;
+mod generator;
 mod graph;
 mod image;
 mod maze;
@@ -30,3 +30,4 @@ pub fn a_maze_init() {
 }
 
 pub use maze::Maze;
+pub use generator::Generator;

@@ -1,5 +1,5 @@
 use super::constants::BLACK;
-use super::generators;
+use super::generator::Generator;
 use super::image::Image;
 use super::pixel::Pixel;
 use super::process::Process;
@@ -10,6 +10,8 @@ use wasm_bindgen::prelude::*;
 pub struct Maze {
     cell_size: usize,
     wall_size: usize,
+    cell_rows: usize,
+    cell_cols: usize,
     image: Image,
     step_idx: usize,
     process: Process,
@@ -30,9 +32,11 @@ impl Maze {
         Maze {
             cell_size,
             wall_size,
+            cell_rows,
+            cell_cols,
             image,
             step_idx: 0,
-            process: generators::test(cell_cols, cell_rows),
+            process: Process::new(None),
         }
     }
 
@@ -74,6 +78,11 @@ impl Maze {
         let y2 = y1 + height;
 
         ((x1, y1), (x2, y2))
+    }
+
+    pub fn set_generator(&mut self, generator: Generator) {
+        self.process = generator.call(self.cell_cols, self.cell_rows);
+        self.set_step(0);
     }
 
     pub fn set_step(&mut self, new_step_idx: usize) {

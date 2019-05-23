@@ -132,6 +132,25 @@ export const App = () => {
     contentSize,
   });
 
+  useEffect(() => {
+    if (maze && maze.Generator && loc.params) {
+      const { Generator, setGenerator } = maze;
+      switch (loc.params.generator) {
+        case "random":
+          setGenerator(Generator.Random);
+          break;
+
+        case "hilburt":
+          setGenerator(Generator.Hilburt);
+          break;
+
+        case "test":
+          setGenerator(Generator.Test);
+          break;
+      }
+    }
+  }, [loc, maze]);
+
   return h(
     "main",
     { className: classes.main },
@@ -171,71 +190,20 @@ export const App = () => {
         { className: classes.links },
         h(
           LiAnchor,
-          { href: getHashRoute({ generator: "dfs" }) },
-          "Depth First Search"
+          { href: getHashRoute({ generator: "hilburt" }) },
+          "Hilburt's Curve"
         ),
         h(
           LiAnchor,
-          { href: getHashRoute({ generator: "kruskals" }) },
-          "Kruskal's Algorithm"
+          { href: getHashRoute({ generator: "random" }) },
+          "Random"
         ),
         h(
           LiAnchor,
-          { href: getHashRoute({ generator: "prims" }) },
-          "Prim's Algorithm"
+          { href: getHashRoute({ generator: "test" }) },
+          "Test"
         ),
-        h(
-          LiAnchor,
-          { href: getHashRoute({ generator: "recur-backtracker" }) },
-          "Recursive Backtracker"
-        ),
-        h(
-          LiAnchor,
-          { href: getHashRoute({ generator: "recur-division" }) },
-          "Recursive Division"
-        ),
-        h(
-          LiAnchor,
-          { href: getHashRoute({ generator: "wilsons" }) },
-          "Wilson's Algorithm"
-        )
       ),
-      h("h2", { className: classes.subheader }, "Solvers"),
-      h("hr"),
-      h(
-        "ul",
-        { className: classes.links },
-        h(
-          LiAnchor,
-          { href: getHashRoute({ solver: "a-star" }) },
-          "A* Algorithm"
-        ),
-        h(
-          LiAnchor,
-          { href: getHashRoute({ ...loc.params, solver: "bfs" }) },
-          "Breadth First Search"
-        ),
-        h(
-          LiAnchor,
-          { href: getHashRoute({ ...loc.params, solver: "dead-end" }) },
-          "Dead End Filling"
-        ),
-        h(
-          LiAnchor,
-          { href: getHashRoute({ ...loc.params, solver: "random" }) },
-          "Random Mouse"
-        ),
-        h(
-          LiAnchor,
-          { href: getHashRoute({ ...loc.params, solver: "tremauxs" }) },
-          "Trémaux's Algorithm"
-        ),
-        h(
-          LiAnchor,
-          { href: getHashRoute({ ...loc.params, solver: "wall-follow" }) },
-          "Wall Follower"
-        )
-      )
     ),
     h("section", { className: classes.content, ref: contentRef }, h(Maze, maze))
   );
