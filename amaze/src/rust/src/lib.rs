@@ -41,20 +41,6 @@ const BLACK: Color = (0, 0, 0);
 const GRAY: Color = (127, 127, 127);
 const WHITE: Color = (255, 255, 255);
 
-fn clamp(i: usize, low: usize, high: usize) -> usize {
-    if i < low {
-        low
-    } else if i >= high {
-        high - 1
-    } else {
-        i
-    }
-}
-
-fn randNum(to: usize) -> usize {
-    (js_sys::Math::random() * to as f64) as usize
-}
-
 fn generateDfsProcess() -> Process {
     let mut graph = Graph::new((0, 0), WHITE);
     graph.make_step();
@@ -101,7 +87,9 @@ pub struct Graph {
 }
 
 impl Graph {
-    pub fn new(coord: Coord, bg: Color) -> Graph {
+    pub fn new(cell_coord: Coord, bg: Color) -> Graph {
+        let (x, y) = cell_coord;
+        let coord = (x * 2, y * 2);
         Graph {
             process: Process::new(None),
             changes: vec![(coord, bg)],
@@ -114,8 +102,9 @@ impl Graph {
         self.bg = bg;
     }
 
-    pub fn set_coord(&mut self, coord: Coord) {
-        self.coord = coord;
+    pub fn set_coord(&mut self, cell_coord: Coord) {
+        let (x, y) = cell_coord;
+        self.coord = (x * 2, y * 2);
     }
 
     pub fn fill(&mut self) {
