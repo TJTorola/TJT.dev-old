@@ -1,5 +1,5 @@
-use super::pixel::Pixel;
 use super::constants::{ BLACK };
+use super::pixel::Pixel;
 use super::types::*;
 
 pub struct Image {

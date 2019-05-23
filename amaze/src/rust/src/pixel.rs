@@ -16,4 +16,3 @@ impl Pixel {
         self.2 = b;
     }
 }
-

@@ -1,11 +1,11 @@
-mod types;
 mod constants;
+mod generators;
+mod graph;
 mod image;
+mod maze;
 mod pixel;
 mod process;
-mod graph;
-mod generators;
-mod maze;
+mod types;
 
 extern crate web_sys;
 

@@ -1,10 +1,10 @@
-use wasm_bindgen::prelude::*;
 use super::constants::{ BLACK };
-use super::types::*;
+use super::generators;
 use super::image::Image;
 use super::pixel::Pixel;
 use super::process::{ Process };
-use super::generators;
+use super::types::*;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub struct Maze {
