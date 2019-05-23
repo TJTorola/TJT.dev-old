@@ -10,8 +10,6 @@ use wasm_bindgen::prelude::*;
 pub struct Maze {
     cell_size: usize,
     wall_size: usize,
-    cols: usize,
-    rows: usize,
     image: Image,
     step_idx: usize,
     process: Process,
@@ -27,16 +25,11 @@ impl Maze {
         let height = (cell_rows * full_size) - wall_size;
         let width = (cell_cols * full_size) - wall_size;
 
-        let rows = (cell_rows * 2) - 1;
-        let cols = (cell_cols * 2) - 1;
-
         let image = Image::new(width, height);
 
         Maze {
             cell_size,
             wall_size,
-            cols,
-            rows,
             image,
             step_idx: 0,
             process: generators::hilburt(),
