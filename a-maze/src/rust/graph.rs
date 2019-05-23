@@ -1,3 +1,4 @@
+use super::constants::WHITE;
 use super::process::Process;
 use super::types::*;
 
@@ -16,14 +17,12 @@ pub struct Graph {
 }
 
 impl Graph {
-    pub fn new(cell_coord: Coord, bg: Color) -> Graph {
-        let (x, y) = cell_coord;
-        let coord = (x * 2, y * 2);
+    pub fn new() -> Graph {
         Graph {
             process: Process::new(None),
-            changes: vec![(coord, bg)],
-            coord,
-            bg,
+            changes: vec![],
+            coord: (0, 0),
+            bg: WHITE,
         }
     }
 
@@ -36,11 +35,17 @@ impl Graph {
         self.coord = (x * 2, y * 2);
     }
 
+    pub fn set_fill(&mut self, cell_coord: Coord, bg: Color) {
+        self.set_coord(cell_coord);
+        self.set_bg(bg);
+        self.fill();
+    }
+
     pub fn fill(&mut self) {
         self.changes.push((self.coord, self.bg))
     }
 
-    pub fn walk(&mut self, dir: Dir) {
+    pub fn walk(&mut self, dir: Dir) -> Coord {
         let (x, y) = self.coord;
         let (wall_coord, cell_coord) = match dir {
             Dir::Up => ((x, y - 1), (x, y - 2)),
@@ -52,6 +57,7 @@ impl Graph {
         self.changes.push((wall_coord, self.bg));
         self.changes.push((cell_coord, self.bg));
         self.coord = cell_coord;
+        cell_coord
     }
 
     pub fn make_step(&mut self) {

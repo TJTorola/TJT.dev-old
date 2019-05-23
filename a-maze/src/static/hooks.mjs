@@ -151,7 +151,7 @@ export const useMaze = ({ cellSize, wallSize, contentSize }) => {
     } else {
       setPlaying(false);
     }
-  }, playing ? 20 : null);
+  }, playing ? 0 : null);
 
   const setStep = newStep => {
     const newStepNum = parseInt(newStep, 10);
