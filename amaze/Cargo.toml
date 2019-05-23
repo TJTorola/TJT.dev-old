@@ -5,6 +5,7 @@ authors = ["Tyler Torola <Tyler@TJT.Codes>"]
 edition = "2018"
 
 [lib]
+path = "src/rust/lib.rs"
 crate-type = ["cdylib", "rlib"]
 
 [features]
@@ -27,5 +28,4 @@ features = [
 wasm-bindgen-test = "0.2"
 
 [profile.release]
-# Tell `rustc` to optimize for small code size.
 opt-level = "s"

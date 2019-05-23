@@ -8,8 +8,8 @@ $(static_files) : www/% : src/static/%
 	mkdir -p $(@D)
 	cp $< $@
 
-pkg: src/rust/src
-	wasm-pack build src/rust --out-dir ../../www/pkg --out-name index --target web --debug
+pkg: src/rust
+	wasm-pack build --out-dir ../../www/pkg --out-name index --target web --debug
 
 clean:
 	rm -rf www
