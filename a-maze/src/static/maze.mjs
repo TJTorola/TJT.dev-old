@@ -11,33 +11,51 @@ import {
 import { Loader } from "./loader.mjs";
 
 export const Maze = () => {
-  const [loading, setLoading] = useState(true);
+  const [renderInfo, setRenderInfo] = useState();
 
-  return loading
-    ? h(LoadingMaze, { setLoading })
-    : h(LoadedMaze)
+  return !renderInfo
+    ? h(LoadingMaze, { setRenderInfo })
+    : h(LoadedMaze, { renderInfo });
 };
 
-const LoadingMaze = ({ setLoading }) => {
+const LoadingMaze = ({ setRenderInfo }) => {
   const worker = useContext(WorkerContext);
   useEffect(() => {
-    worker.send({
-      type: "SETUP",
-      payload: {
-        maxWidth: window.innerWidth - SC.SPACING.NAV_WIDTH - 64,
-        maxHeight: window.innerHeight - SC.SPACING.CONTROL_HEIGHT - 64,
-        cellSize: 10,
-        wallSize: 1
-      }
-    }).then(() => {
-      setLoading(false);
-    });
+    worker
+      .send({
+        type: "SETUP",
+        payload: {
+          maxWidth: window.innerWidth - SC.SPACING.NAV_WIDTH - 64,
+          maxHeight: window.innerHeight - SC.SPACING.CONTROL_HEIGHT - 64,
+          cellSize: 10,
+          wallSize: 1
+        }
+      })
+      .then(renderInfo => {
+        setRenderInfo(renderInfo);
+      });
   }, []);
-  
+
   return h(Loader);
 };
 
-const LoadedMaze = () => {
-  return h('canvas');
-};
+const putImage = (ctx, { buffer, width, height }) =>
+  ctx.putImageData(new ImageData(buffer, width, height), 0, 0);
 
+const LoadedMaze = ({ renderInfo }) => {
+  const [ctx, setCtx] = useState(null);
+  const ref = useCallback(canvas => {
+    if (canvas !== null) {
+      const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+      setCtx(ctx);
+      putImage(ctx, renderInfo);
+    }
+  });
+
+  return h("canvas", {
+    ref,
+    width: renderInfo.width,
+    height: renderInfo.height
+  });
+};

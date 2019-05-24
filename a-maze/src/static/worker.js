@@ -8,14 +8,18 @@ pkg("./pkg/a_maze_bg.wasm").then(
 
     let maze;
     const postRender = id => {
+      const width = maze.width();
+      const height = maze.height();
       postMessage({
         id,
         payload: {
           buffer: new Uint8ClampedArray(
             wasm.memory.buffer,
             maze.image_data(),
-            maze.width() * maze.height() * 4
-          )
+            width * height * 4
+          ),
+          width,
+          height
         }
       });
     };
