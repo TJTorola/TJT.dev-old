@@ -13,3 +13,9 @@ export const useLayoutEffect = React.useLayoutEffect;
 export const useRef = React.useRef;
 export const useReducer = React.useReducer;
 export const useState = React.useState;
+
+export const composeContext = (contexts, children) =>
+  contexts.reduce(
+    (acc, [context, value]) => h(context.Provider, { value }, acc),
+    children
+  );

@@ -66,3 +66,4 @@ export class Css {
 }
 
 export const StyleContext = createContext();
+export const WorkerContext = createContext();

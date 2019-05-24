@@ -1,15 +1,18 @@
 import { App } from "./app.mjs";
-import { StyleContext, Css } from "./context.mjs";
-import { Fragment, h, render, unmount } from "./react.mjs";
+import { WorkerContext, StyleContext, Css } from "./context.mjs";
+import { h, composeContext, render, unmount } from "./react.mjs";
 
-class WasmBridge {
+class AMaze extends HTMLElement {
   constructor() {
+    super();
+
+    this.css = new Css();
     this.msgId = 0;
     this.resolves = [];
     this.rejects = [];
   }
 
-  load() {
+  loadWorker() {
     this.worker = new Worker("./worker.js");
     this.worker.onmessage = this.onMessage.bind(this);
 
@@ -56,22 +59,26 @@ class WasmBridge {
       });
     });
   }
-}
 
-class AMaze extends HTMLElement {
-  constructor() {
-    super();
-    this.css = new Css();
-    this.bridge = new WasmBridge();
-  }
-
-  connectedCallback() {
+  async connectedCallback() {
+    await this.loadWorker();
     this.css.mount();
-    render(h(StyleContext.Provider, { value: this.css }, h(App)), this);
+
+    render(
+      composeContext(
+        [
+          [WorkerContext, { send: this.send.bind(this) }],
+          [StyleContext, this.css]
+        ],
+        h(App)
+      ),
+      this
+    );
   }
 
   disconnectedCallback() {
     this.css.unmount();
+    this.worker.terminate();
     unmount(this);
   }
 }
