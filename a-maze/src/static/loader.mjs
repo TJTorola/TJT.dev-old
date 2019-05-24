@@ -34,10 +34,7 @@ const STYLE = `
   } 
 }`;
 
-export const Loader = ({
-  size = DEFAULT_SIZE,
-  color = DEFAULT_COLOR
-}) => {
+export const Loader = ({ size = DEFAULT_SIZE, color = DEFAULT_COLOR }) => {
   const classes = useStyle(STYLE);
 
   return h(
@@ -47,4 +44,4 @@ export const Loader = ({
       h("div", { key: i, style: { background: color } })
     )
   );
-}
+};

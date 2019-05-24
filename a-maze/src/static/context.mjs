@@ -60,7 +60,7 @@ export class Css {
   }
 
   revoke(css) {
-    const filteredStyles = this._styleEl.innerHTML.replace(css, '');
+    const filteredStyles = this._styleEl.innerHTML.replace(css, "");
     this._styleEl.innerHTML = filteredStyles;
   }
 }

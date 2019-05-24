@@ -77,18 +77,23 @@ export const useRedux = (reducer, _middleware = []) => {
   const stateRef = useRef(reducer(undefined, { type: "@INIT" }));
   const [state, setState] = useState(stateRef.current);
 
-  const store = useRef((() => {
-    const store = { getState: () => stateRef.current };
-    store.dispatch = [thunk, logger, ..._middleware]
-      .reverse()
-      .map(ware => ware(store))
-      .reduce((next, ware) => ware(next), action => {
-        stateRef.current = reducer(stateRef.current, action);
-        setState(stateRef.current);
-      });
+  const store = useRef(
+    (() => {
+      const store = { getState: () => stateRef.current };
+      store.dispatch = [thunk, logger, ..._middleware]
+        .reverse()
+        .map(ware => ware(store))
+        .reduce(
+          (next, ware) => ware(next),
+          action => {
+            stateRef.current = reducer(stateRef.current, action);
+            setState(stateRef.current);
+          }
+        );
 
-    return store
-  })());
+      return store;
+    })()
+  );
 
   return store.current;
 };

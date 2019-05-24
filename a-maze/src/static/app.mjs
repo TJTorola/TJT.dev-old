@@ -1,5 +1,11 @@
 import { SCHEME as SC } from "./constants.mjs";
-import { useAnimationFrame, useLocation, useRedux, useStyle, getHashRoute } from "./hooks.mjs";
+import {
+  useAnimationFrame,
+  useLocation,
+  useRedux,
+  useStyle,
+  getHashRoute
+} from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { Loader } from "./loader.mjs";
 import { h, useCallback, useEffect, useRef, useState } from "./react.mjs";
@@ -65,13 +71,13 @@ const mazeManager = ({ bridge, ctx }) => {
 
     next(action);
   };
-}
+};
 
 const INITIAL_STATE = { loading: true };
 const reducer = (mazeState = INITIAL_STATE, action) => {
   const setField = field => () => ({
     ...mazeState,
-    [field]: action.payload,
+    [field]: action.payload
   });
 
   const ifLoaded = cb => {
@@ -88,7 +94,7 @@ const reducer = (mazeState = INITIAL_STATE, action) => {
         ...mazeState,
         generator: action.payload,
         playing: false,
-        step: 0,
+        step: 0
       }));
 
     case "LOADED": {
@@ -297,7 +303,10 @@ export const App = () => {
     }
   }, [classes]);
 
-  const { store: { dispatch, getState }, canvasRef } = useMaze({
+  const {
+    store: { dispatch, getState },
+    canvasRef
+  } = useMaze({
     cellSize: 16,
     wallSize: 4,
     contentSize
@@ -318,7 +327,8 @@ export const App = () => {
         "button",
         {
           className: classes.control,
-          onClick: () => dispatch({ type: "PLAYING", payload: !getState().playing })
+          onClick: () =>
+            dispatch({ type: "PLAYING", payload: !getState().playing })
         },
         h(getState().playing ? icons.Pause : icons.Play, { size: 23 })
       ),
