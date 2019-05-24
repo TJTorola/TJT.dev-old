@@ -2,6 +2,7 @@ import { SCHEME as SC } from "./constants.mjs";
 import { WorkerContext } from "./context.mjs";
 import { useLocation } from "./hooks.mjs";
 import {
+  Fragment,
   h,
   useContext,
   useEffect,
@@ -63,6 +64,7 @@ const useGeneratorLoc = ctx => {
   const worker = useContext(WorkerContext);
   const loc = useLocation();
   const ctxRef = useRef(ctx);
+  const [loading, setLoading] = useState(false);
 
   if (ctxRef.current !== ctx) {
     ctxRef.current = ctx;
@@ -70,24 +72,33 @@ const useGeneratorLoc = ctx => {
 
   useEffect(() => {
     if (loc.params.generator) {
+      setLoading(true);
       worker
         .send({ type: "SET_GENERATOR", payload: loc.params.generator })
         .then(resp => {
+          setLoading(false);
           if (resp.buffer) {
             putImage(ctxRef.current, resp);
           }
         });
     }
   }, [loc]);
+
+  return { loading };
 };
 
 const LoadedMaze = ({ renderInfo }) => {
   const { ctx, ref } = useCanvasContext(renderInfo);
-  useGeneratorLoc(ctx);
+  const { loading } = useGeneratorLoc(ctx);
 
-  return h("canvas", {
-    ref,
-    width: renderInfo.width,
-    height: renderInfo.height
-  });
+  return h(
+    Fragment,
+    {},
+    h("canvas", {
+      ref,
+      width: renderInfo.width,
+      height: renderInfo.height
+    }),
+    loading ? h(Loader) : null
+  );
 };

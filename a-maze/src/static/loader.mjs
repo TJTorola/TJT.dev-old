@@ -8,6 +8,16 @@ const DEFAULT_SIZE = 60;
 const DEFAULT_COLOR = SC.COLORS.GRAY.S;
 
 const STYLE = `
+~grid {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
+}
+
 ~grid div {
   width: 33.3%;
   height: 33.3%;
