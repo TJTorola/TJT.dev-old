@@ -36,6 +36,22 @@ pkg("./pkg/a_maze_bg.wasm").then(
       });
     };
 
+    const postClear = () => {
+      const width = maze.width();
+      const height = maze.height();
+
+      postMessage({
+        id: 'render',
+        payload: {
+          buffer: null,
+          width,
+          height,
+          stepCount: 0,
+          step
+        }
+      });
+    };
+
     onmessage = ({ data: { type, payload, id } }) => {
       switch (type) {
         case "SETUP": {
@@ -68,10 +84,12 @@ pkg("./pkg/a_maze_bg.wasm").then(
             });
           } else {
             generator = newGenerator;
+            step = 0;
 
             if (maze === undefined) {
               postSuccess(id);
             } else {
+              postClear();
               maze.set_generator(generator);
               postSuccess(id);
               postRender();

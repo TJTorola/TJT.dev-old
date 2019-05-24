@@ -1,5 +1,6 @@
 import { App } from "./app.mjs";
 import { WorkerContext, StyleContext, Css } from "./context.mjs";
+import { getLocation } from "./hooks.mjs";
 import { h, composeContext, render, unmount } from "./react.mjs";
 
 class AMaze extends HTMLElement {
@@ -12,15 +13,32 @@ class AMaze extends HTMLElement {
     this.resolves = [];
     this.rejects = [];
     this.subscribers = [];
+
+    this.setGenerator = this.setGenerator.bind(this);
+  }
+
+  watchLoc() {
+    window.addEventListener("hashchange", this.setGenerator);
+    this.setGenerator();
+  }
+
+  setGenerator() {
+    const { params } = getLocation();
+    this.send({ type: "SET_GENERATOR", payload: params.generator });
   }
 
   loadWorker() {
     this.worker = new Worker("./worker.js");
     this.worker.onmessage = this.onMessage.bind(this);
 
-    return new Promise((res, rej) => {
+    const loadingP = new Promise((res, rej) => {
       this.resolves["init"] = res;
       this.rejects["init"] = rej;
+    });
+
+    return loadingP.then(res => {
+      this.watchLoc();
+      return res;
     });
   }
 
@@ -103,6 +121,7 @@ class AMaze extends HTMLElement {
   disconnectedCallback() {
     this.css.unmount();
     this.worker.terminate();
+    window.removeEventListener("hashchange", this.setGenerator);
     unmount(this);
   }
 }

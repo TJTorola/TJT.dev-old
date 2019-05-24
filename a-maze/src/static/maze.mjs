@@ -55,13 +55,21 @@ const LoadedMaze = ({ renderInfo, setTotalSteps, step }) => {
   useEffect(() => {
     if (ctx) {
       const { buffer, width, height } = renderInfo;
-      ctx.putImageData(new ImageData(buffer, width, height), 0, 0);
+
+      if (buffer) {
+        ctx.putImageData(new ImageData(buffer, width, height), 0, 0);
+      } else {
+        ctx.fillRect(0, 0, width, height);
+      }
     }
   }, [renderInfo, ctx]);
 
-  return h("canvas", {
-    ref,
-    width: renderInfo.width,
-    height: renderInfo.height
-  });
+  return h(Fragment, {},
+    h("canvas", {
+      ref,
+      width: renderInfo.width,
+      height: renderInfo.height
+    }),
+    renderInfo.stepCount === 0 ? h(Loader) : null
+  );
 };

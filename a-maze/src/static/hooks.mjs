@@ -21,7 +21,7 @@ const getParams = hash => {
   );
 };
 
-const getLocation = () => ({
+export const getLocation = () => ({
   route: getRoute(window.location.hash),
   params: getParams(window.location.hash)
 });
