@@ -1,11 +1,10 @@
 import { StyleContext } from "./context.mjs";
 import {
   useContext,
-  useCallback,
-  useRef,
-  useState,
   useEffect,
-  useLayoutEffect
+  useLayoutEffect,
+  useRef,
+  useState
 } from "./react.mjs";
 
 const getRoute = hash => (hash.length > 0 ? hash.slice(1) : "");
@@ -50,6 +49,50 @@ export const useLocation = () => {
   return location;
 };
 
+const thunk = store => next => action => {
+  if (typeof action === "function") {
+    return action(store);
+  } else {
+    return next(action);
+  }
+};
+
+const logger = ({ getState }) => next => action => {
+  const previousState = getState();
+  const result = next(action);
+  const nextState = getState();
+
+  console.groupCollapsed(
+    `%c${action.type}`,
+    "font-weight:bold;font-size:14;color:rgb(23, 162, 184)"
+  );
+  console.log("%cPrevious state: ", "font-weight:bold", previousState);
+  console.log("%cAction: ", "font-weight:bold", action);
+  console.log("%cNext state: ", "font-weight:bold", nextState);
+  console.groupEnd();
+  return result;
+};
+
+export const useRedux = (reducer, _middleware = []) => {
+  const stateRef = useRef(reducer(undefined, { type: "@INIT" }));
+  const [state, setState] = useState(stateRef.current);
+
+  const store = useRef((() => {
+    const store = { getState: () => stateRef.current };
+    store.dispatch = [thunk, logger, ..._middleware]
+      .reverse()
+      .map(ware => ware(store))
+      .reduce((next, ware) => ware(next), action => {
+        stateRef.current = reducer(stateRef.current, action);
+        setState(stateRef.current);
+      });
+
+    return store
+  })());
+
+  return store.current;
+};
+
 export const useStyle = style => {
   const css = useContext(StyleContext);
   const [classes, setClasses] = useState({});
@@ -64,157 +107,21 @@ export const useStyle = style => {
   return classes;
 };
 
-export const useInterval = (callback, delay) => {
-  const savedCallback = useRef();
-  useEffect(() => {
-    savedCallback.current = callback;
+export const useAnimationFrame = callback => {
+  const callbackRef = useRef(callback);
+  useLayoutEffect(() => {
+    callbackRef.current = callback;
   }, [callback]);
 
-  useEffect(() => {
-    const tick = () => {
-      savedCallback.current();
-    };
-
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-};
-
-export const useMaze = ({ cellSize, wallSize, contentSize }) => {
-  const [generator, setGenerator] = useState(null);
-  const [height, setHeight] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [playing, _setPlaying] = useState(false);
-  const [playingInterval, setPlayingInterval] = useState(null);
-  const [step, _setStep] = useState(0);
-  const [stepCount, setStepCount] = useState(null);
-  const [width, setWidth] = useState(null);
-
-  const bridge = useRef();
-  useEffect(() => {
-    // Allow the app to calculate w & h before initializing the maze
-    if (!contentSize) return;
-
-    // Don't recalculate if size changes
-    if (!loading) return;
-
-    (async () => {
-      const pkg = await import("./pkg/index.js");
-      const wasm = await pkg.default("./pkg/index_bg.wasm");
-      pkg.a_maze_init();
-      const maze = pkg.Maze.new(
-        cellSize,
-        wallSize,
-        contentSize.width - 64,
-        contentSize.height - 64
-      );
-      bridge.current = { wasm, maze, Generator: pkg.Generator };
-
-      setWidth(maze.width());
-      setHeight(maze.height());
-      setStepCount(maze.step_count());
-
-      setLoading(false);
-    })();
-  }, [contentSize]);
-
-  useEffect(() => {
-    if (!loading) {
-      const { maze } = bridge.current;
-
-      maze.set_generator(generator);
-      setStepCount(maze.step_count());
-      setStep(0);
-    }
-  }, [generator]);
-
-  const setImage = ctx => {
-    if (bridge.current) {
-      const { wasm, maze } = bridge.current;
-      const imageData = new ImageData(
-        new Uint8ClampedArray(
-          wasm.memory.buffer,
-          maze.image_data(),
-          maze.width() * maze.height() * 4
-        ),
-        maze.width(),
-        maze.height()
-      );
-
-      ctx.putImageData(imageData, 0, 0);
-    }
+  const loop = () => {
+    frameRef.current = requestAnimationFrame(loop);
+    const cb = callbackRef.current;
+    cb();
   };
 
-  const blockPlaying = useRef(false);
-  const setPlaying = newPlaying => {
-    blockPlaying.current = false;
-    if (loading) {
-      throw new Error("Cannot setPlaying before maze is loaded");
-    }
-    if (step === stepCount - 1 && newPlaying) return;
-
-    _setPlaying(newPlaying);
-  };
-
-  useInterval(
-    () => {
-      if (blockPlaying.current) {
-        return;
-      }
-
-      if (step < stepCount - 1) {
-        bridge.current.maze.set_step(step + 1);
-        _setStep(step + 1);
-      } else {
-        setPlaying(false);
-      }
-    },
-    playing ? 0 : null
-  );
-
-  const setStep = newStep => {
-    const newStepNum = parseInt(newStep, 10);
-    if (loading) {
-      throw new Error("Cannot setStep before maze is loaded");
-    }
-    if (0 > newStepNum || newStepNum >= stepCount) {
-      throw new Error("New step is out of bounds");
-    }
-
-    bridge.current.maze.set_step(newStepNum);
-    _setStep(newStepNum);
-    if (playing) {
-      setPlaying(false);
-      blockPlaying.current = true;
-    }
-  };
-
-  return {
-    Generator: bridge.current && bridge.current.Generator,
-    setGenerator,
-    setImage,
-    width,
-    height,
-    loading,
-    stepCount,
-    step,
-    setStep,
-    playing,
-    setPlaying
-  };
-};
-
-export const useCtx = () => {
-  const [ctx, setCtx] = useState(null);
-  const ref = useCallback(canvas => {
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      ctx.imageSmoothingEnabled = false;
-      setCtx(ctx);
-    }
+  const frameRef = useRef();
+  useLayoutEffect(() => {
+    frameRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(frameRef.current);
   }, []);
-
-  return { ref, ctx };
 };
