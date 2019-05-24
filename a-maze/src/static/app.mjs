@@ -1,7 +1,6 @@
 import { SCHEME as SC } from "./constants.mjs";
 import { useLocation, useStyle, getHashRoute } from "./hooks.mjs";
 import * as icons from "./icons.mjs";
-import { Loader } from "./loader.mjs";
 import { Maze } from "./maze.mjs";
 import { h } from "./react.mjs";
 
@@ -153,6 +152,6 @@ export const App = () => {
         h(LiAnchor, { href: getHashRoute({ generator: "test" }) }, "Test")
       )
     ),
-    h("section", { className: classes.content }, !classes ? h(Loader) : h(Maze))
+    h("section", { className: classes.content }, h(Maze))
   );
 };
