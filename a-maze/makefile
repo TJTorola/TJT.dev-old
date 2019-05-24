@@ -1,22 +1,21 @@
 SHELL := /bin/bash
 MAKE := ${MAKE} --no-print-directory
 
-PKG_FILES := www/pkg/index_bg.d.ts
-PKG_FILES += www/pkg/index_bg.wasm
-PKG_FILES += www/pkg/index.d.ts
-PKG_FILES += www/pkg/index.js
-PKG_FILES += www/pkg/LICENSE.txt
-PKG_FILES += www/pkg/package.json
 STATIC_FILES := $(shell find -L src/static -type f | sed -e 's/src\/static/www/g')
 
-all: ${PKG_FILES} $(STATIC_FILES)
+all: www/pkg/* $(STATIC_FILES)
 
 $(STATIC_FILES) : www/% : src/static/%
 	mkdir -p $(@D)
 	cp $< $@
 
-${PKG_FILES} : src/rust/* Cargo.toml
-	wasm-pack build --out-dir www/pkg --out-name index --target web --debug
+www/pkg/* : src/rust/* Cargo.toml
+	cargo build --target wasm32-unknown-unknown
+	wasm-bindgen target/wasm32-unknown-unknown/debug/a_maze.wasm \
+			--no-modules \
+			--no-modules-global pkg \
+			--no-typescript \
+			--out-dir www/pkg 
 
 dev:
 	${MAKE} serve & ${MAKE} watch
