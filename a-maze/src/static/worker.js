@@ -7,6 +7,7 @@ pkg("./pkg/a_maze_bg.wasm").then(
     const { Maze, Generator } = pkg;
 
     let maze;
+    let generator;
     const postRender = id => {
       const width = maze.width();
       const height = maze.height();
@@ -40,20 +41,26 @@ pkg("./pkg/a_maze_bg.wasm").then(
         }
 
         case "SET_GENERATOR": {
-          const generator = {
+          const newGenerator = {
             hilburt: Generator.Hilburt,
             random: Generator.Random,
             test: Generator.Test
           }[payload];
 
-          if (generator === undefined) {
+          if (newGenerator === undefined) {
             postMessage({
               id,
               error: `Unknown generator payload '${payload}'`
             });
           } else {
-            maze.set_generator(generator);
-            postRender(id);
+            generator = newGenerator;
+
+            if (maze === undefined) {
+              postMessage({ id, payload: { set: true } });
+            } else {
+              maze.set_generator(generator);
+              postRender(id);
+            }
           }
 
           break;

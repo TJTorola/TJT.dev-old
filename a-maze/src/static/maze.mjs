@@ -1,5 +1,6 @@
 import { SCHEME as SC } from "./constants.mjs";
 import { WorkerContext } from "./context.mjs";
+import { useLocation } from "./hooks.mjs";
 import {
   h,
   useContext,
@@ -42,7 +43,8 @@ const LoadingMaze = ({ setRenderInfo }) => {
 const putImage = (ctx, { buffer, width, height }) =>
   ctx.putImageData(new ImageData(buffer, width, height), 0, 0);
 
-const LoadedMaze = ({ renderInfo }) => {
+// Hook up canvas.ctx state and put the initial image
+const useCanvasContext = renderInfo => {
   const [ctx, setCtx] = useState(null);
   const ref = useCallback(canvas => {
     if (canvas !== null) {
@@ -52,6 +54,36 @@ const LoadedMaze = ({ renderInfo }) => {
       putImage(ctx, renderInfo);
     }
   });
+
+  return { ctx, ref };
+};
+
+// Keep tabs on location and sync with worker as needed
+const useGeneratorLoc = ctx => {
+  const worker = useContext(WorkerContext);
+  const loc = useLocation();
+  const ctxRef = useRef(ctx);
+
+  if (ctxRef.current !== ctx) {
+    ctxRef.current = ctx;
+  }
+
+  useEffect(() => {
+    if (loc.params.generator) {
+      worker
+        .send({ type: "SET_GENERATOR", payload: loc.params.generator })
+        .then(resp => {
+          if (resp.buffer) {
+            putImage(ctxRef.current, resp);
+          }
+        });
+    }
+  }, [loc]);
+};
+
+const LoadedMaze = ({ renderInfo }) => {
+  const { ctx, ref } = useCanvasContext(renderInfo);
+  useGeneratorLoc(ctx);
 
   return h("canvas", {
     ref,
