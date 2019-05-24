@@ -2,7 +2,7 @@
 
 import { SCHEME as SC } from "./constants.mjs";
 import { useStyle } from "./hooks.mjs";
-import { h } from "./react.mjs";
+import { h, forwardRef } from "./react.mjs";
 
 const DEFAULT_SIZE = 60;
 const DEFAULT_COLOR = SC.COLORS.GRAY.S;

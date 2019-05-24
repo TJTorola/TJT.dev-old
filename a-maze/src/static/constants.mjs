@@ -23,9 +23,9 @@ export const SCHEME = {
     M: "16px",
     L: "32px",
     XL: "64px",
-    CONTROL_HEIGHT: "64px",
+    CONTROL_HEIGHT: "64",
     MIN_APP_HEIGHT: "512px",
     MIN_APP_WIDTH: "1024px",
-    NAV_WIDTH: "256px"
+    NAV_WIDTH: "256"
   }
 };

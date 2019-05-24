@@ -2,6 +2,7 @@ import { SCHEME as SC } from "./constants.mjs";
 import { useLocation, useStyle, getHashRoute } from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { Loader } from "./loader.mjs";
+import { Maze } from "./maze.mjs";
 import { h } from "./react.mjs";
 
 const STYLE = `
@@ -20,6 +21,7 @@ button {
 
 canvas {
   border: ${SC.SPACING.XS} solid black;
+  background: black;
 }
 
 ~content {
@@ -69,8 +71,8 @@ canvas {
 ~main {
   display: grid;
   font-family: Helvetica, Arial, sans-serif;
-  grid-template-columns: ${SC.SPACING.NAV_WIDTH} auto;
-  grid-template-rows: ${SC.SPACING.CONTROL_HEIGHT} auto;
+  grid-template-columns: ${SC.SPACING.NAV_WIDTH}px auto;
+  grid-template-rows: ${SC.SPACING.CONTROL_HEIGHT}px auto;
   height: 100%;
   min-height: ${SC.SPACING.MIN_APP_HEIGHT};
   min-width: ${SC.SPACING.MIN_APP_WIDTH};
@@ -151,6 +153,6 @@ export const App = () => {
         h(LiAnchor, { href: getHashRoute({ generator: "test" }) }, "Test")
       )
     ),
-    h("section", { className: classes.content }, h(Loader))
+    h("section", { className: classes.content }, !classes ? h(Loader) : h(Maze))
   );
 };
