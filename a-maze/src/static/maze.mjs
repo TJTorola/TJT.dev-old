@@ -12,12 +12,12 @@ import {
 } from "./react.mjs";
 import { Loader } from "./loader.mjs";
 
-export const Maze = () => {
+export const Maze = ({ setTotalSteps, step }) => {
   const [renderInfo, setRenderInfo] = useState();
 
   return !renderInfo
     ? h(LoadingMaze, { setRenderInfo })
-    : h(LoadedMaze, { renderInfo });
+    : h(LoadedMaze, { renderInfo, setTotalSteps, step });
 };
 
 const LoadingMaze = ({ setRenderInfo }) => {
@@ -44,31 +44,25 @@ const LoadingMaze = ({ setRenderInfo }) => {
 const putImage = (ctx, { buffer, width, height }) =>
   ctx.putImageData(new ImageData(buffer, width, height), 0, 0);
 
-// Hook up canvas.ctx state and put the initial image
-const useCanvasContext = renderInfo => {
+const LoadedMaze = ({ renderInfo, setTotalSteps, step }) => {
+  // Hook up canvas.ctx state and put the initial image
   const [ctx, setCtx] = useState(null);
+  const ctxRef = useRef(ctx);
+
   const ref = useCallback(canvas => {
     if (canvas !== null) {
       const ctx = canvas.getContext("2d");
       ctx.imageSmoothingEnabled = false;
       setCtx(ctx);
+      ctxRef.current = ctx;
       putImage(ctx, renderInfo);
     }
   });
 
-  return { ctx, ref };
-};
-
-// Keep tabs on location and sync with worker as needed
-const useGeneratorLoc = ctx => {
+  // Keep tabs on location and sync with worker as needed
   const worker = useContext(WorkerContext);
   const loc = useLocation();
-  const ctxRef = useRef(ctx);
   const [loading, setLoading] = useState(false);
-
-  if (ctxRef.current !== ctx) {
-    ctxRef.current = ctx;
-  }
 
   useEffect(() => {
     if (loc.params.generator) {
@@ -83,13 +77,6 @@ const useGeneratorLoc = ctx => {
         });
     }
   }, [loc]);
-
-  return { loading };
-};
-
-const LoadedMaze = ({ renderInfo }) => {
-  const { ctx, ref } = useCanvasContext(renderInfo);
-  const { loading } = useGeneratorLoc(ctx);
 
   return h(
     Fragment,

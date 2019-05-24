@@ -2,7 +2,7 @@ import { SCHEME as SC } from "./constants.mjs";
 import { useLocation, useStyle, getHashRoute } from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { Maze } from "./maze.mjs";
-import { h } from "./react.mjs";
+import { h, useState, Fragment } from "./react.mjs";
 
 const STYLE = `
 hr {
@@ -111,17 +111,13 @@ canvas {
 const LiAnchor = ({ children, href }) =>
   h("li", {}, h("a", { href }, children));
 
-export const App = () => {
-  const loc = useLocation();
-  const classes = useStyle(STYLE);
-
-  return h(
-    "main",
-    { className: classes.main },
-    h("div", { className: classes.title }, h("h1", {}, "A Maze")),
-    h(
-      "header",
-      { className: classes.header },
+const Controls = ({ totalSteps, step, playing, setStep, setPlaying }) => {
+  if (!totalSteps) {
+    return null;
+  } else {
+    return h(
+      Fragment,
+      {},
       h(
         "button",
         {
@@ -135,6 +131,26 @@ export const App = () => {
         min: 0,
         max: 0
       })
+    );
+  }
+};
+
+export const App = () => {
+  const loc = useLocation();
+  const classes = useStyle(STYLE);
+
+  const [totalSteps, setTotalSteps] = useState(null);
+  const [step, setStep] = useState(0);
+  const [playing, setPlaying] = useState(false);
+
+  return h(
+    "main",
+    { className: classes.main },
+    h("div", { className: classes.title }, h("h1", {}, "A Maze")),
+    h(
+      "header",
+      { className: classes.header },
+      h(Controls, { totalSteps, step, playing, setStep, setPlaying })
     ),
     h(
       "nav",
@@ -153,6 +169,6 @@ export const App = () => {
         h(LiAnchor, { href: getHashRoute({ generator: "test" }) }, "Test")
       )
     ),
-    h("section", { className: classes.content }, h(Maze))
+    h("section", { className: classes.content }, h(Maze, { step, setTotalSteps }))
   );
 };
