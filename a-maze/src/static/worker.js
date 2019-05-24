@@ -8,11 +8,20 @@ pkg("./pkg/a_maze_bg.wasm").then(
 
     let maze;
     let generator;
-    const postRender = id => {
+    let step = 0;
+
+    const postSuccess = id => postMessage({
+      id,
+      payload: { success: true }
+    });
+
+    const postRender = () => {
       const width = maze.width();
       const height = maze.height();
+      const stepCount = maze.step_count();
+
       postMessage({
-        id,
+        id: 'render',
         payload: {
           buffer: new Uint8ClampedArray(
             wasm.memory.buffer,
@@ -20,7 +29,9 @@ pkg("./pkg/a_maze_bg.wasm").then(
             width * height * 4
           ),
           width,
-          height
+          height,
+          stepCount,
+          step
         }
       });
     };
@@ -30,13 +41,16 @@ pkg("./pkg/a_maze_bg.wasm").then(
         case "SETUP": {
           const { cellSize, wallSize, maxWidth, maxHeight } = payload;
           maze = pkg.Maze.new(cellSize, wallSize, maxWidth, maxHeight);
-          postRender(id);
+          postSuccess(id);
+          postRender();
           break;
         }
 
         case "SET_STEP": {
           maze.set_step(payload);
-          postRender(id);
+          step = payload;
+          postSuccess(id);
+          postRender();
           break;
         }
 
@@ -56,10 +70,11 @@ pkg("./pkg/a_maze_bg.wasm").then(
             generator = newGenerator;
 
             if (maze === undefined) {
-              postMessage({ id, payload: { set: true } });
+              postSuccess(id);
             } else {
               maze.set_generator(generator);
-              postRender(id);
+              postSuccess(id);
+              postRender();
             }
           }
 
@@ -76,10 +91,7 @@ pkg("./pkg/a_maze_bg.wasm").then(
       }
     };
 
-    postMessage({
-      id: "init",
-      payload: { initialized: true }
-    });
+    postSuccess("init");
   },
   error => {
     postMessage({

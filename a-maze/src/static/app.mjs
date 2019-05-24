@@ -1,8 +1,8 @@
 import { SCHEME as SC } from "./constants.mjs";
+import { Controls } from "./controls.mjs";
 import { useLocation, useStyle, getHashRoute } from "./hooks.mjs";
-import * as icons from "./icons.mjs";
 import { Maze } from "./maze.mjs";
-import { h, useState, Fragment } from "./react.mjs";
+import { h } from "./react.mjs";
 
 const STYLE = `
 hr {
@@ -30,23 +30,6 @@ canvas {
   flex-grow: 1;
   justify-content: center;
   position: relative;
-}
-
-~control {
-  fill: ${SC.COLORS.GRAY.S};
-  margin: ${SC.SPACING.XS};
-}
-
-~control:hover {
-  fill: ${SC.COLORS.GRAY.M};
-}
-
-~control:active {
-  fill: ${SC.COLORS.GRAY.S};
-}
-
-~control svg {
-  display: block;
 }
 
 ~header {
@@ -90,10 +73,6 @@ canvas {
   grid-area: 2 / 2;
 }
 
-~slider {
-  width: 100%;
-}
-
 ~subheader {
   margin-bottom: ${SC.SPACING.XS};
 }
@@ -111,37 +90,9 @@ canvas {
 const LiAnchor = ({ children, href }) =>
   h("li", {}, h("a", { href }, children));
 
-const Controls = ({ totalSteps, step, playing, setStep, setPlaying }) => {
-  if (!totalSteps) {
-    return null;
-  } else {
-    return h(
-      Fragment,
-      {},
-      h(
-        "button",
-        {
-          className: classes.control
-        },
-        h(false ? icons.Pause : icons.Play, { size: 23 })
-      ),
-      h("input", {
-        className: classes.slider,
-        type: "range",
-        min: 0,
-        max: 0
-      })
-    );
-  }
-};
-
 export const App = () => {
   const loc = useLocation();
   const classes = useStyle(STYLE);
-
-  const [totalSteps, setTotalSteps] = useState(null);
-  const [step, setStep] = useState(0);
-  const [playing, setPlaying] = useState(false);
 
   return h(
     "main",
@@ -150,7 +101,7 @@ export const App = () => {
     h(
       "header",
       { className: classes.header },
-      h(Controls, { totalSteps, step, playing, setStep, setPlaying })
+      h(Controls)
     ),
     h(
       "nav",
@@ -169,6 +120,6 @@ export const App = () => {
         h(LiAnchor, { href: getHashRoute({ generator: "test" }) }, "Test")
       )
     ),
-    h("section", { className: classes.content }, h(Maze, { step, setTotalSteps }))
+    h("section", { className: classes.content }, h(Maze))
   );
 };

@@ -8,8 +8,10 @@ class AMaze extends HTMLElement {
 
     this.css = new Css();
     this.msgId = 0;
+    this.subscriberId = 0;
     this.resolves = [];
     this.rejects = [];
+    this.subscribers = [];
   }
 
   loadWorker() {
@@ -24,7 +26,11 @@ class AMaze extends HTMLElement {
 
   onMessage({ data }) {
     const { id, error, payload } = data;
-    if (payload) {
+
+    if (id === "render") {
+      Object.values(this.subscribers).forEach(sub => sub(payload));
+      return;
+    } else if (payload) {
       const res = this.resolves[id];
       if (res) {
         res(payload);
@@ -44,6 +50,17 @@ class AMaze extends HTMLElement {
       delete this.resolves[id];
       delete this.rejects[id];
     }
+  }
+
+  subscribe(subscriber) {
+    const id = this.subscriberId++;
+    this.subscribers[id] = subscriber;
+
+    return id;
+  }
+
+  unsubscribe(id) {
+    delete this.subscribers[id];
   }
 
   send({ type, payload }) {
@@ -67,7 +84,14 @@ class AMaze extends HTMLElement {
     render(
       composeContext(
         [
-          [WorkerContext, { send: this.send.bind(this) }],
+          [
+            WorkerContext,
+            {
+              send: this.send.bind(this),
+              subscribe: this.subscribe.bind(this),
+              unsubscribe: this.unsubscribe.bind(this)
+            }
+          ],
           [StyleContext, this.css]
         ],
         h(App)

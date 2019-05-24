@@ -14,78 +14,54 @@ import { Loader } from "./loader.mjs";
 
 export const Maze = ({ setTotalSteps, step }) => {
   const [renderInfo, setRenderInfo] = useState();
+  const worker = useContext(WorkerContext);
+  useEffect(() => {
+    const subId = worker.subscribe(setRenderInfo);
+    return () => worker.unsubscribe(subId);
+  }, []);
 
   return !renderInfo
     ? h(LoadingMaze, { setRenderInfo })
     : h(LoadedMaze, { renderInfo, setTotalSteps, step });
 };
 
-const LoadingMaze = ({ setRenderInfo }) => {
+const LoadingMaze = () => {
   const worker = useContext(WorkerContext);
   useEffect(() => {
-    worker
-      .send({
-        type: "SETUP",
-        payload: {
-          maxWidth: window.innerWidth - SC.SPACING.NAV_WIDTH - 64,
-          maxHeight: window.innerHeight - SC.SPACING.CONTROL_HEIGHT - 64,
-          cellSize: 10,
-          wallSize: 1
-        }
-      })
-      .then(renderInfo => {
-        setRenderInfo(renderInfo);
-      });
+    worker.send({
+      type: "SETUP",
+      payload: {
+        maxWidth: window.innerWidth - SC.SPACING.NAV_WIDTH - 64,
+        maxHeight: window.innerHeight - SC.SPACING.CONTROL_HEIGHT - 64,
+        cellSize: 10,
+        wallSize: 1
+      }
+    });
   }, []);
 
   return h(Loader);
 };
 
-const putImage = (ctx, { buffer, width, height }) =>
-  ctx.putImageData(new ImageData(buffer, width, height), 0, 0);
-
 const LoadedMaze = ({ renderInfo, setTotalSteps, step }) => {
-  // Hook up canvas.ctx state and put the initial image
   const [ctx, setCtx] = useState(null);
-  const ctxRef = useRef(ctx);
-
   const ref = useCallback(canvas => {
     if (canvas !== null) {
       const ctx = canvas.getContext("2d");
       ctx.imageSmoothingEnabled = false;
       setCtx(ctx);
-      ctxRef.current = ctx;
-      putImage(ctx, renderInfo);
     }
   });
 
-  // Keep tabs on location and sync with worker as needed
-  const worker = useContext(WorkerContext);
-  const loc = useLocation();
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    if (loc.params.generator) {
-      setLoading(true);
-      worker
-        .send({ type: "SET_GENERATOR", payload: loc.params.generator })
-        .then(resp => {
-          setLoading(false);
-          if (resp.buffer) {
-            putImage(ctxRef.current, resp);
-          }
-        });
+    if (ctx) {
+      const { buffer, width, height } = renderInfo;
+      ctx.putImageData(new ImageData(buffer, width, height), 0, 0);
     }
-  }, [loc]);
+  }, [renderInfo, ctx]);
 
-  return h(
-    Fragment,
-    {},
-    h("canvas", {
-      ref,
-      width: renderInfo.width,
-      height: renderInfo.height
-    }),
-    loading ? h(Loader) : null
-  );
+  return h("canvas", {
+    ref,
+    width: renderInfo.width,
+    height: renderInfo.height
+  });
 };
