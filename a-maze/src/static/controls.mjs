@@ -28,13 +28,26 @@ const STYLE = `
 
 export const Controls = () => {
   const classes = useStyle(STYLE);
+  const [step, setStep] = useState(0);
   const [renderInfo, setRenderInfo] = useState();
+
   const worker = useContext(WorkerContext);
   useEffect(() => {
     const subId = worker.subscribe(setRenderInfo);
     return () => worker.unsubscribe(subId);
   }, []);
 
+  useEffect(() => {
+    if (renderInfo && renderInfo.step !== step) {
+      setStep(renderInfo.step);
+    }
+  }, [renderInfo]);
+
+  const setAndSendStep = event => {
+    const newStep = parseInt(event.target.value, 10);
+    worker.send({ type: "SET_STEP", payload: newStep });
+    setStep(newStep);
+  };
 
   if (!renderInfo || renderInfo.stepCount <= 1) {
     return null;
@@ -54,6 +67,8 @@ export const Controls = () => {
         type: "range",
         min: 0,
         max: renderInfo.stepCount - 1,
+        value: step,
+        onChange: setAndSendStep
       })
     );
   }
