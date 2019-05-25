@@ -9,6 +9,35 @@ pub enum Dir {
     Left,
 }
 
+impl Dir {
+    pub fn rotate_cw(&self) -> Dir {
+        match &self {
+            Dir::Up => Dir::Right,
+            Dir::Right => Dir::Down,
+            Dir::Down => Dir::Left,
+            Dir::Left => Dir::Up,
+        }
+    }
+
+    pub fn rotate_ccw(&self) -> Dir {
+        match &self {
+            Dir::Up => Dir::Left,
+            Dir::Right => Dir::Up,
+            Dir::Down => Dir::Right,
+            Dir::Left => Dir::Down,
+        }
+    }
+
+    pub fn invert(&self) -> Dir {
+        match &self {
+            Dir::Up => Dir::Down,
+            Dir::Right => Dir::Left,
+            Dir::Down => Dir::Up,
+            Dir::Left => Dir::Right,
+        }
+    }
+}
+
 pub struct Graph {
     process: Process,
     changes: Vec<Change>,
