@@ -106,7 +106,7 @@ export const App = () => {
     h(
       "nav",
       { className: classes.nav },
-      h("h2", { className: classes.subheader }, "Generators"),
+      h("h2", { className: classes.subheader }, "Test Patterns"),
       h("hr"),
       h(
         "ul",
@@ -117,7 +117,7 @@ export const App = () => {
           "Hilburt's Curve"
         ),
         h(LiAnchor, { href: getHashRoute({ generator: "random" }) }, "Random"),
-        h(LiAnchor, { href: getHashRoute({ generator: "test" }) }, "Test")
+        h(LiAnchor, { href: getHashRoute({ generator: "rows" }) }, "Rows")
       )
     ),
     h("section", { className: classes.content }, h(Maze))

@@ -74,7 +74,7 @@ pkg("./pkg/a_maze_bg.wasm").then(
           const newGenerator = {
             hilburt: Generator.Hilburt,
             random: Generator.Random,
-            test: Generator.Test
+            rows: Generator.Rows
           }[payload];
 
           generator = newGenerator;

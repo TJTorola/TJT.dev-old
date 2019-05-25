@@ -59,7 +59,7 @@ pub fn random(cell_cols: usize, cell_rows: usize) -> Process {
     process
 }
 
-pub fn test(cols: usize, rows: usize) -> Process {
+pub fn fill_rows(cols: usize, rows: usize) -> Process {
     let mut graph = Graph::new();
 
     for y in 0..rows {
@@ -79,7 +79,7 @@ pub fn test(cols: usize, rows: usize) -> Process {
 pub enum Generator {
     Hilburt,
     Random,
-    Test,
+    Rows,
 }
 
 impl Generator {
@@ -87,7 +87,7 @@ impl Generator {
         match &self {
             Generator::Hilburt => hilburt(cols, rows),
             Generator::Random => random(cols, rows),
-            Generator::Test => test(cols, rows),
+            Generator::Rows => fill_rows(cols, rows),
         }
     }
 }
