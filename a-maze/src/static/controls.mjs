@@ -36,7 +36,7 @@ export const Controls = () => {
   }, []);
 
 
-  if (!renderInfo || renderInfo.stepCount === 0) {
+  if (!renderInfo || renderInfo.stepCount <= 1) {
     return null;
   } else {
     return h(
@@ -53,7 +53,7 @@ export const Controls = () => {
         className: classes.slider,
         type: "range",
         min: 0,
-        max: 0
+        max: renderInfo.stepCount - 1,
       })
     );
   }

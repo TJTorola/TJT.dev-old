@@ -77,23 +77,19 @@ pkg("./pkg/a_maze_bg.wasm").then(
             test: Generator.Test
           }[payload];
 
-          if (newGenerator === undefined) {
-            postMessage({
-              id,
-              error: `Unknown generator payload '${payload}'`
-            });
-          } else {
-            generator = newGenerator;
-            step = 0;
+          generator = newGenerator;
+          step = 0;
 
-            if (maze === undefined) {
-              postSuccess(id);
-            } else {
-              postClear();
-              maze.set_generator(generator);
-              postSuccess(id);
-              postRender();
-            }
+          if (maze === undefined) {
+            postSuccess(id);
+          } else if (newGenerator === undefined) {
+            postClear();
+            postSuccess(id);
+          } else {
+            postClear();
+            maze.set_generator(generator);
+            postSuccess(id);
+            postRender();
           }
 
           break;
