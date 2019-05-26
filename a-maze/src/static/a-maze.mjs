@@ -13,6 +13,8 @@ class AMaze extends HTMLElement {
     this.resolves = [];
     this.rejects = [];
     this.subscribers = [];
+    this.settingStep = false;
+    this.nextStep = null;
 
     this.setGenerator = this.setGenerator.bind(this);
   }
@@ -81,6 +83,26 @@ class AMaze extends HTMLElement {
     delete this.subscribers[id];
   }
 
+  setStep(step) {
+    if (this.settingStep) {
+      this.nextStep = step;
+      return;
+    }
+
+    this.settingStep = true;
+    this.send({
+      type: "SET_STEP",
+      payload: step,
+    }).then(() => {
+      this.settingStep = false;
+      if (this.nextStep) {
+        const nextStep = this.nextStep;
+        this.nextStep = null;
+        this.setStep(nextStep);
+      }
+    });
+  }
+
   send({ type, payload }) {
     const id = this.msgId++;
     return new Promise((res, rej) => {
@@ -106,6 +128,7 @@ class AMaze extends HTMLElement {
             WorkerContext,
             {
               send: this.send.bind(this),
+              setStep: this.setStep.bind(this),
               subscribe: this.subscribe.bind(this),
               unsubscribe: this.unsubscribe.bind(this)
             }

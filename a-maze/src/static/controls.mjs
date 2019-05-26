@@ -1,6 +1,6 @@
 import { SCHEME as SC } from "./constants.mjs";
 import { WorkerContext } from "./context.mjs";
-import { useStyle } from "./hooks.mjs";
+import { useInterval, useStyle } from "./hooks.mjs";
 import * as icons from "./icons.mjs";
 import { h, useContext, useEffect, useState, Fragment } from "./react.mjs";
 
@@ -29,6 +29,7 @@ const STYLE = `
 export const Controls = () => {
   const classes = useStyle(STYLE);
   const [step, setStep] = useState(0);
+  const [playing, setPlaying] = useState(false);
   const [renderInfo, setRenderInfo] = useState();
 
   const worker = useContext(WorkerContext);
@@ -37,17 +38,28 @@ export const Controls = () => {
     return () => worker.unsubscribe(subId);
   }, []);
 
-  useEffect(() => {
-    if (renderInfo && renderInfo.step !== step) {
-      setStep(renderInfo.step);
-    }
-  }, [renderInfo]);
-
   const setAndSendStep = event => {
-    const newStep = parseInt(event.target.value, 10);
-    worker.send({ type: "SET_STEP", payload: newStep });
-    setStep(newStep);
+    if (playing) {
+      setPlaying(false);
+    }
+
+    const nextStep = parseInt(event.target.value, 10);
+    worker.setStep(nextStep);
+    setStep(nextStep);
   };
+
+  useInterval(
+    () => {
+      const nextStep = step + 1;
+      if (nextStep < renderInfo.stepCount) {
+        worker.setStep(nextStep);
+        setStep(nextStep);
+      } else {
+        setPlaying(false);
+      }
+    },
+    playing ? 20 : null
+  );
 
   if (!renderInfo || renderInfo.stepCount <= 1) {
     return null;
@@ -58,9 +70,10 @@ export const Controls = () => {
       h(
         "button",
         {
-          className: classes.control
+          className: classes.control,
+          onClick: () => setPlaying(!playing)
         },
-        h(false ? icons.Pause : icons.Play, { size: 23 })
+        h(playing ? icons.Pause : icons.Play, { size: 23 })
       ),
       h("input", {
         className: classes.slider,
@@ -73,4 +86,3 @@ export const Controls = () => {
     );
   }
 };
-
