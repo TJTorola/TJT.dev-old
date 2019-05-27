@@ -5,16 +5,35 @@
     <meta charset="utf-8">
     <title>TJT.Dev - A Maze</title>
     <link rel="icon" href="data:,">
-
-    <style>
-      html, body { height: 100%; }
-      body { margin: 0; }
-    </style>
-
-    <script type="module" src="./a-maze.mjs"></script>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
   </head>
-
   <body>
-    <a-maze></a-maze>
+    <header class="title">
+      <h1>A Maze</h1>
+    </header>
+    <section class="controls">
+      <button class="control">
+        <svg view-box="0 0 16 16" width="23" height="23">
+          <polygon points="0,0 16,8 0,16"></polygon>
+        </svg>
+      </button>
+      <input class="slider" type="range"></input>
+    </section>
+    <nav>
+      <h2 class="subheader">Test Patterns</h2>
+      <hr></hr>
+      <ul class="links">
+        <li><a href="#hilburt">Hilburt's Curve</a></li>
+        <li><a href="#random">Random</a></li>
+        <li><a href="#rows">Rows</a></li>
+      </ul>
+    </nav>
+    <section class="content">
+      <div class="grid">
+        <div></div><div></div><div></div>
+        <div></div><div></div><div></div>
+        <div></div><div></div><div></div>
+      </div>
+    </section>
   </body>
 </html>
