@@ -29,5 +29,5 @@ pub fn a_maze_init() {
     console_error_panic_hook::set_once();
 }
 
-pub use maze::Maze;
 pub use generator::Generator;
+pub use maze::Maze;
