@@ -172,3 +172,13 @@ body.isLoading #step-slider,
 body.isLoading #canvas-bg {
   display: none;
 }
+
+#pause-icon {
+  display: none;
+}
+body.isPlaying #play-icon { 
+  display: none;
+}
+body.isPlaying #pause-icon { 
+  display: block;
+}
