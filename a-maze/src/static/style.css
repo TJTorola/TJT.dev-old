@@ -157,4 +157,18 @@ nav {
 
 .slider {
   width: 100%;
-}`;
+}
+
+#loading-indicator {
+  display: none;
+}
+
+body.isLoading #loading-indicator {
+  display: block;
+}
+
+body.isLoading #play-button,
+body.isLoading #step-slider,
+body.isLoading #canvas-bg {
+  display: none;
+}
