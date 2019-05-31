@@ -11,13 +11,13 @@
     <header class="title">
       <h1>A Maze</h1>
     </header>
-    <section class="controls">
-      <button class="control">
+    <section class="controls" id="controls-wrapper">
+      <button class="control" id="play-button">
         <svg view-box="0 0 16 16" width="23" height="23">
           <polygon points="0,0 16,8 0,16"></polygon>
         </svg>
       </button>
-      <input class="slider" type="range"></input>
+      <input class="slider" id="step-slider" type="range"></input>
     </section>
     <nav>
       <h2 class="subheader">Test Patterns</h2>
@@ -28,7 +28,7 @@
         <li><a href="#rows">Rows</a></li>
       </ul>
     </nav>
-    <section class="content">
+    <section class="content" id="canvas-wrapper">
       <div class="grid">
         <div></div><div></div><div></div>
         <div></div><div></div><div></div>
