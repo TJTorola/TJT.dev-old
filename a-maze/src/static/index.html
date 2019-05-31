@@ -7,39 +7,41 @@
     <link rel="icon" href="data:,">
     <link rel="stylesheet" type="text/css" href="/style.css" />
   </head>
-  <body class="isLoading">
-    <header class="title">
-      <h1>A Maze</h1>
-    </header>
-    <section class="controls">
-      <button class="control" id="play-button">
-        <svg id="play-icon" view-box="0 0 16 16" width="23" height="23">
-          <polygon points="0,0 16,8 0,16"></polygon>
-        </svg>
-        <svg id="pause-icon" view-box="0 0 16 16" width="23" height="23">
-          <polygon points="2,0 2,16 6,16 6,0"></polygon>
-          <polygon points="10,0 10,16 14,16 14,0"></polygon>
-        </svg>
-      </button>
-      <input class="slider" id="step-slider" type="range"></input>
-    </section>
-    <nav>
-      <h2 class="subheader">Test Patterns</h2>
-      <hr></hr>
-      <ul class="links">
-        <li><a href="#hilburt">Hilburt's Curve</a></li>
-        <li><a href="#random">Random</a></li>
-        <li><a href="#rows">Rows</a></li>
-      </ul>
-    </nav>
-    <section class="content">
-      <div class="grid" id="loading-indicator">
-        <div></div><div></div><div></div>
-        <div></div><div></div><div></div>
-        <div></div><div></div><div></div>
-      </div>
-      <canvas id="canvas-bg"></canvas>
-    </section>
+  <body>
+    <main id="app" data-status="loading">
+      <header class="title">
+        <h1>A Maze</h1>
+      </header>
+      <section class="controls">
+        <button class="control" id="play-button" data-status="playing">
+          <svg id="play-icon" view-box="0 0 16 16" width="23" height="23">
+            <polygon points="0,0 16,8 0,16"></polygon>
+          </svg>
+          <svg id="pause-icon" view-box="0 0 16 16" width="23" height="23">
+            <polygon points="2,0 2,16 6,16 6,0"></polygon>
+            <polygon points="10,0 10,16 14,16 14,0"></polygon>
+          </svg>
+        </button>
+        <input class="slider" id="step-slider" type="range"></input>
+      </section>
+      <nav>
+        <h2 class="subheader">Test Patterns</h2>
+        <hr></hr>
+        <ul class="links">
+          <li><a href="#hilburt">Hilburt's Curve</a></li>
+          <li><a href="#random">Random</a></li>
+          <li><a href="#rows">Rows</a></li>
+        </ul>
+      </nav>
+      <section class="content">
+        <div class="grid" id="loading-indicator">
+          <div></div><div></div><div></div>
+          <div></div><div></div><div></div>
+          <div></div><div></div><div></div>
+        </div>
+        <canvas id="canvas-bg"></canvas>
+      </section>
+    </main>
   </body>
 
   <script src="./main.js"></script>

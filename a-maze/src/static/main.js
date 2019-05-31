@@ -1,6 +1,7 @@
 class AMaze {
   constructor() {
     this.elements = {
+      app: document.getElementById('app'),
       playButton: document.getElementById("play-button"),
       stepSlider: document.getElementById("step-slider"),
       canvasBg: document.getElementById("canvas-bg")
@@ -16,13 +17,17 @@ class AMaze {
     this.worker.onmessage = this.onMessage;
   }
 
+  setAppStatus(status) {
+    this.elements.app.setAttribute('data-status', status);
+  }
+
   onMessage(message) {
     const { data } = message;
 
     switch (data.type) {
       case "INITIALIZED": {
         if (data.payload.success) {
-          document.body.classList.remove('isLoading');
+          this.setAppStatus('initialized');
         } else {
           console.error("Could not initialize WASM");
           throw new Error(data.payload.error);
@@ -38,4 +43,4 @@ class AMaze {
   }
 }
 
-new AMaze();
+window.AMaze = new AMaze();

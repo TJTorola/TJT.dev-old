@@ -14,7 +14,7 @@
   --spacing-xl: 64px;
 }
 
-html { height: 100%; }
+html, body { height: 100%; }
 
 hr {
   border-color: var(--medium);
@@ -22,7 +22,7 @@ hr {
   border-width: 1px;
 }
 
-body {
+main {
   display: grid;
   font-family: Helvetica, Arial, sans-serif;
   grid-template-columns: 256px auto;
@@ -163,22 +163,19 @@ nav {
   display: none;
 }
 
-body.isLoading #loading-indicator {
+#app[data-status="loading"] #loading-indicator {
   display: block;
 }
 
-body.isLoading #play-button,
-body.isLoading #step-slider,
-body.isLoading #canvas-bg {
+#app[data-status="loading"] #play-button,
+#app[data-status="loading"] #step-slider,
+#app[data-status="loading"] #canvas-bg {
   display: none;
 }
 
-#pause-icon {
+#play-button[data-status="playing"] #play-icon { 
   display: none;
 }
-body.isPlaying #play-icon { 
+#play-button[data-status="paused"] #pause-icon { 
   display: none;
-}
-body.isPlaying #pause-icon { 
-  display: block;
 }
