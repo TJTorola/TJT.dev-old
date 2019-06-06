@@ -3,6 +3,12 @@ delete WebAssembly.instantiateStreaming;
 
 const middleware = (store, next) => action => {
   switch (action.type) {
+    case "SET_GENERATOR":
+    case "SETUP": {
+      next(action);
+      console.log(store.getState().generator);
+    }
+
     default:
       return next(action);
   }
@@ -10,6 +16,15 @@ const middleware = (store, next) => action => {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "SETUP": {
+      const { generator } = action.payload;
+      return { generator };
+    }
+
+    case "SET_GENERATOR": {
+      return { generator: action.payload };
+    }
+
     default:
       return state;
   }

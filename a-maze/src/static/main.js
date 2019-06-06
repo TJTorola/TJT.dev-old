@@ -1,46 +1,57 @@
 class AMaze {
   constructor() {
     this.elements = {
-      app: document.getElementById('app'),
+      app: document.getElementById("app"),
       playButton: document.getElementById("play-button"),
       stepSlider: document.getElementById("step-slider"),
       canvasBg: document.getElementById("canvas-bg")
     };
 
-    this.onMessage = this.onMessage.bind(this);
+    this.handlers = {
+      INITIALIZED: this.initialized.bind(this)
+    };
 
-    this.loadWorker();
+    this.worker = new Worker("./worker.js");
+    this.worker.onmessage = message => {
+      const handler = this.handlers[message.data.type];
+
+      if (!handler) {
+        throw new Error(`Un-handled message, '${data.type}'`);
+      } else {
+        handler(message.data.payload);
+      }
+    };
   }
 
-  loadWorker() {
-    this.worker = new Worker("./worker.js");
-    this.worker.onmessage = this.onMessage;
+  getGenerator() {
+    const { hash } = window.location;
+    const route = hash.length > 0 ? hash.slice(1) : "";
+    return route.split("/")[0];
+  }
+
+  initialized(payload) {
+    if (!payload.success) {
+      console.error("Could not initialize WASM");
+      throw new Error(payload.error);
+    }
+
+    this.setAppStatus("initialized");
+    this.worker.postMessage({
+      type: "SETUP",
+      payload: { generator: this.getGenerator() }
+    });
+
+    window.addEventListener("hashchange", () => {
+      this.worker.postMessage({
+        type: "SET_GENERATOR",
+        payload: this.getGenerator()
+      });
+    });
   }
 
   setAppStatus(status) {
-    this.elements.app.setAttribute('data-status', status);
-  }
-
-  onMessage(message) {
-    const { data } = message;
-
-    switch (data.type) {
-      case "INITIALIZED": {
-        if (data.payload.success) {
-          this.setAppStatus('initialized');
-        } else {
-          console.error("Could not initialize WASM");
-          throw new Error(data.payload.error);
-        }
-
-        break;
-      }
-
-      default: {
-        throw new Error(`Un-handled message, '${data.type}'`);
-      }
-    }
+    this.elements.app.setAttribute("data-status", status);
   }
 }
 
-window.AMaze = new AMaze();
+window.aMaze = new AMaze();
