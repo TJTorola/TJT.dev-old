@@ -14,7 +14,10 @@
   --spacing-xl: 64px;
 }
 
-html, body { height: 100%; }
+html, body {
+  height: 100%;
+  margin: 0;
+}
 
 hr {
   border-color: var(--medium);
@@ -167,9 +170,12 @@ nav {
   display: block;
 }
 
-#app[data-status="loading"] #play-button,
-#app[data-status="loading"] #step-slider,
 #app[data-status="loading"] #canvas-bg {
+  display: none;
+}
+
+#control-wrapper[data-status="unplayable"] #play-button,
+#control-wrapper[data-status="unplayable"] #step-slider {
   display: none;
 }
 
