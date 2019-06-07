@@ -60,14 +60,10 @@ class AMaze {
     });
   }
 
-  setAppStatus(status) {
-    this.elements.app.setAttribute("data-status", status);
-  }
-
   setupComplete({ width, height }) {
     this.elements.canvasBg.width = width;
     this.elements.canvasBg.height = height;
-    this.setAppStatus("initialized");
+    this.elements.app.setAttribute("data-status", 'loaded');
   }
 }
 
