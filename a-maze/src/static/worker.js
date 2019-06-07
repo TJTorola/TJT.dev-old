@@ -3,10 +3,27 @@ delete WebAssembly.instantiateStreaming;
 
 const middleware = (store, next) => action => {
   switch (action.type) {
-    case "SET_GENERATOR":
     case "SETUP": {
-      next(action);
-      console.log(store.getState().generator);
+      const { cellSize, wallSize, maxWidth, maxHeight } = action.payload;
+      const maze = pkg.Maze.new(cellSize, wallSize, maxWidth, maxHeight);
+
+      const res = next({
+        type: "SETUP",
+        payload: {
+          generator: action.payload.generator,
+          maze
+        }
+      });
+
+      postMessage({
+        type: "SETUP_COMPLETE",
+        payload: {
+          width: maze.width(),
+          height: maze.height()
+        }
+      });
+
+      return res;
     }
 
     default:
@@ -17,8 +34,8 @@ const middleware = (store, next) => action => {
 const reducer = (state, action) => {
   switch (action.type) {
     case "SETUP": {
-      const { generator } = action.payload;
-      return { generator };
+      const { generator, maze } = action.payload;
+      return { generator, maze };
     }
 
     case "SET_GENERATOR": {
@@ -43,6 +60,7 @@ const makeStore = () => {
 
 pkg("./pkg/a_maze_bg.wasm").then(
   wasm => {
+    pkg.a_maze_init();
     const store = makeStore();
     onmessage = ({ data }) => store.dispatch(data);
     postMessage({

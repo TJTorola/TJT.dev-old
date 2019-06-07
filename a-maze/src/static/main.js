@@ -1,14 +1,20 @@
+const CELL_SIZE = 10;
+const WALL_SIZE = 1;
+const PADDING = 64;
+
 class AMaze {
   constructor() {
     this.elements = {
       app: document.getElementById("app"),
+      contentWrapper: document.getElementById("content-wrapper"),
       playButton: document.getElementById("play-button"),
       stepSlider: document.getElementById("step-slider"),
       canvasBg: document.getElementById("canvas-bg")
     };
 
     this.handlers = {
-      INITIALIZED: this.initialized.bind(this)
+      INITIALIZED: this.initialized.bind(this),
+      SETUP_COMPLETE: this.setupComplete.bind(this),
     };
 
     this.worker = new Worker("./worker.js");
@@ -35,10 +41,15 @@ class AMaze {
       throw new Error(payload.error);
     }
 
-    this.setAppStatus("initialized");
     this.worker.postMessage({
       type: "SETUP",
-      payload: { generator: this.getGenerator() }
+      payload: {
+        cellSize: CELL_SIZE,
+        wallSize: WALL_SIZE,
+        maxHeight: this.elements.contentWrapper.clientHeight - PADDING,
+        maxWidth: this.elements.contentWrapper.clientWidth - PADDING,
+        generator: this.getGenerator(),
+      }
     });
 
     window.addEventListener("hashchange", () => {
@@ -51,6 +62,12 @@ class AMaze {
 
   setAppStatus(status) {
     this.elements.app.setAttribute("data-status", status);
+  }
+
+  setupComplete({ width, height }) {
+    this.elements.canvasBg.width = width;
+    this.elements.canvasBg.height = height;
+    this.setAppStatus("initialized");
   }
 }
 
