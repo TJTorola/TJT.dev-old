@@ -1,19 +1,50 @@
 importScripts("./pkg/a_maze.js");
 delete WebAssembly.instantiateStreaming;
 
+const { Maze, Generator } = pkg;
+
+const GENERATOR_MAP = {
+  hilburt: Generator.Hilburt,
+  random: Generator.Random,
+  rows: Generator.Rows
+};
+
 const middleware = (store, next) => action => {
   switch (action.type) {
+    case "SET_GENERATOR": {
+      const prev = store.getState().generator;
+      const res = next(action);
+      const { generator, maze } = store.getState();
+      console.log(store.getState());
+
+      if (prev !== generator) {
+        maze.set_generator(generator);
+
+        postMessage({
+          type: "STEP_COUNT_CHANGE",
+          payload: {
+            stepCount: maze.step_count()
+          }
+        });
+      }
+
+      return res;
+    }
     case "SETUP": {
       const { cellSize, wallSize, maxWidth, maxHeight } = action.payload;
       const maze = pkg.Maze.new(cellSize, wallSize, maxWidth, maxHeight);
 
       const res = next({
-        type: "SETUP",
-        payload: {
-          generator: action.payload.generator,
-          maze
-        }
+        type: "SET_MAZE",
+        payload: maze
       });
+
+      if (action.payload.generator) {
+        store.dispatch({
+          type: "SET_GENERATOR",
+          payload: action.payload.generator
+        });
+      }
 
       postMessage({
         type: "SETUP_COMPLETE",
@@ -33,13 +64,15 @@ const middleware = (store, next) => action => {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "SETUP": {
-      const { generator, maze } = action.payload;
-      return { generator, maze };
+    case "SET_MAZE": {
+      return { ...state, maze: action.payload };
     }
 
     case "SET_GENERATOR": {
-      return { generator: action.payload };
+      return {
+        ...state,
+        generator: GENERATOR_MAP[action.payload]
+      };
     }
 
     default:
