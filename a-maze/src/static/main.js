@@ -30,12 +30,15 @@ const getGenerator = () => {
 // ---------------------------------------------------
 
 let LAST_STEP = null;
+let WORKING = false;
 const main = () => {
   if (
-    ELEMENTS.controlWrapper.dataset.status === "playable"
+    !WORKING
+    && ELEMENTS.controlWrapper.dataset.status === "playable"
     && ELEMENTS.stepSlider.value !== LAST_STEP
   ) {
     LAST_STEP = ELEMENTS.stepSlider.value;
+    WORKING = true;
     WORKER.postMessage({
       type: "SET_STEP",
       payload: parseInt(LAST_STEP, 10)
@@ -76,6 +79,7 @@ const initialized = payload => {
 
 const render = ({ buffer, width, height }) => {
   CTX.bg.putImageData(new ImageData(buffer, width, height), 0, 0);
+  WORKING = false;
 };
 
 const setupComplete = ({ width, height }) => {
