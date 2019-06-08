@@ -10,6 +10,10 @@ const ELEMENTS = {
   playButton: document.getElementById("play-button"),
   stepSlider: document.getElementById("step-slider")
 };
+const CTX = {
+  bg: ELEMENTS.canvasBg.getContext("2d")
+};
+CTX.bg.imageSmoothingEnabled = false;
 
 // ----------------
 // UTILITIES -------------
@@ -20,6 +24,26 @@ const getGenerator = () => {
   const route = hash.length > 0 ? hash.slice(1) : "";
   return route.split("/")[0];
 };
+
+// ----------------
+// MAIN LOOP -------------
+// ---------------------------------------------------
+
+let LAST_STEP = null;
+const main = () => {
+  if (
+    ELEMENTS.controlWrapper.dataset.status === "playable"
+    && ELEMENTS.stepSlider.value !== LAST_STEP
+  ) {
+    LAST_STEP = ELEMENTS.stepSlider.value;
+    WORKER.postMessage({
+      type: "SET_STEP",
+      payload: parseInt(LAST_STEP, 10)
+    });
+  }
+  requestAnimationFrame(main);
+};
+main();
 
 // ----------------
 // MSG HANDLERS ----------
@@ -50,6 +74,10 @@ const initialized = payload => {
   });
 };
 
+const render = ({ buffer, width, height }) => {
+  CTX.bg.putImageData(new ImageData(buffer, width, height), 0, 0);
+};
+
 const setupComplete = ({ width, height }) => {
   ELEMENTS.canvasBg.width = width;
   ELEMENTS.canvasBg.height = height;
@@ -57,14 +85,18 @@ const setupComplete = ({ width, height }) => {
 };
 
 const stepCountChange = ({ stepCount }) => {
-  ELEMENTS.controlWrapper.setAttribute(
-    "data-status",
-    stepCount > 0 ? "playable" : "unplayable"
-  );
+  if (stepCount > 0) {
+    ELEMENTS.controlWrapper.setAttribute("data-status", "playable");
+    ELEMENTS.stepSlider.value = 0;
+    ELEMENTS.stepSlider.max = stepCount - 1;
+  } else {
+    ELEMENTS.controlWrapper.setAttribute("data-status", "unplayable");
+  }
 };
 
 const HANDLERS = {
   INITIALIZED: initialized,
+  RENDER: render,
   STEP_COUNT_CHANGE: stepCountChange,
   SETUP_COMPLETE: setupComplete
 };

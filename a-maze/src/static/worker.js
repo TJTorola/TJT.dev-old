@@ -15,7 +15,6 @@ const middleware = (store, next) => action => {
       const prev = store.getState().generator;
       const res = next(action);
       const { generator, maze } = store.getState();
-      console.log(store.getState());
 
       if (prev !== generator) {
         maze.set_generator(generator);
@@ -30,6 +29,27 @@ const middleware = (store, next) => action => {
 
       return res;
     }
+
+    case "SET_STEP": {
+      const { maze, width, height, wasm } = store.getState();
+
+      maze.set_step(action.payload);
+      postMessage({
+        type: "RENDER",
+        payload: {
+          buffer: new Uint8ClampedArray(
+            wasm.memory.buffer,
+            maze.image_data(),
+            width * height * 4
+          ),
+          width,
+          height
+        }
+      });
+
+      return;
+    }
+
     case "SETUP": {
       const { cellSize, wallSize, maxWidth, maxHeight } = action.payload;
       const maze = pkg.Maze.new(cellSize, wallSize, maxWidth, maxHeight);
@@ -46,11 +66,12 @@ const middleware = (store, next) => action => {
         });
       }
 
+      const { width, height } = store.getState();
       postMessage({
         type: "SETUP_COMPLETE",
         payload: {
-          width: maze.width(),
-          height: maze.height()
+          width,
+          height
         }
       });
 
@@ -65,7 +86,8 @@ const middleware = (store, next) => action => {
 const reducer = (state, action) => {
   switch (action.type) {
     case "SET_MAZE": {
-      return { ...state, maze: action.payload };
+      const maze = action.payload;
+      return { ...state, maze, width: maze.width(), height: maze.height() };
     }
 
     case "SET_GENERATOR": {
@@ -80,8 +102,8 @@ const reducer = (state, action) => {
   }
 };
 
-const makeStore = () => {
-  let state = {};
+const makeStore = wasm => {
+  let state = { wasm };
   const store = { getState: () => state };
   store.dispatch = middleware(store, action => {
     const newState = reducer(state, action);
@@ -94,7 +116,7 @@ const makeStore = () => {
 pkg("./pkg/a_maze_bg.wasm").then(
   wasm => {
     pkg.a_maze_init();
-    const store = makeStore();
+    const store = makeStore(wasm);
     onmessage = ({ data }) => store.dispatch(data);
     postMessage({
       type: "INITIALIZED",

@@ -87,6 +87,7 @@ impl Maze {
     }
 
     pub fn set_step(&mut self, new_step_idx: usize) {
+        // TODO: Don't trust JS to send in a safe idx here
         let map = self.process.get_map(new_step_idx).unwrap();
         let diff = self.process.get_diff(self.step_idx, Some(new_step_idx));
 
