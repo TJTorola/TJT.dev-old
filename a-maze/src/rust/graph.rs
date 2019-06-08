@@ -2,41 +2,11 @@ use super::constants::WHITE;
 use super::process::Process;
 use super::types::*;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Dir {
     Up,
     Down,
     Right,
     Left,
-}
-
-impl Dir {
-    pub fn rotate_ccw(&self) -> Dir {
-        match self {
-            Dir::Up => Dir::Left,
-            Dir::Right => Dir::Up,
-            Dir::Down => Dir::Right,
-            Dir::Left => Dir::Down,
-        }
-    }
-
-    pub fn flip_hor(&self) -> Dir {
-        match self {
-            Dir::Up => Dir::Up,
-            Dir::Right => Dir::Left,
-            Dir::Down => Dir::Down,
-            Dir::Left => Dir::Right,
-        }
-    }
-
-    pub fn flip_vert(&self) -> Dir {
-        match self {
-            Dir::Up => Dir::Down,
-            Dir::Right => Dir::Right,
-            Dir::Down => Dir::Up,
-            Dir::Left => Dir::Left,
-        }
-    }
 }
 
 pub struct Graph {
