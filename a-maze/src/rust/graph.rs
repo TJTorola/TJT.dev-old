@@ -2,6 +2,7 @@ use super::constants::WHITE;
 use super::process::Process;
 use super::types::*;
 
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Dir {
     Up,
     Down,
