@@ -31,7 +31,7 @@ const getGenerator = () => {
 
 let LAST_STEP = null;
 let WORKING = false;
-const main = () => {
+setInterval(() => {
   if (
     !WORKING
     && ELEMENTS.controlWrapper.dataset.status === "playable"
@@ -44,9 +44,7 @@ const main = () => {
       payload: parseInt(LAST_STEP, 10)
     });
   }
-  requestAnimationFrame(main);
-};
-main();
+}, 20);
 
 // ----------------
 // MSG HANDLERS ----------
