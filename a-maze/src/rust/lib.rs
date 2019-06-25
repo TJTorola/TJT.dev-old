@@ -1,3 +1,4 @@
+mod color;
 mod constants;
 mod generator;
 mod graph;

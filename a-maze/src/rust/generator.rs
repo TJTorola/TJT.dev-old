@@ -1,3 +1,4 @@
+use super::color::Sequencer;
 use super::constants::WHITE;
 use super::graph::{Dir, Graph};
 use super::process::Process;

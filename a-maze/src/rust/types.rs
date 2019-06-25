@@ -6,3 +6,4 @@ pub type Coord = (usize, usize);
 pub type Diff = Vec<Coord>;
 pub type Map = ImHashMap<Coord, Color>;
 pub type Region = (Coord, Coord);
+pub type ColorSequence = (Color, Color, Color);
