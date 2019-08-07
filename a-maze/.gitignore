@@ -1,4 +1,3 @@
+/.cpcache/**
+/out/**
 /target/**
-/public/js/**
-/.lein-*
-/.nrepl-port

@@ -1,6 +1,6 @@
 (ns a-maze.core
-    (:require [reagent.core :as r]))
+  (:require [reagent.core :as r]))
 
-(defn a-maze [] [:div "Hello CLJS"])
+(defn app [] [:div "Hello CLJS"])
 
-(r/render-component [a-maze] (. js/document (getElementById "a-maze")))
+(r/render app (. js/document (getElementById "app")))
