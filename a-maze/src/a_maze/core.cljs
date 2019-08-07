@@ -1,6 +1,5 @@
-(ns a-maze.core
-  (:require [reagent.core :as r]))
+(ns a-maze.core (:require [reagent.core :as r]))
 
-(defn app [] [:div "A-Maze!"])
+(defn hello-world [] [:h3 "It works!"])
 
-(r/render app (. js/document (getElementById "app")))
+(r/render hello-world (. js/document (getElementById "app")))
