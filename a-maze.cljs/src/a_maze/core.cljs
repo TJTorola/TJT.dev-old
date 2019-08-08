@@ -1,17 +1,5 @@
 (ns a-maze.core (:require [reagent.core :as r]))
-
-(defn play-icon []
-  [:svg {:view-box "0 0 16 16"
-         :width "23"
-         :height "23"}
-   [:polygon {:points "0,0 16,8 0,16"}]])
-
-(defn pause-icon []
-  [:svg {:view-box "0 0 16 16"
-         :width "23"
-         :height "23"}
-   [:polygon {:points "2,0 2,16 6,16 6,0"}]
-   [:polygon {:points "10,0 10,16 14,16 14,0"}]])
+(declare app loader pause-icon play-icon)
 
 (defn app []
   [:main
@@ -29,6 +17,22 @@
      [:li [:a {:href "#random"} "Random"]]
      [:li [:a {:href "#rows"} "Rows"]]]]
    [:section.content
-    [:div.grid (repeat 9 [:div])]]])
+    [loader]]])
+
+(defn loader []
+  [:div.grid (repeat 9 [:div])])
+
+(defn pause-icon []
+  [:svg {:view-box "0 0 16 16"
+         :width "23"
+         :height "23"}
+   [:polygon {:points "2,0 2,16 6,16 6,0"}]
+   [:polygon {:points "10,0 10,16 14,16 14,0"}]])
+
+(defn play-icon []
+  [:svg {:view-box "0 0 16 16"
+         :width "23"
+         :height "23"}
+   [:polygon {:points "0,0 16,8 0,16"}]])
 
 (r/render app (. js/document (getElementById "app")))
