@@ -1,14 +1,19 @@
 (ns a-maze.core (:require [reagent.core :as r]))
-(declare app loader pause-icon play-icon)
+(declare app loader pause-icon play-control play-icon step-control)
+
+(defonce playing (r/atom false))
+(defonce step (r/atom 0))
+
+(defn to-int [string-number]
+  (js/parseInt string-number 10))
 
 (defn app []
   [:main
    [:header.title
     [:h1 "A Maze"]]
    [:section.controls
-    [:button.control
-     [play-icon]]
-    [:input.slider {:type "range"}]]
+    [play-control]
+    [step-control]]
    [:nav
     [:h2.subheader "Test Patterns"]
     [:hr]
@@ -29,10 +34,19 @@
    [:polygon {:points "2,0 2,16 6,16 6,0"}]
    [:polygon {:points "10,0 10,16 14,16 14,0"}]])
 
+(defn play-control []
+  [:button.control {:on-click #(swap! playing not)}
+   (if @playing [pause-icon] [play-icon])])
+
 (defn play-icon []
   [:svg {:view-box "0 0 16 16"
          :width "23"
          :height "23"}
    [:polygon {:points "0,0 16,8 0,16"}]])
+
+(defn step-control []
+  [:input.slider {:on-change #(reset! step (to-int (.. % -target -value)))
+                  :type "range"
+                  :value @step}])
 
 (r/render app (. js/document (getElementById "app")))
