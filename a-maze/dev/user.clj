@@ -7,4 +7,3 @@
 
 (defn stop []
   (f/stop-figwheel!))
-
