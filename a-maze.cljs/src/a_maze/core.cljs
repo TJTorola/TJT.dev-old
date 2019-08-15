@@ -8,7 +8,9 @@
   (js/parseInt string-number 10))
 
 (defn loader []
-  [:div.grid (repeat 9 [:div])])
+  [:div.grid
+   (for [i (range 9)]
+     ^{:key i} [:div])])
 
 (defn pause-icon []
   [:svg {:view-box "0 0 16 16"
