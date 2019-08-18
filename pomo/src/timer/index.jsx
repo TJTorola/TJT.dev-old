@@ -35,30 +35,28 @@ export default class extends Component {
 
   render() {
     return (
-      <div className="timer">
-        <div className="clock-wrapper">
-          <ClockSvg
-            seconds={this.state.seconds % 60}
-            minutes={Math.floor(this.state.seconds / 60)}
-          />
-          <Readout
-            seconds={this.state.seconds}
-          />
-          <PlayPause
-            playing={!!this.state.interval}
-            play={this.play}
-            pause={this.pause}
-          />
-          <ResetButton
-            seconds={this.state.seconds}
-            playing={!!this.state.interval}
-            reset={() => this.setSeconds(0)}
-          />
-          <Handles
-            set={this.setSeconds}
-            playing={!!this.state.interval}
-          />
-        </div>
+      <div className="clock-wrapper">
+        <ClockSvg
+          seconds={this.state.seconds % 60}
+          minutes={Math.floor(this.state.seconds / 60)}
+        />
+        <Readout
+          seconds={this.state.seconds}
+        />
+        <PlayPause
+          playing={!!this.state.interval}
+          play={this.play}
+          pause={this.pause}
+        />
+        <ResetButton
+          seconds={this.state.seconds}
+          playing={!!this.state.interval}
+          reset={() => this.setSeconds(0)}
+        />
+        <Handles
+          set={this.setSeconds}
+          playing={!!this.state.interval}
+        />
       </div>
     );
   }
