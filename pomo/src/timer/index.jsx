@@ -35,7 +35,7 @@ export default class extends Component {
 
   render() {
     return (
-      <div className="clock-wrapper">
+      <div className="timer">
         <ClockSvg
           seconds={this.state.seconds % 60}
           minutes={Math.floor(this.state.seconds / 60)}

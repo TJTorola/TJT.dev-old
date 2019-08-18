@@ -11,11 +11,11 @@ html, body, #root, main {
 
 main {
   display: flex;
-  align-content: center;
+  align-items: center;
   justify-content: center;
 }
 
-.clock-wrapper {
+.timer {
   position: relative;
   width: 500px;
   height: 500px;
