@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
 import ClockSvg from './clock-svg.jsx';
-import Readout from './readout.jsx';
-import PlayPause from './play-pause.jsx';
-import ResetButton from './reset-button.jsx';
 import Handles from './handles.jsx';
+import PlayPause from './play-pause.jsx';
+import Readout from './readout.jsx';
+import ResetButton from './reset-button.jsx';
 
 export default class extends Component {
   state = {
@@ -37,25 +37,27 @@ export default class extends Component {
     return (
       <div className="timer">
         <ClockSvg
-          seconds={this.state.seconds % 60}
           minutes={Math.floor(this.state.seconds / 60)}
+          seconds={this.state.seconds % 60}
+          sessionMinutes={this.props.sessionMinutes}
         />
         <Readout
           seconds={this.state.seconds}
         />
         <PlayPause
-          playing={!!this.state.interval}
-          play={this.play}
           pause={this.pause}
+          play={this.play}
+          playing={!!this.state.interval}
         />
         <ResetButton
-          seconds={this.state.seconds}
           playing={!!this.state.interval}
           reset={() => this.setSeconds(0)}
+          seconds={this.state.seconds}
         />
         <Handles
-          set={this.setSeconds}
           playing={!!this.state.interval}
+          set={this.setSeconds}
+          sessionMinutes={this.props.sessionMinutes}
         />
       </div>
     );

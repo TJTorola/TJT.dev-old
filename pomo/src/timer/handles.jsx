@@ -1,36 +1,33 @@
 import React from 'react';
 
-const CNT = 15;
 const RADIUS = 240;
 
-const handles = set => {
-  const handleMapper = handle(set);
-  return Array.from(new Array(CNT), (x,i) => i)
-              .map(handleMapper);
+const handleStyle = (minute, sessionMinutes) => {
+  const radians = ((2 * Math.PI) / sessionMinutes) * minute;
+  const degrees = (360 / sessionMinutes) * minute;
+
+  return {
+    left: (Math.sin(radians) + 1) * RADIUS - 3,
+    bottom: (Math.cos(radians) + 1) * RADIUS + 7,
+    transform: `rotate(${degrees}deg)`
+  };
 };
 
-const handle = set => idx => (
-  <div key={ idx } 
-    className="handle" 
-    style={ handleStyle(idx) }
-    onClick={ () => { set(60 * idx) } }>
-    <div className="bar" />
-  </div>
-);
-
-const idxToDeg = idx => (360 / CNT) * idx;
-const idxToRads = idx => ((2 * Math.PI) / CNT) * idx;
-const idxToX = idx => (Math.sin(idxToRads(idx)) + 1) * RADIUS - 3;
-const idxToY = idx => (Math.cos(idxToRads(idx)) + 1) * RADIUS + 7;
-
-const handleStyle = idx => ({
-  left: idxToX(idx),
-  bottom: idxToY(idx),
-  transform: `rotate(${ idxToDeg(idx) }deg)`
-});
-
-export default ({ set, playing }) => (
+export default ({ set, playing, sessionMinutes }) => (
   <div className={ !playing ? "handles paused" : "handles" }>
-    { handles(playing ? () => {} : set) }
+    {[...new Array(sessionMinutes)].map((_, i) => (
+      <div
+        key={i}
+        className="handle"
+        style={handleStyle(i, sessionMinutes)}
+        onClick={
+          playing
+            ? () => {}
+            : () => {set(60 * i);}
+        }
+      >
+        <div className="bar" />
+      </div>
+    ))}
   </div>
 );
