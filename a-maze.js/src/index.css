@@ -1,18 +1,32 @@
 .Navbar {
+  align-items: center;
   background: #293742;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   padding: 16px;
   width: 256px;
+}
+
+.Navbar-algorithms {
+  margin-top: 10px;
+}
+
+.Navbar-algorithms .bp3-tab {
+  width: 100%;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .Navbar-header {
   align-items: center;
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 
 .Navbar-tabs {
-  padding-top: 10px;
+  padding: 10px;
 }
 
 .Wrapper {
