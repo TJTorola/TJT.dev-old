@@ -11,6 +11,10 @@
   justify-content: space-between;
 }
 
+.Navbar-tabs {
+  padding-top: 10px;
+}
+
 .Wrapper {
   background: #5C7080;
   height: 100vh;
