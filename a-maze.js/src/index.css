@@ -1,12 +1,19 @@
-main {
-  background: #5C7080;
-  width: 100vw;
-  height: 100vh;
-}
-
-nav {
+.Navbar {
   background: #293742;
-  width: 256px;
   height: 100vh;
   padding: 16px;
+  width: 256px;
 }
+
+.Navbar-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.Wrapper {
+  background: #5C7080;
+  height: 100vh;
+  width: 100vw;
+}
+
