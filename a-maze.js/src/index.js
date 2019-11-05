@@ -1,12 +1,15 @@
+import '@blueprintjs/core/lib/css/blueprint.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import 'normalize.css/normalize.css';
+
+import './index.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+
+import Root from './Root';
 import * as serviceWorker from './serviceWorker';
 
-import 'normalize.css/normalize.css';
-import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-import '@blueprintjs/core/lib/css/blueprint.css';
-
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<Root />, document.getElementById('root'));
 
 serviceWorker.unregister();

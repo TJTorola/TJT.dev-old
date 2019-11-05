@@ -1,0 +1,12 @@
+main {
+  background: #5C7080;
+  width: 100vw;
+  height: 100vh;
+}
+
+nav {
+  background: #293742;
+  width: 256px;
+  height: 100vh;
+  padding: 16px;
+}
