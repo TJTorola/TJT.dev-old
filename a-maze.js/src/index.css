@@ -4,17 +4,16 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 16px;
-  width: 256px;
+  width: 16rem;
 }
 
 .Navbar-algorithms {
-  margin-top: 10px;
+  margin-top: .5rem;
 }
 
 .Navbar-algorithms .bp3-tab {
   width: 100%;
-  margin-top: 10px;
+  margin-top: .5rem;
   text-align: center;
 }
 
@@ -23,10 +22,7 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-}
-
-.Navbar-tabs {
-  padding: 10px;
+  padding: 2rem;
 }
 
 .Wrapper {
