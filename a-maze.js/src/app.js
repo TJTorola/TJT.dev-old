@@ -2,7 +2,7 @@ import { Component, createElement as h } from 'react';
 import { Tab, Tabs } from '@blueprintjs/core';
 
 import { RouteContext } from './context.js';
-import { generateRoute, getRoute, ROUTES } from './lib.js';
+import { getCurrentRoute, getRoute, ROUTES } from './lib.js';
 
 class Navbar extends Component {
   state = {
@@ -10,11 +10,11 @@ class Navbar extends Component {
   }
 
   onGeneratorChange = generator => {
-    window.location.hash = generateRoute(ROUTES.GENERATOR, { generator });
+    window.location.hash = getRoute(ROUTES.GENERATOR, { generator });
   }
 
   onSolverChange = solver => {
-    window.location.hash = generateRoute(ROUTES.SOLVER, { solver });
+    window.location.hash = getRoute(ROUTES.SOLVER, { solver });
   }
 
   setTab = tab => {
@@ -83,7 +83,7 @@ export const Root = () => (
 
 class RouteProvider extends Component {
   state = {
-    route: getRoute()
+    route: getCurrentRoute()
   }
 
   componentDidMount() {
@@ -95,7 +95,7 @@ class RouteProvider extends Component {
   }
 
   setRoute = () => {
-    this.setState({ route: getRoute() });
+    this.setState({ route: getCurrentRoute() });
   }
 
   render() {

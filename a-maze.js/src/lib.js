@@ -20,7 +20,7 @@ export const ROUTES = {
   SOLVER: '#/$generator/$solver',
 }
 
-export const getRoute = () => {
+export const getCurrentRoute = () => {
   const { hash } = window.location;
   if (hash === '') return {
     key: 'INDEX',
@@ -60,8 +60,8 @@ export const getRoute = () => {
   };
 };
 
-export const generateRoute = (route, params = {}) => {
-  const current = getRoute();
+export const getRoute = (route, params = {}) => {
+  const current = getCurrentRoute();
   const newParams = Object.assign({}, current.params, params);
   const segments = route.split('/').map(segment => {
     if (segment.startsWith('$')) {

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-import { getRoute } from './lib.js';
+import { getCurrentRoute } from './lib.js';
 
-export const RouteContext = createContext(getRoute());
+export const RouteContext = createContext(getCurrentRoute());
