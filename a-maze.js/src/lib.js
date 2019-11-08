@@ -21,7 +21,7 @@ export const ROUTES = {
   SOLVER: '#/$seed/$generator/$solver',
 }
 
-const getRoute = () => {
+export const getRoute = () => {
   const { hash } = window.location;
   if (hash === '') return {
     key: 'INDEX',
@@ -60,13 +60,6 @@ const getRoute = () => {
     params
   };
 };
-
-export const onRouteChange = listener => {
-  const _callListener = () => listener(getRoute());
-  window.addEventListener("hashchange", _callListener);
-  _callListener();
-  return () => removeEventListener("hashchange", _callListener);
-}
 
 export const generateRoute = (route, params = {}) => {
   const current = getRoute();

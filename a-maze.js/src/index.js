@@ -7,8 +7,8 @@ import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Root from './Root';
-import * as serviceWorker from './serviceWorker';
+import { Root } from './app.js';
+import * as serviceWorker from './serviceWorker.js';
 
 ReactDOM.render(<Root />, document.getElementById('root'));
 
