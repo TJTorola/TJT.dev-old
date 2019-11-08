@@ -25,29 +25,35 @@ class Navbar extends Component {
     switch (this.state.tab) {
       case 'generators': {
         return (
-          h(Tabs, {
-            className: 'Navbar-algorithms',
-            vertical: true,
-            onChange: this.onGeneratorChange
-          },
-            h(Tab, { id: 'depth-first', title: 'Depth-first Search' }),
-            h(Tab, { id: 'kruskals', title: "Kruskal's Algorithm" }),
-            h(Tab, { id: 'prims', title: "Prim's Algorithm" }),
-          )
+          h(RouteContext.Consumer, {}, ({ params }) => (
+            h(Tabs, {
+              className: 'Navbar-algorithms',
+              onChange: this.onGeneratorChange,
+              selectedTabId: params.generator,
+              vertical: true,
+            },
+              h(Tab, { id: 'depth-first', title: 'Depth-first Search' }),
+              h(Tab, { id: 'kruskals', title: "Kruskal's Algorithm" }),
+              h(Tab, { id: 'prims', title: "Prim's Algorithm" }),
+            )
+          ))
         );
       }
 
       case 'solvers': {
         return (
-          h(Tabs, {
-            className: 'Navbar-algorithms',
-            vertical: true,
-            onChange: this.onSolverChange
-          },
-            h(Tab, { id: 'breadth-first', title: 'Breadth-first Search' }),
-            h(Tab, { id: 'wall-follower', title: 'Wall Follower' }),
-            h(Tab, { id: 'dead-end-filling', title: 'Dead-end Filling' }),
-          )
+          h(RouteContext.Consumer, {}, ({ params }) => (
+            h(Tabs, {
+              className: 'Navbar-algorithms',
+              onChange: this.onSolverChange,
+              selectedTabId: params.solver,
+              vertical: true,
+            },
+              h(Tab, { id: 'breadth-first', title: 'Breadth-first Search' }),
+              h(Tab, { id: 'wall-follower', title: 'Wall Follower' }),
+              h(Tab, { id: 'dead-end-filling', title: 'Dead-end Filling' }),
+            )
+          ))
         );
       }
 
