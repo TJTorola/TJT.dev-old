@@ -6,7 +6,7 @@ import { cx, getCurrentRoute, getRoute, ROUTES } from './lib.js';
 
 export class Root extends Component {
   state = {
-    darkMode: true,
+    darkMode: false,
   }
 
   render() {
@@ -15,7 +15,7 @@ export class Root extends Component {
     return (
       h(RouteProvider, {}, 
         h('main', { className: cx({ Wrapper: true, 'bp3-dark': darkMode }) },
-          h(SideBar)
+          h(SideBar),
         )
       )
     );
@@ -105,7 +105,7 @@ class SideBar extends Component {
 
   render() {
     return (
-      h('nav', { className: 'SideBar' },
+      h('nav', { className: 'SideBar bp3-elevation-2' },
         h('div', { className: 'SideBar-header' },
           h('h2', { className: 'bp3-heading' }, 'A-Maze'),
         ),
