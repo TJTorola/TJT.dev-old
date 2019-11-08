@@ -4,10 +4,6 @@ import { Tab, Tabs } from '@blueprintjs/core';
 import { RouteContext } from './context.js';
 import { generateRoute, getRoute, ROUTES } from './lib.js';
 
-const onGeneratorChange = generator => {
-  window.location.hash = generateRoute(ROUTES.GENERATOR, { generator });
-};
-
 export class Navbar extends Component {
   state = {
     tab: 'generators'
