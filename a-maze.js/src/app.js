@@ -2,25 +2,81 @@ import { Component, createElement as h } from 'react';
 import { Button, Tab, Tabs } from '@blueprintjs/core';
 
 import { RouteContext } from './context.js';
-import { getRoute } from './lib.js';
+import { generateRoute, getRoute, ROUTES } from './lib.js';
 
-export const Navbar = () => (
-  h('nav', { className: 'Navbar' },
-    h('div', { className: 'Navbar-header' },
-      h('h2', { className: 'bp3-heading' }, 'A-Maze'),
-      h(Button, { icon: 'menu-closed', minimal: true })
-    ),
-    h(Tabs, { className: 'Navbar-tabs' },
-      h(Tab, { id: 'generators', title: 'Generators' }),
-      h(Tab, { id: 'solvers', title: 'Solvers' }),
-    ),
-    h(Tabs, { className: 'Navbar-algorithms', vertical: true },
-      h(Tab, { id: 'hilburts', title: "Hulburt's Curve" }),
-      h(Tab, { id: 'random', title: 'Random' }),
-      h(Tab, { id: 'stripes', title: 'Stripe Fill' }),
-    )
-  )
-);
+const onGeneratorChange = generator => {
+  window.location.hash = generateRoute(ROUTES.GENERATOR, { generator });
+};
+
+export class Navbar extends Component {
+  state = {
+    tab: 'generators'
+  }
+
+  onGeneratorChange = generator => {
+    window.location.hash = generateRoute(ROUTES.GENERATOR, { generator });
+  }
+
+  onSolverChange = solver => {
+    window.location.hash = generateRoute(ROUTES.SOLVER, { solver });
+  }
+
+  setTab = tab => {
+    this.setState({ tab });
+  }
+
+  renderAlgorithms() {
+    switch (this.state.tab) {
+      case 'generators': {
+        return (
+          h(Tabs, {
+            className: 'Navbar-algorithms',
+            vertical: true,
+            onChange: this.onGeneratorChange
+          },
+            h(Tab, { id: 'depth-first', title: 'Depth-first Search' }),
+            h(Tab, { id: 'kruskals', title: "Kruskal's Algorithm" }),
+            h(Tab, { id: 'prims', title: "Prim's Algorithm" }),
+          )
+        );
+      }
+
+      case 'solvers': {
+        return (
+          h(Tabs, {
+            className: 'Navbar-algorithms',
+            vertical: true,
+            onChange: this.onSolverChange
+          },
+            h(Tab, { id: 'breadth-first', title: 'Breadth-first Search' }),
+            h(Tab, { id: 'wall-follower', title: 'Wall Follower' }),
+            h(Tab, { id: 'dead-end-filling', title: 'Dead-end Filling' }),
+          )
+        );
+      }
+
+      default: {
+        throw new Error(`Un-handled case '${this.state.tab}'`);
+      }
+    }
+  }
+
+  render() {
+    return (
+      h('nav', { className: 'Navbar' },
+        h('div', { className: 'Navbar-header' },
+          h('h2', { className: 'bp3-heading' }, 'A-Maze'),
+          h(Button, { icon: 'menu-closed', minimal: true })
+        ),
+        h(Tabs, { className: 'Navbar-tabs', onChange: this.setTab },
+          h(Tab, { id: 'generators', title: 'Generators' }),
+          h(Tab, { id: 'solvers', title: 'Solvers' }),
+        ),
+        this.renderAlgorithms()
+      )
+    );
+  }
+};
 
 export const Root = () => (
   h(RouteProvider, {}, 
