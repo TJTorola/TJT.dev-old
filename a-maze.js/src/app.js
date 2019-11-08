@@ -4,7 +4,7 @@ import { Tab, Tabs } from '@blueprintjs/core';
 import { RouteContext } from './context.js';
 import { generateRoute, getRoute, ROUTES } from './lib.js';
 
-export class Navbar extends Component {
+class Navbar extends Component {
   state = {
     tab: 'generators'
   }
@@ -81,7 +81,7 @@ export const Root = () => (
   )
 );
 
-export class RouteProvider extends Component {
+class RouteProvider extends Component {
   state = {
     route: getRoute()
   }
