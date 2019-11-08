@@ -16,9 +16,8 @@
  */
 
 export const ROUTES = {
-  SEEDED: '#/$seed',
-  GENERATOR: '#/$seed/$generator',
-  SOLVER: '#/$seed/$generator/$solver',
+  GENERATOR: '#/$generator',
+  SOLVER: '#/$generator/$solver',
 }
 
 export const getRoute = () => {
@@ -64,16 +63,18 @@ export const getRoute = () => {
 export const generateRoute = (route, params = {}) => {
   const current = getRoute();
   const newParams = Object.assign({}, current.params, params);
-  return route.split('/').reduce((acc, segment) => {
+  const segments = route.split('/').map(segment => {
     if (segment.startsWith('$')) {
       const param = newParams[segment.slice(1)];
       if (!param) {
         throw new Error(`Could not find param '${segment}' to generate route '${route}'`);
       }
       
-      return acc + param;
+      return param;
     } else {
-      return acc + segment;
+      return segment;
     }
-  }, '');
+  });
+
+  return segments.join('/');
 };
