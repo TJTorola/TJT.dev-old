@@ -1,5 +1,5 @@
 import { Component, createElement as h } from 'react';
-import { Button, Tab, Tabs } from '@blueprintjs/core';
+import { Tab, Tabs } from '@blueprintjs/core';
 
 import { RouteContext } from './context.js';
 import { generateRoute, getRoute, ROUTES } from './lib.js';
@@ -66,7 +66,6 @@ export class Navbar extends Component {
       h('nav', { className: 'Navbar' },
         h('div', { className: 'Navbar-header' },
           h('h2', { className: 'bp3-heading' }, 'A-Maze'),
-          h(Button, { icon: 'menu-closed', minimal: true })
         ),
         h(Tabs, { className: 'Navbar-tabs', onChange: this.setTab },
           h(Tab, { id: 'generators', title: 'Generators' }),
