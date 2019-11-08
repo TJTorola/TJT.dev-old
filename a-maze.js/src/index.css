@@ -1,8 +1,8 @@
-.bp3-dark .Navbar {
+.bp3-dark .SideBar {
   background: #293742;
 }
 
-.Navbar {
+.SideBar {
   background: #fff;
   align-items: center;
   display: flex;
@@ -11,17 +11,17 @@
   width: 16rem;
 }
 
-.Navbar-algorithms {
+.SideBar-algorithms {
   margin-top: .5rem;
 }
 
-.Navbar-algorithms .bp3-tab {
+.SideBar-algorithms .bp3-tab {
   width: 100%;
   margin-top: .5rem;
   text-align: center;
 }
 
-.Navbar-header {
+.SideBar-header {
   align-items: center;
   display: flex;
   justify-content: space-between;
