@@ -2,7 +2,7 @@ import { Component, createElement as h } from 'react';
 import { Tab, Tabs } from '@blueprintjs/core';
 
 import { RouteContext } from './context.js';
-import { getCurrentRoute, getRoute, ROUTES } from './lib.js';
+import { cx, getCurrentRoute, getRoute, ROUTES } from './lib.js';
 
 class Navbar extends Component {
   state = {
@@ -79,13 +79,23 @@ class Navbar extends Component {
   }
 };
 
-export const Root = () => (
-  h(RouteProvider, {}, 
-    h('main', { className: 'bp3-dark Wrapper' },
-      h(Navbar)
-    )
-  )
-);
+export class Root extends Component {
+  state = {
+    darkMode: true,
+  }
+
+  render() {
+    const { darkMode } = this.state;
+
+    return (
+      h(RouteProvider, {}, 
+        h('main', { className: cx({ Wrapper: true, 'bp3-dark': darkMode }) },
+          h(Navbar)
+        )
+      )
+    );
+  }
+}
 
 class RouteProvider extends Component {
   state = {

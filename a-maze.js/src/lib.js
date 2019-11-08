@@ -1,3 +1,7 @@
+export const cx = classes => Object.keys(classes).reduce((acc, className) => (
+  classes[className] ? [...acc, className] : acc
+), []).join(' ');
+
 /**
  *
  * type Route = string
