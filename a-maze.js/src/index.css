@@ -2,6 +2,19 @@
   background: #394B59;
 }
 
+.Content {
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.Controls-group {
+  width: 100%;
+}
+
+.Controls-slider {
+  margin-left: 1rem;
+}
+
 .SideBar {
   background: #fff;
   align-items: center;

@@ -1,12 +1,24 @@
 import { Component, createElement as h } from 'react';
-import { Tab, Tabs } from '@blueprintjs/core';
+import { Button, Navbar, Slider, Tab, Tabs } from '@blueprintjs/core';
 
 import { RouteContext } from './context.js';
 import { cx, getCurrentRoute, getRoute, ROUTES } from './lib.js';
 
+const Controls = () => (
+  h(Navbar, { className: 'Controls' },
+    h(Navbar.Group, { className: 'Controls-group' },
+      h(Button, { minimal: true, icon: 'fast-backward' }),
+      h(Button, { minimal: true, icon: 'play' }),
+      h(Button, { minimal: true, icon: 'fast-forward' }),
+      h(Navbar.Divider),
+      h(Slider, { labelRenderer: false, className: 'Controls-slider' })
+    ),
+  )
+);
+
 export class Root extends Component {
   state = {
-    darkMode: false,
+    darkMode: true,
   }
 
   render() {
@@ -16,6 +28,9 @@ export class Root extends Component {
       h(RouteProvider, {}, 
         h('main', { className: cx({ Wrapper: true, 'bp3-dark': darkMode }) },
           h(SideBar),
+          h('content', { className: 'Content' },
+            h(Controls)
+          )
         )
       )
     );
