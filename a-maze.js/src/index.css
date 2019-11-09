@@ -3,6 +3,8 @@
 }
 
 .Content {
+  display: flex;
+  flex-direction: column;
   padding: 1.5rem;
   width: 100%;
 }
@@ -13,6 +15,11 @@
 
 .Controls-slider {
   margin-left: 1rem;
+}
+
+.Maze {
+  flex: 1;
+  margin-top: 1rem;
 }
 
 .SideBar {

@@ -1,5 +1,5 @@
 import { Component, createElement as h } from 'react';
-import { Button, Navbar, Slider, Tab, Tabs } from '@blueprintjs/core';
+import { Button, Card, Navbar, Slider, Tab, Tabs } from '@blueprintjs/core';
 
 import { RouteContext } from './context.js';
 import { cx, getCurrentRoute, getRoute, ROUTES } from './lib.js';
@@ -16,9 +16,13 @@ const Controls = () => (
   )
 );
 
+const Maze = () => (
+  h(Card, { className: 'Maze' })
+);
+
 export class Root extends Component {
   state = {
-    darkMode: true,
+    darkMode: false,
   }
 
   render() {
@@ -29,7 +33,8 @@ export class Root extends Component {
         h('main', { className: cx({ Wrapper: true, 'bp3-dark': darkMode }) },
           h(SideBar),
           h('content', { className: 'Content' },
-            h(Controls)
+            h(Controls),
+            h(Maze)
           )
         )
       )
