@@ -1,4 +1,4 @@
-import { Component, createElement as h, useContext } from 'react';
+import { Component, createElement as h } from 'react';
 import { Button, Card, Navbar, Slider, Tab, Tabs } from '@blueprintjs/core';
 
 import algorithms from './algorithms/index.js';
@@ -108,11 +108,12 @@ class Controls extends Component {
   }
 };
 
-const Maze = ({ setStepCount, step }) => {
-  const { key, params } = useContext(RouteContext);
-  if (key === 'INDEX') return null;
+class Maze extends Component {
+  static contextType = RouteContext;
 
-  const Algorithm = (() => {
+  selectAlgorithm = () => {
+    const { key, params } = this.context;
+
     switch (key) {
       case 'GENERATOR': {
         const generator = algorithms.generators[params.generator];
@@ -134,12 +135,17 @@ const Maze = ({ setStepCount, step }) => {
         throw new Error(`Un-handled case, '${key}'`);
       }
     }
-  })();
+  }
 
-  return h(Card, { className: 'Maze' },
-    h(Algorithm, { setStepCount, step })
-  );
-};
+  render() {
+    const { setStepCount, step } = this.props;
+    if (this.context.key === 'INDEX') return null;
+
+    return h(Card, { className: 'Maze' },
+      h(this.selectAlgorithm(), { setStepCount, step })
+    );
+  };
+}
 
 export class Root extends Component {
   state = {
