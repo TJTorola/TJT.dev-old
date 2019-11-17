@@ -1,4 +1,4 @@
-import { Component, createElement as h, createRef, useContext } from 'react';
+import { Component, createElement as h, useContext } from 'react';
 import { Button, Card, Navbar, Slider, Tab, Tabs } from '@blueprintjs/core';
 
 import algorithms from './algorithms/index.js';
@@ -17,30 +17,36 @@ const Controls = () => (
   )
 );
 
-const Generator = () => {
-  const { params } = useContext(RouteContext);
-
-  const generator = algorithms.generators[params.generator];
-  if (!generator) {
-    throw new Error(`Un-handled case, '${params.generator}'`);
-  }
-
-  return h(generator);
-};
-
 const Maze = () => {
-  const route = useContext(RouteContext);
+  const { key, params } = useContext(RouteContext);
 
-  const Algorithm = {
-    SOLVER: Solver,
-    GENERATOR: Generator
-  }[route.key];
+  const Algorithm = (() => {
+    switch (key) {
+      case 'GENERATOR': {
+        const generator = algorithms.generators[params.generator];
+        if (!generator) {
+          throw new Error(`Could not find generator: '${params.generator}'`);
+        }
 
-  if (!Algorithm) {
-    throw new Error(`Un-handled case, '${route.key}'`);
-  }
+        return generator;
+      }
+      case 'SOLVER': {
+        const solver = algorithms.solvers[params.solver];
+        if (!solver) {
+          throw new Error(`Could not find solver: '${params.solver}'`);
+        }
 
-  return h(Card, { className: 'Maze' }, h(Algorithm));
+        return solver;
+      }
+      default: {
+        throw new Error(`Un-handled case, '${key}'`);
+      }
+    }
+  })();
+
+  return h(Card, { className: 'Maze' },
+    h(Algorithm, { step: 0 })
+  );
 };
 
 export class Root extends Component {
@@ -160,16 +166,5 @@ class SideBar extends Component {
       )
     );
   }
-};
-
-const Solver = () => {
-  const { params } = useContext(RouteContext);
-
-  const solver = algorithms.solvers[params.solver];
-  if (!solver) {
-    throw new Error(`Un-handled case, '${params.solver}'`);
-  }
-
-  return h(solver);
 };
 

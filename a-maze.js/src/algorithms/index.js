@@ -1,5 +1,7 @@
 import { createElement as h } from 'react';
 
+import Stripes from './stripes.js';
+
 export default {
   generators: {
     'depth-first': () => h('div', {}, 'Depth First: Not yet implimented'),
@@ -7,7 +9,7 @@ export default {
     'kruskals': () => h('div', {}, 'Kruscals: Not yet implimented'),
     'prims': () => h('div', {}, 'Prims: Not yet implimented'),
     'random': () => h('div', {}, 'Random: Not yet implimented'),
-    'stripes': () => h('div', {}, 'Stripes: Not yet implimented'),
+    'stripes': Stripes,
   },
   solvers: {
     'breadth-first': () => h('div', {}, 'Breadth First: Not yet implimented'),
