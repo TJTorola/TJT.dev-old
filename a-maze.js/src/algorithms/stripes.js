@@ -1,4 +1,4 @@
-import { createAlgorithm } from './lib.js';
+import createAlgorithm from './createAlgorithm.js';
 
 const runner = () => [...new Array(5)].map((_, i) => ({
   bounds: [10 * i, 0, 10, 10],

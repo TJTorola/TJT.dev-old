@@ -1,6 +1,6 @@
 import { Component, createElement as h, createRef } from 'react';
 
-export const createAlgorithm = ({
+export default ({
   layerCount,
   name,
   runner
