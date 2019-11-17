@@ -5,20 +5,37 @@ import algorithms from './algorithms/index.js';
 import { RouteContext } from './context.js';
 import { cx, getCurrentRoute, getRoute, ROUTES } from './lib.js';
 
-const Controls = () => (
-  h(Navbar, { className: 'Controls' },
-    h(Navbar.Group, { className: 'Controls-group' },
-      h(Button, { minimal: true, icon: 'fast-backward' }),
-      h(Button, { minimal: true, icon: 'play' }),
-      h(Button, { minimal: true, icon: 'fast-forward' }),
-      h(Navbar.Divider),
-      h(Slider, { labelRenderer: false, className: 'Controls-slider' })
-    ),
-  )
-);
+const Controls = ({ setStep, step, stepCount }) => {
+  if (!stepCount) {
+    return (
+      h(Navbar, { className: 'Controls' },
+        h(Navbar.Group, { className: 'Controls-group' })
+      )
+    );
+  }
 
-const Maze = () => {
+  return (
+    h(Navbar, { className: 'Controls' },
+      h(Navbar.Group, { className: 'Controls-group' },
+        h(Button, { minimal: true, icon: 'fast-backward' }),
+        h(Button, { minimal: true, icon: 'play' }),
+        h(Button, { minimal: true, icon: 'fast-forward' }),
+        h(Navbar.Divider),
+        h(Slider, {
+          className: 'Controls-slider',
+          labelRenderer: false,
+          max: stepCount,
+          onChange: setStep,
+          value: step
+        })
+      ),
+    )
+  );
+};
+
+const Maze = ({ setStepCount, step }) => {
   const { key, params } = useContext(RouteContext);
+  if (key === 'INDEX') return null;
 
   const Algorithm = (() => {
     switch (key) {
@@ -45,14 +62,19 @@ const Maze = () => {
   })();
 
   return h(Card, { className: 'Maze' },
-    h(Algorithm, { step: 0 })
+    h(Algorithm, { setStepCount, step })
   );
 };
 
 export class Root extends Component {
   state = {
     darkMode: true,
+    step: 0,
+    stepCount: 0
   }
+
+  setStep = step => this.setState({ step })
+  setStepCount = stepCount => this.setState({ stepCount })
 
   render() {
     const { darkMode } = this.state;
@@ -61,9 +83,16 @@ export class Root extends Component {
       h(RouteProvider, {}, 
         h('main', { className: cx({ Wrapper: true, 'bp3-dark': darkMode }) },
           h(SideBar),
-          h('content', { className: 'Content' },
-            h(Controls),
-            h(Maze)
+          h('div', { className: 'Content' },
+            h(Controls, {
+              setStep: this.setStep,
+              step: this.state.step,
+              stepCount: this.state.stepCount
+            }),
+            h(Maze, {
+              step: this.state.step,
+              setStepCount: this.setStepCount
+            })
           )
         )
       )

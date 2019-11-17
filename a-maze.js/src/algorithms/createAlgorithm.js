@@ -21,6 +21,7 @@ export default ({
     this.ctx = canvas.getContext('2d');
     this.ctx.scale(dpr, dpr);
     this.run = runner();
+    this.props.setStepCount(this.run.length);
   }
 
   componentDidUpdate(prevProps) {
@@ -45,10 +46,6 @@ export default ({
         ctx.fillRect(...run[i].bounds);
       }
     }
-  }
-
-  shouldComponentUpdate() {
-    return false;
   }
 
   render() {
