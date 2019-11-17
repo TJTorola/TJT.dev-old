@@ -5,32 +5,107 @@ import algorithms from './algorithms/index.js';
 import { RouteContext } from './context.js';
 import { cx, getCurrentRoute, getRoute, ROUTES } from './lib.js';
 
-const Controls = ({ setStep, step, stepCount }) => {
-  if (!stepCount) {
+class Controls extends Component {
+  interval = null
+
+  state = {
+    playing: false,
+  }
+
+  jumpBackward = () => {
+    this.stop();
+    this.props.setStep(0);
+  }
+
+  jumpForward = () => {
+    this.stop();
+    this.props.setStep(this.props.stepCount);
+  }
+
+  play = () => {
+    if (this.state.playing || this.props.step >= this.props.stepCount) return;
+
+    this.setState({ playing: true });
+    clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      const { setStep, step, stepCount } = this.props;
+      if (step >= stepCount) {
+        this.stop();
+      } else {
+        setStep(step + 1);
+      }
+    }, 100);
+  }
+
+  setSliderValue = value => {
+    this.stop();
+    this.props.setStep(value);
+  }
+
+  stop = () => {
+    if (!this.state.playing || this.props.step <= 0) return;
+
+    this.setState({ playing: false });
+    clearInterval(this.interval);
+    this.interval = null;
+  }
+
+  togglePlaying = () => {
+    if (this.state.playing) {
+      this.stop();
+    } else {
+      this.play();
+    }
+  }
+
+  render() {
+    const { playing } = this.state;
+    const { step, stepCount } = this.props;
+
+    if (!stepCount) {
+      return (
+        h(Navbar, { className: 'Controls' },
+          h(Navbar.Group, { className: 'Controls-group' })
+        )
+      );
+    }
+
     return (
       h(Navbar, { className: 'Controls' },
-        h(Navbar.Group, { className: 'Controls-group' })
+        h(Navbar.Group, { className: 'Controls-group' },
+          h(Button, {
+            disabled: step <= 0,
+            icon: 'step-backward',
+            minimal: true,
+            onClick: this.jumpBackward
+          }),
+          h(Button, {
+            disabled: (
+              (!playing && step >= stepCount) ||
+              (playing && step <= 0)
+            ),
+            icon: this.state.playing ? 'pause' : 'play',
+            minimal: true,
+            onClick: this.togglePlaying
+          }),
+          h(Button, {
+            disabled: step >= stepCount,
+            icon: 'step-forward',
+            minimal: true,
+            onClick: this.jumpForward
+          }),
+          h(Navbar.Divider),
+          h(Slider, {
+            className: 'Controls-slider',
+            labelRenderer: false,
+            max: stepCount,
+            onChange: this.setSliderValue,
+            value: step
+          })
+        ),
       )
     );
   }
-
-  return (
-    h(Navbar, { className: 'Controls' },
-      h(Navbar.Group, { className: 'Controls-group' },
-        h(Button, { minimal: true, icon: 'fast-backward' }),
-        h(Button, { minimal: true, icon: 'play' }),
-        h(Button, { minimal: true, icon: 'fast-forward' }),
-        h(Navbar.Divider),
-        h(Slider, {
-          className: 'Controls-slider',
-          labelRenderer: false,
-          max: stepCount,
-          onChange: setStep,
-          value: step
-        })
-      ),
-    )
-  );
 };
 
 const Maze = ({ setStepCount, step }) => {
