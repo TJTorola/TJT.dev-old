@@ -1,5 +1,7 @@
 import { Component, createElement as h, createRef } from 'react';
 
+import { getDimensions } from './lib.js';
+
 export default ({
   layerCount,
   name,
@@ -12,15 +14,18 @@ export default ({
 
   componentDidMount() {
     const canvas = this.canvasRef.current;
-
     const dpr = window.devicePixelRatio || 1;
     const bounds = canvas.getBoundingClientRect();
+
     canvas.width = bounds.width * dpr;
     canvas.height = bounds.height * dpr;
 
     this.ctx = canvas.getContext('2d');
     this.ctx.scale(dpr, dpr);
-    this.run = runner();
+    this.run = runner({
+      dimensions: getDimensions(),
+      cellSize: this.props.cellSize
+    });
     this.props.setStepCount(this.run.length);
   }
 
@@ -49,6 +54,14 @@ export default ({
   }
 
   render() {
-    return h('canvas', { ref: this.canvasRef });
+    const [x, y] = getDimensions();
+
+    return h('canvas', {
+      ref: this.canvasRef,
+      style: {
+        width: x * this.props.cellSize,
+        height: y * this.props.cellSize
+      }
+    });
   }
 }

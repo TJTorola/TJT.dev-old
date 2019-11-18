@@ -149,7 +149,11 @@ class Maze extends Component {
       }
     })();
 
-    return h(Algorithm, { step: this.props.step, setStepCount: this.props.setStepCount });
+    return h(Algorithm, {
+      cellSize: this.props.cellSize,
+      step: this.props.step,
+      setStepCount: this.props.setStepCount
+    });
   }
 
   render() {

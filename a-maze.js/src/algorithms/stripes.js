@@ -1,10 +1,22 @@
 import createAlgorithm from './createAlgorithm.js';
 
-const runner = () => [...new Array(10)].map((_, i) => ({
-  bounds: [10 * i, 0, 10, 10],
-  before: '#000',
-  after: '#FFF'
-}));
+const runner = ({
+  dimensions,
+  cellSize
+}) => {
+  const [x, y] = dimensions;
+
+  return [...new Array(x * y)].map((_, i) => ({
+    bounds: [
+      cellSize * (i % x),
+      cellSize * Math.floor(i / x),
+      cellSize,
+      cellSize 
+    ],
+    before: '#000',
+    after: '#FFF'
+  }));
+}
 
 export default createAlgorithm({
   layerCount: 1,
