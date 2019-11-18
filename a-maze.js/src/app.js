@@ -1,5 +1,5 @@
 import { Component, createElement as h } from 'react';
-import { Button, Card, Navbar, Slider, Tab, Tabs } from '@blueprintjs/core';
+import { Button, Card, Navbar, ResizeSensor, Slider, Tab, Tabs } from '@blueprintjs/core';
 
 import algorithms from './algorithms/index.js';
 import { RouteContext } from './context.js';
@@ -111,44 +111,59 @@ class Controls extends Component {
 class Maze extends Component {
   static contextType = RouteContext;
 
-  selectAlgorithm = () => {
-    const { key, params } = this.context;
-
-    switch (key) {
-      case 'GENERATOR': {
-        const generator = algorithms.generators[params.generator];
-        if (!generator) {
-          throw new Error(`Could not find generator: '${params.generator}'`);
-        }
-
-        return generator;
-      }
-      case 'SOLVER': {
-        const solver = algorithms.solvers[params.solver];
-        if (!solver) {
-          throw new Error(`Could not find solver: '${params.solver}'`);
-        }
-
-        return solver;
-      }
-      default: {
-        throw new Error(`Un-handled case, '${key}'`);
-      }
+  onResize = resizeValues => {
+    if (this.context.key === 'INDEX') {
+      const { height, width } = resizeValues[0].contentRect;
+      const cellHeight = Math.floor(height / this.props.cellSize);
+      const cellWidth = Math.floor(width / this.props.cellSize);
+      const seed = `${cellWidth}x${cellHeight}`;
+      window.location.hash = getRoute(ROUTES.SEED, { seed });
     }
   }
 
-  render() {
-    const { setStepCount, step } = this.props;
-    if (this.context.key === 'INDEX') return null;
+  renderAlgorithm = () => {
+    const { key, params } = this.context;
+    if (['INDEX', 'SEED'].includes(key)) return null;
 
-    return h(Card, { className: 'Maze' },
-      h(this.selectAlgorithm(), { setStepCount, step })
+    const Algorithm = (() => {
+      switch (key) {
+        case 'GENERATOR': {
+          const generator = algorithms.generators[params.generator];
+          if (!generator) {
+            throw new Error(`Could not find generator: '${params.generator}'`);
+          }
+
+          return generator;
+        }
+        case 'SOLVER': {
+          const solver = algorithms.solvers[params.solver];
+          if (!solver) {
+            throw new Error(`Could not find solver: '${params.solver}'`);
+          }
+
+          return solver;
+        }
+        default: {
+          throw new Error(`Un-handled case, '${key}'`);
+        }
+      }
+    })();
+
+    return h(Algorithm, { step: this.props.step, setStepCount: this.props.setStepCount });
+  }
+
+  render() {
+    return (
+      h(ResizeSensor, { onResize: this.onResize },
+        h(Card, { className: 'Maze' }, this.renderAlgorithm())
+      )
     );
   };
 }
 
 export class Root extends Component {
   state = {
+    cellSize: 10,
     darkMode: true,
     step: 0,
     stepCount: 0
@@ -158,7 +173,7 @@ export class Root extends Component {
   setStepCount = stepCount => this.setState({ stepCount })
 
   render() {
-    const { darkMode } = this.state;
+    const { cellSize, darkMode, step, stepCount } = this.state;
 
     return (
       h(RouteProvider, {}, 
@@ -167,11 +182,12 @@ export class Root extends Component {
           h('div', { className: 'Content' },
             h(Controls, {
               setStep: this.setStep,
-              step: this.state.step,
-              stepCount: this.state.stepCount
+              step,
+              stepCount
             }),
             h(Maze, {
-              step: this.state.step,
+              cellSize,
+              step,
               setStepCount: this.setStepCount
             })
           )

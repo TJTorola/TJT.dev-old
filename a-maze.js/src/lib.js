@@ -20,8 +20,9 @@ export const cx = classes => Object.keys(classes).reduce((acc, className) => (
  */
 
 export const ROUTES = {
-  GENERATOR: '#/$generator',
-  SOLVER: '#/$generator/$solver',
+  SEED: '#/$seed',
+  GENERATOR: '#/$seed/$generator',
+  SOLVER: '#/$seed/$generator/$solver',
 }
 
 export const getCurrentRoute = () => {
