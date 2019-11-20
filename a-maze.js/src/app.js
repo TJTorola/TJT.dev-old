@@ -49,6 +49,10 @@ class Controls extends Component {
     if (this.state.playing || this.props.step >= this.props.stepCount) return;
 
     this.setState({ playing: true });
+    this.setInterval();
+  }
+
+  setInterval = () => {
     clearInterval(this.interval);
     const [intervalMs, stepInc] = this.getIntervalSpeed(this.state.speed);
     this.interval = setInterval(() => {
@@ -67,7 +71,7 @@ class Controls extends Component {
   }
 
   setSpeed = speed => {
-    this.setState({ speed });
+    this.setState({ speed }, this.setInterval);
   }
 
   stop = () => {
