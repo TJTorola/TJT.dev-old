@@ -1,5 +1,16 @@
 import { Component, createElement as h } from 'react';
-import { Button, Card, Navbar, ResizeSensor, Slider, Tab, Tabs } from '@blueprintjs/core';
+import {
+  Button,
+  Card,
+  Menu,
+  Navbar,
+  Popover,
+  Position,
+  ResizeSensor,
+  Slider,
+  Tab,
+  Tabs
+} from '@blueprintjs/core';
 
 import algorithms from './algorithms/index.js';
 import { RouteContext } from './context.js';
@@ -10,7 +21,19 @@ class Controls extends Component {
 
   state = {
     playing: false,
+    speed: '1',
   }
+
+  getIntervalSpeed = speed => ({
+    '0.1': [1000, 1],
+    '0.2': [500, 1],
+    '0.5': [200, 1],
+    '1': [100, 1],
+    '2': [50, 1],
+    '5': [20, 1],
+    '10': [10, 1],
+    '100': [10, 10],
+  }[speed])
 
   jumpBackward = () => {
     this.stop();
@@ -27,19 +50,24 @@ class Controls extends Component {
 
     this.setState({ playing: true });
     clearInterval(this.interval);
+    const [intervalMs, stepInc] = this.getIntervalSpeed(this.state.speed);
     this.interval = setInterval(() => {
       const { setStep, step, stepCount } = this.props;
       if (step >= stepCount) {
         this.stop();
       } else {
-        setStep(step + 1);
+        setStep(Math.min(step + stepInc, stepCount));
       }
-    }, 100);
+    }, intervalMs);
   }
 
   setSliderValue = value => {
     this.stop();
     this.props.setStep(value);
+  }
+
+  setSpeed = speed => {
+    this.setState({ speed });
   }
 
   stop = () => {
@@ -94,6 +122,29 @@ class Controls extends Component {
             minimal: true,
             onClick: this.jumpForward
           }),
+          h(Navbar.Divider),
+          h(Popover, {
+            Position: Position.BOTTOM_LEFT,
+            content: (
+              h(Menu, {},
+                h(Menu.Item, { text: 'x 0.1', onClick: () => this.setSpeed('0.1') }),
+                h(Menu.Item, { text: 'x 0.2', onClick: () => this.setSpeed('0.2') }),
+                h(Menu.Item, { text: 'x 0.5', onClick: () => this.setSpeed('0.5') }),
+                h(Menu.Divider),
+                h(Menu.Item, { text: 'x 1', onClick: () => this.setSpeed('1') }),
+                h(Menu.Divider),
+                h(Menu.Item, { text: 'x 2', onClick: () => this.setSpeed('2') }),
+                h(Menu.Item, { text: 'x 5', onClick: () => this.setSpeed('5') }),
+                h(Menu.Item, { text: 'x 10', onClick: () => this.setSpeed('10') }),
+                h(Menu.Item, { text: 'x 100', onClick: () => this.setSpeed('100') }),
+              )
+            )
+          },
+            h(Button, {
+              icon: 'dashboard',
+              minimal: true,
+            }, `x${this.state.speed}`)
+          ),
           h(Navbar.Divider),
           h(Slider, {
             className: 'Controls-slider',
