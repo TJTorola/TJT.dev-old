@@ -112,7 +112,7 @@ class Maze extends Component {
   static contextType = RouteContext;
 
   onResize = resizeValues => {
-    if (this.context.key === 'INDEX') {
+    if (['INDEX', 'SEED'].includes(this.context.key)) {
       const { height, width } = resizeValues[0].contentRect;
       const cellHeight = Math.floor(height / this.props.cellSize);
       const cellWidth = Math.floor(width / this.props.cellSize);
