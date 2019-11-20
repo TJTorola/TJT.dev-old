@@ -71,7 +71,11 @@ class Controls extends Component {
   }
 
   setSpeed = speed => {
-    this.setState({ speed }, this.setInterval);
+    this.setState({ speed }, () => {
+      if (this.state.playing) {
+        this.setInterval();
+      }
+    });
   }
 
   stop = () => {
