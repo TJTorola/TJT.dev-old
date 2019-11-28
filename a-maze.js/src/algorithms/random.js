@@ -13,10 +13,16 @@ const runner = ({
   twister.setSeed(0);
 
   for (let i = 0; i < length; i++) {
-    const ranX = Math.floor(twister.nextFloat() * x); 
-    const ranY = Math.floor(twister.nextFloat() * y); 
+    const ranX = twister.nextNum(x);
+    const ranY = twister.nextNum(y);
+    const cell = [ranX, ranY];
 
-    builder.setCell([ranX, ranY], '#FFF');
+    const ranR = twister.nextNum(256);
+    const ranB = twister.nextNum(256);
+    const ranG = twister.nextNum(256);
+    const color = `rgb(${ranR},${ranB},${ranG})`;
+
+    builder.setCell(cell, color);
   }
 
   return builder.steps;

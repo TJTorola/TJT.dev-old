@@ -266,4 +266,12 @@ FP.nextDouble = function()
     / 70368744177664.0; // 2^46
 };
 
+/**
+ * TJ: My added methods:
+ */
+FP.nextNum = function(limit)
+{
+  return Math.floor((this[$next](32) / 4294967296.0) * limit);
+}
+
 export default F;
