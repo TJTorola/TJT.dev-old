@@ -1,5 +1,6 @@
 import createAlgorithm from './createAlgorithm.js';
 import MersenneTwister from './mersenneTwister.js';
+import Builder from './builder.js';
 
 const runner = ({
   dimensions,
@@ -7,23 +8,18 @@ const runner = ({
 }) => {
   const [x, y] = dimensions;
   const length = x * y;
+  const builder = new Builder({ dimensions, cellSize });
   const twister = new MersenneTwister();
   twister.setSeed(0);
 
-  return [...new Array(length)].map(() => {
-    const i = Math.floor(twister.nextFloat() * length);
+  for (let i = 0; i < length; i++) {
+    const ranX = Math.floor(twister.nextFloat() * x); 
+    const ranY = Math.floor(twister.nextFloat() * y); 
 
-    return {
-      bounds: [
-        cellSize * (i % x),
-        cellSize * Math.floor(i / x),
-        cellSize,
-        cellSize 
-      ],
-      before: '#000',
-      after: '#FFF'
-    };
-  });
+    builder.setCell([ranX, ranY], '#FFF');
+  }
+
+  return builder.steps;
 }
 
 export default createAlgorithm({
