@@ -1,5 +1,6 @@
 import { createElement as h } from 'react';
 
+import Random from './random.js';
 import Stripes from './stripes.js';
 
 export default {
@@ -8,7 +9,7 @@ export default {
     'hilburts': () => h('div', {}, 'Hilburts: Not yet implimented'),
     'kruskals': () => h('div', {}, 'Kruscals: Not yet implimented'),
     'prims': () => h('div', {}, 'Prims: Not yet implimented'),
-    'random': () => h('div', {}, 'Random: Not yet implimented'),
+    'random': Random,
     'stripes': Stripes,
   },
   solvers: {
