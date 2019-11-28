@@ -14,7 +14,7 @@ import {
 
 import algorithms from './algorithms/index.js';
 import { RouteContext } from './context.js';
-import { cx, getCurrentRoute, getRoute, ROUTES } from './lib.js';
+import { cx, getCurrentRoute, getDimensions, getRoute, ROUTES } from './lib.js';
 
 class Controls extends Component {
   interval = null
@@ -170,12 +170,19 @@ class Controls extends Component {
 class Maze extends Component {
   static contextType = RouteContext;
 
+  state = {
+    dimensions: getDimensions(),
+  }
+
   onResize = resizeValues => {
     if (['INDEX', 'SEED'].includes(this.context.key)) {
       const { height, width } = resizeValues[0].contentRect;
-      const cellHeight = Math.floor(height / this.props.cellSize);
-      const cellWidth = Math.floor(width / this.props.cellSize);
-      const seed = `${cellWidth}x${cellHeight}`;
+      const x = Math.floor(width / this.props.cellSize);
+      const y = Math.floor(height / this.props.cellSize);
+
+      this.setState({ dimensions: [x, y] });
+
+      const seed = `${x}x${y}`;
       window.location.hash = getRoute(ROUTES.SEED, { seed });
     }
   }
@@ -210,6 +217,7 @@ class Maze extends Component {
 
     return h(Algorithm, {
       cellSize: this.props.cellSize,
+      dimensions: this.state.dimensions,
       step: this.props.step,
       setStepCount: this.props.setStepCount
     });

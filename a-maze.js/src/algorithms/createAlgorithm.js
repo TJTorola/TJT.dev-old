@@ -1,6 +1,5 @@
 import { Component, createElement as h, createRef } from 'react';
 
-import { getDimensions } from './lib.js';
 
 export default ({
   layerCount,
@@ -23,7 +22,7 @@ export default ({
     this.ctx = canvas.getContext('2d');
     this.ctx.scale(dpr, dpr);
     this.run = runner({
-      dimensions: getDimensions(),
+      dimensions: this.props.dimensions,
       cellSize: this.props.cellSize
     });
     this.props.setStepCount(this.run.length);
@@ -54,7 +53,7 @@ export default ({
   }
 
   render() {
-    const [x, y] = getDimensions();
+    const [x, y] = this.props.dimensions;
 
     return h('canvas', {
       ref: this.canvasRef,
