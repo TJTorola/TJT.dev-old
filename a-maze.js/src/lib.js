@@ -25,45 +25,51 @@ export const ROUTES = {
   SOLVER: '#/$seed/$generator/$solver',
 }
 
+
 export const getCurrentRoute = () => {
   const { hash } = window.location;
+  const [ path ] = hash.split('?');
   if (hash === '') return {
     key: 'INDEX',
-    route: '',
     params: {}
   };
 
-  const hashSegments = hash.split('/');
-  const key = Object.keys(ROUTES).find(key => {
-    const route = ROUTES[key];
-
-    if (route.split('/').length !== hashSegments.length) return false;
-
-    return route.split('/').every((segment, idx) => (
-      segment.startsWith('$') ? true : segment === hashSegments[idx]
-    ));
-  });
+  const key = getRouteKey(path);
 
   if (!key) return {
     key: 'NOT_FOUND',
-    route: hash,
     params: {}
   };
 
-  const params = ROUTES[key].split('/').reduce((acc, segment, idx) => (
+  return {
+    key,
+    params: getRouteParams(path, key)
+  };
+};
+
+export const getRouteKey = path => {
+  const pathSegments = path.split('/');
+  return Object.keys(ROUTES).find(key => {
+    const route = ROUTES[key];
+
+    if (route.split('/').length !== pathSegments.length) return false;
+
+    return route.split('/').every((segment, idx) => (
+      segment.startsWith('$') ? true : segment === pathSegments[idx]
+    ));
+  });
+}
+
+export const getRouteParams = (path, key) => {
+  const pathSegments = path.split('/');
+  return ROUTES[key].split('/').reduce((acc, segment, idx) => (
     segment.startsWith('$')
       ? {
         ...acc,
-        [segment.slice(1)]: hashSegments[idx]
+        [segment.slice(1)]: pathSegments[idx]
       } : acc
   ), {});
-
-  return {
-    key,
-    route: hash,
-    params
-  };
-};
+}
 
 export const getDimensions = () => {
   const { params } = getCurrentRoute();
