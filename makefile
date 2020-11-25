@@ -5,10 +5,13 @@ STATIC_FILES := $(shell find -L src/static -type f | sed -e 's/src\/static/build
 
 static: $(STATIC_FILES)
 
-all: build static
+all: build build/index.css static
 
 build:
 	mkdir build
+
+build/index.css: src/css/index.css
+	yarn postcss $< -o $@
 
 install:
 	yarn install
@@ -20,11 +23,10 @@ $(STATIC_FILES): build/% : src/static/%
 static-watch:
 	${SHELL} ./scripts/static-watch.sh
 
-watch:
-	${MAKE} static-watch
+watch: static-watch
 
 serve: all
-	${MAKE} && cd build/ && http-server -c-1
+	cd build/ && http-server -c-1
 
 dev: serve watch
 
