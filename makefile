@@ -15,8 +15,14 @@ $(STATIC_FILES) : build/% : public/%
 	mkdir -p $(@D)
 	cp $< $@
 
+watch:
+	${SHELL} ./scripts/watch.sh
+
 serve: all
 	${MAKE} && cd build/ && http-server -c-1
+
+dev:
+	${MAKE} serve & ${MAKE} watch
 
 clean:
 	rm -rf build
