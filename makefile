@@ -25,7 +25,7 @@ static-watch:
 
 watch: static-watch
 
-serve: all
+serve:
 	cd build/ && http-server -c-1
 
 dev: serve watch
