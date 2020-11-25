@@ -8,6 +8,9 @@ all: build $(STATIC_FILES)
 build:
 	mkdir build
 
+install:
+	yarn install
+
 $(STATIC_FILES) : build/% : public/%
 	mkdir -p $(@D)
 	cp $< $@
@@ -17,3 +20,4 @@ serve: all
 
 clean:
 	rm -rf build
+	rm -rf node_modules
