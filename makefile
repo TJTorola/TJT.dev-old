@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 MAKE := ${MAKE} --no-print-directory
 
-STATIC_FILES := $(shell find -L public -type f | sed -e 's/public/build/g')
+STATIC_FILES := $(shell find -L src/static -type f | sed -e 's/src\/static/build/g')
 
 all: build $(STATIC_FILES)
 
@@ -11,7 +11,7 @@ build:
 install:
 	yarn install
 
-$(STATIC_FILES) : build/% : public/%
+$(STATIC_FILES) : build/% : src/static/%
 	mkdir -p $(@D)
 	cp $< $@
 
