@@ -5,7 +5,8 @@ STATIC_FILES := $(shell ./scripts/ls-static-targets.sh)
 clean:
 	rm -rf build
 
-dev: all serve watch
+dev:
+	./scripts/dev.sh
 
 install:
 	yarn install
