@@ -1,7 +1,4 @@
-SHELL := /bin/bash
-MAKE := ${MAKE} --no-print-directory
-
-STATIC_FILES := $(shell find -L src/static -type f | sed -e 's/src\/static/build/g')
+STATIC_FILES := $(shell ./scripts/ls-static-targets.sh)
 
 static: $(STATIC_FILES)
 
@@ -21,7 +18,7 @@ $(STATIC_FILES): build/% : src/static/%
 	cp $< $@
 
 static-watch:
-	${SHELL} ./scripts/static-watch.sh
+	./scripts/static-watch.sh
 
 watch: static-watch
 
