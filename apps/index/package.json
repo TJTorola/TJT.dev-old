@@ -1,0 +1,8 @@
+{
+  "name": "@tjt-dev/index",
+  "scripts": {
+      "clean": "rm -rf ./build && mkdir build",
+      "build": "npm run clean && cp src/* build",
+      "deploy": "npm run build && cp -r build/* ../../build"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "tjt-dev",
+  "scripts": {
+    "clean": "rm -rf build && mkdir build",
+    "build": "npm run clean && npm run deploy --workspaces --if-present"
+  },
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "author": "Tyler Torola <TJTorola@gmail.com>"
+}
